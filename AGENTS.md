@@ -68,7 +68,8 @@ Other commands: `/opsx:explore` (think something through before proposing),
 tooling and typos, do not need an OpenSpec change.
 
 Git: work on a branch named `change/<change-id>` (or `fix/<topic>`) and open a PR
-to `master`. Commit messages are imperative, in English, and name the change ID.
+to `master`. `master` is protected: changes land only through a PR with a green
+`check` job. Commit messages are imperative, in English, and name the change ID.
 Do not push or merge unless the user asks.
 
 ## Working rules
@@ -103,11 +104,6 @@ Do not edit these without asking the user:
 - Accepted ADRs in `docs/adr/`: supersede them with a new ADR instead of editing them.
 - Rules for paths that M0 creates (Flyway migrations, `api/openapi.json`, `.env`
   files) are in `docs/ARCHITECTURE.md`. Once those paths exist, add them to this list.
-
-Human review required: `.github/workflows/`, `scripts/check.mjs`,
-`openspec/config.yaml`, `docs/ARCHITECTURE.md`, `docs/adr/`, `AGENTS.md`, and,
-once it exists, the back-end `auth` module and security configuration. An agent's
-approval does not count for these.
 
 ## Checks
 

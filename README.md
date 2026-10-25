@@ -78,8 +78,8 @@ it, then the agent implements it.
 5. **Archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`). The
    change's specs merge into `openspec/specs/`, and the roadmap status becomes `archived`.
 6. **Open a PR** to `master` that contains the change, its archive and the
-   roadmap update. A teammate reviews it, and CI (`pnpm check`) must be green
-   before merging.
+   roadmap update. CI (`pnpm check`) must be green before merging.
+   Direct pushes to `master` are blocked.
 
 Two more useful commands:
 - `/opsx:explore`: think a problem through with the agent before proposing.
@@ -95,8 +95,7 @@ OpenSpec. Use a `fix/<topic>` branch and a normal PR.
 - **Every new UI string** needs both an `en` and a `uk` translation.
 - **Never weaken a test or a check** to get CI green. Fix the cause instead.
 - **Ask in chat before changing shared files:** CI, `scripts/check.mjs`,
-  `docs/ARCHITECTURE.md`, ADRs, `AGENTS.md`, `openspec/config.yaml`. Changes to
-  these need a human reviewer, not only an agent.
+  `docs/ARCHITECTURE.md`, ADRs, `AGENTS.md`, `openspec/config.yaml`.
 - **Scope changed?** Edit [docs/ROADMAP.md](docs/ROADMAP.md) in your PR and say
   why. Never silently drop a user story.
 - **Agent forgot a rule?** Add the rule to `AGENTS.md`, so the next agent doesn't

@@ -11,7 +11,8 @@ next: /opsx:propose bootstrap-backend (docs/ROADMAP.md M0)
 decisions:
   - Stack and conventions: docs/adr/0001-0006
   - Planning split (docs vs OpenSpec): docs/adr/0007
-  - No AI code review; no handoff hooks committed
+  - No AI code review, no required human review; master protected (PR + green check job)
+  - No handoff hooks committed
   - UI design (docs/DESIGN.md) to be produced later with Claude Design
 refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/config.yaml]
 checks:
