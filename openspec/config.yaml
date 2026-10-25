@@ -11,9 +11,9 @@ context: |
   - docs/ARCHITECTURE.md and docs/adr/: project-wide rules every change must follow.
   - docs/ROADMAP.md: the change ID, its stories, dependencies and status.
   Stack: Java 25, Spring Boot 4.1, Maven wrapper (backend/), PostgreSQL + PostGIS,
-  Flyway, Spring Modulith; React + Vite + TypeScript, pnpm (frontend/); UI strings
+  Flyway, plain layered monolith with ArchUnit layer rules; React + Vite + TypeScript, pnpm (frontend/); UI strings
   in en and uk via react-i18next. Quality gate: `pnpm check` from the repository root.
-  Capability spec folders are named after backend modules (e.g. site, review, post).
+  Capability spec folders are named after backend feature packages (e.g. site, review, post).
 
 rules:
   proposal:
@@ -35,7 +35,7 @@ operations:
   apply:
     guidance:
       - Before starting, set the change's status in docs/ROADMAP.md to in-progress.
-      - Stay within the module boundaries in docs/ARCHITECTURE.md; do not edit merged Flyway migrations.
+      - Follow the layer rules in docs/ARCHITECTURE.md; do not edit merged Flyway migrations.
   archive:
     guidance:
       - Archive only after `pnpm check` passes; set the roadmap status to archived in the same commit.

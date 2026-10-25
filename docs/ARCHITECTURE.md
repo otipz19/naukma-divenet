@@ -31,12 +31,12 @@ flowchart LR
 
 ```
 backend/                 Maven project (mvnw), Spring Boot app
-  src/main/java/ua/ukma/divenet/<module>/
+  src/main/java/ua/ukma/divenet/<feature>/{web,service,domain}/
   src/main/resources/db/migration/   Flyway migrations
   src/main/resources/seed/           demo seed data (JSON)           (planned)
   src/test/java/ua/ukma/divenet/     TestcontainersConfiguration, TestDiveNetApplication
 frontend/                Vite app, pnpm workspace member            (planned, bootstrap-frontend)
-  src/features/<feature>/            feature folders mirroring backend modules
+  src/features/<feature>/            feature folders mirroring backend feature packages
   src/i18n/locales/{en,uk}.json
   e2e/                               Playwright tests
 api/openapi.json         committed OpenAPI snapshot (shared contract)
@@ -50,10 +50,11 @@ docs/                    product, architecture, roadmap, ADRs, handoff
 
 ### Modules
 
-The base package is `ua.ukma.divenet`. Each top-level package below is a module,
-and Spring Modulith verifies the module boundaries in a test (ADR-0002).
+The base package is `ua.ukma.divenet`. The back-end is a plain layered monolith
+(ADR-0008). Each top-level package below is a feature package, organised by layer
+inside. An ArchUnit test (`LayeredArchitectureTest`) checks the layer direction.
 
-| Module | Owns | Stories |
+| Package | Owns | Stories |
 | --- | --- | --- |
 | `shared` | Error handling, pagination, security configuration, clock, base test support | — |
 | `auth` | Registration, login, JWT issuing, refresh tokens | M0 |
@@ -69,21 +70,22 @@ and Spring Modulith verifies the module boundaries in a test (ADR-0002).
 
 Rules:
 
-- Inside a module, organise code by layer: `web` (controllers and request/response DTOs),
-  `service`, `domain` (entities and repositories). Only the module's public
-  service interfaces and its events may be used from other modules.
-- Modules never use each other's repositories or entities. To refer to another
-  module's aggregate, store its ID (for example, a review stores `siteId`).
-- Side effects across modules go through Spring application events. For
-  example, `DiveLogged`, `PostPublished` and `SiteApproved` are consumed by
-  `achievement`. Use `@TransactionalEventListener` or Modulith's
-  `@ApplicationModuleListener`.
-- Controllers stay thin and services hold the transactions. Entities are never
-  serialised directly.
-- `shared` is the one **open** module (`@ApplicationModule(type = OPEN)` in its
-  `package-info.java`), so any module may use its subpackages. Keep it to
-  cross-cutting infrastructure; domain logic never goes there. All other modules
-  are closed: only their top-level package is visible to other modules.
+- Inside a feature, organise code by layer: `web` (controllers and request/response
+  DTOs), `service`, and `domain` (entities and repositories). Dependencies point
+  down: `web → service → domain`. The gate checks this.
+- `web` never touches `domain`. Services return records declared in their own
+  `service` package. Controllers return those records or map them to `web` DTOs.
+  Entities are never serialised.
+- Controllers stay thin, and services hold the transactions.
+- Between features: a service may call another feature's service, or use its
+  entities and repositories. Entities may map JPA relations across features
+  (for example, `Review` → `@ManyToOne Site`). Prefer calling the owning
+  feature's service over its repository, so business rules stay in one place.
+- Fan-out side effects, where several features feed one consumer, should use
+  Spring application events with `@TransactionalEventListener`. For example,
+  `DiveLogged`, `PostPublished` and `SiteApproved` are consumed by `achievement`.
+- `shared` holds cross-cutting infrastructure only, and any package may use it.
+  Domain logic never goes there.
 
 ### Persistence and PostGIS (ADR-0003)
 
@@ -179,7 +181,7 @@ Each change that adds tables updates this diagram.
 - Map: Leaflet through `react-leaflet` plus marker clustering, with OpenStreetMap
   tiles and attribution.
 - Code lives in feature folders under `src/features/`, mirroring the back-end
-  modules. Shared UI goes in `src/components/`, and the API client and generated
+  feature packages. Shared UI goes in `src/components/`, and the API client and generated
   types in `src/api/`.
 - **i18n:** `react-i18next` with the locales `en` (default and fallback) and `uk`.
   User-visible strings are never hard-coded. Every key exists in both locale
@@ -196,7 +198,7 @@ Each change that adds tables updates this diagram.
 | --- | --- | --- |
 | Unit | JUnit 5 + AssertJ (services, rules, mappers) | Vitest + Testing Library (components, hooks) |
 | Integration / functional | `@SpringBootTest` + Testcontainers (`postgis/postgis`), MockMvc against real endpoints | Vitest with MSW-mocked API |
-| Architecture | Spring Modulith `ApplicationModules.verify()` | — |
+| Architecture | ArchUnit `LayeredArchitectureTest` (layer direction inside features) | — |
 | E2E | — | Playwright against the `compose.yaml` stack with demo seed |
 
 - Every OpenSpec requirement scenario is covered by at least one automated test,

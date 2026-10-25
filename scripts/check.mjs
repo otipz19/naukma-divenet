@@ -12,7 +12,7 @@ const mvnw = process.platform === "win32" ? ".\\mvnw.cmd" : "./mvnw";
 // A shell is used so Windows resolves `.cmd` shims (pnpm bins, mvnw.cmd).
 const steps = [
   { name: "openspec: validate specs and changes", cmd: "openspec", args: ["validate", "--all", "--strict", "--no-interactive"] },
-  // Compile, unit + integration tests, Modulith verify, OpenAPI snapshot check, Spotless check.
+  // Compile, unit + integration tests, ArchUnit layer rules, OpenAPI snapshot check, Spotless check.
   { name: "backend: mvnw verify", cmd: mvnw, args: ["-B", "-ntp", "verify"], cwd: "backend" },
 ];
 

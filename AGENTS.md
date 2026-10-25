@@ -44,7 +44,7 @@ PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently
 | Roadmap | [docs/ROADMAP.md](docs/ROADMAP.md) | Ordered OpenSpec change IDs and their status | — |
 | OpenSpec | [openspec/config.yaml](openspec/config.yaml), `openspec/specs/`, `openspec/changes/` | Change proposals, designs, tasks, spec deltas | `openspec validate --all --strict` (part of `pnpm check`) |
 | Quality gate | [scripts/check.mjs](scripts/check.mjs), [.github/workflows/check.yml](.github/workflows/check.yml) | The single check command and CI | `pnpm check` |
-| Back-end | `backend/` | Spring Boot modular monolith; modules under `ua.ukma.divenet` | `backend/mvnw verify` (part of `pnpm check`) |
+| Back-end | `backend/` | Spring Boot layered monolith; feature packages under `ua.ukma.divenet` (ADR-0008) | `backend/mvnw verify` (part of `pnpm check`) |
 | Front-end | `frontend/` (planned, `bootstrap-frontend`) | React SPA, i18n `en`/`uk` | planned |
 | API contract | `api/openapi.json` | REST contract shared by back-end and front-end | `ApiContractTest` (part of `backend/mvnw verify`) |
 | Design | `docs/DESIGN.md` (planned) | UI source of truth; consult it before any UI change once it exists | — |
@@ -83,7 +83,7 @@ Do not push or merge unless the user asks.
   check output, a screenshot.
 - Keep changes within the active change's scope. If you find other work that is
   needed, add it to the roadmap or report it rather than doing it.
-- Follow the module boundaries and API conventions in `docs/ARCHITECTURE.md`. If a
+- Follow the layer rules and API conventions in `docs/ARCHITECTURE.md`. If a
   change must depart from them, write an ADR and update `docs/ARCHITECTURE.md` in
   the same PR.
 - Every spec scenario gets an automated test. Never skip, disable or weaken a test
@@ -120,7 +120,7 @@ pnpm check
 It runs, in order:
 1. `openspec validate --all --strict`.
 2. `backend/mvnw verify`: compile, unit tests, integration tests against a
-   Testcontainers PostGIS, the Spring Modulith boundary check (`ModularityTest`),
+   Testcontainers PostGIS, the ArchUnit layer check (`LayeredArchitectureTest`),
    the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
 
 `bootstrap-frontend` adds the front-end step. Every step must be check-only and
