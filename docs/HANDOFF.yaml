@@ -1,24 +1,23 @@
-goal: M0 (Foundation) — bootstrap-backend archived; PR #1 merging
+goal: M0 (Foundation) — back-end foundation done; next is the front-end bootstrap
 done:
-  - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (see git history up to e7a243f)
-  - bootstrap-backend: all 21 tasks done, PR #1 CI green, archived to openspec/changes/archive/2026-10-25-bootstrap-backend; specs in openspec/specs/shared/*
-  - scripts/check.mjs backend step; check.yml setup-java 25 (user-approved boundary edits)
-wip: switch-to-layered-monolith — committed (f4c7960) on change/switch-to-layered-monolith, not pushed; needs rebase on master after PR #1 merges
+  - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
+  - bootstrap-backend merged (PR #1) and archived; specs in openspec/specs/shared/*
+  - switch-to-layered-monolith archived on change/switch-to-layered-monolith (ADR-0008 supersedes 0002); PR open
+wip: null
 blocked: null
-next: rebase change/switch-to-layered-monolith on master, pnpm check, /opsx:archive switch-to-layered-monolith, push + PR
+next: merge the switch-to-layered-monolith PR once CI is green, then /opsx:propose bootstrap-frontend (docs/ROADMAP.md M0)
 decisions:
-  - Stack and conventions: docs/adr/0001-0006; planning split: docs/adr/0007
-  - No AI code review, no required human review; master protected (PR + green check job)
-  - bootstrap-backend design.md records deviations (FieldViolation name, paging via properties, health probes off, .\mvnw.cmd)
-  - api-errors spec: absent `type` means about:blank (Spring omits it)
-  - switch-to-layered-monolith proposed (feature packages, ArchUnit layers, separate change, skip_specs) — planning files untracked in this tree; keep out of the bootstrap commit
+  - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
+  - Planning split: docs/adr/0007
+  - No AI code review, no required human review; master protected (PR + green check job); repo allows auto-merge
+  - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design (docs/DESIGN.md) to be produced later with Claude Design
-refs: [AGENTS.md, docs/ROADMAP.md, openspec/changes/bootstrap-backend/tasks.md]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-10-25 on Windows, clean build — openspec + mvnw verify (4 unit, 17 integration tests)
-  negative_probes: stale snapshot fails and is not rewritten; Spotless violation fails gate; Modulith catches non-exposed type
-  ci: PR #1 check job green on ubuntu-latest
+  last: pass 2026-10-25 on Windows, clean build after rebase on master — openspec (5 specs, 1 change) + mvnw verify (4 unit, 17 integration)
+  negative_probes: ArchUnit catches controller→repository and service→web DTO; stale snapshot and Spotless violations fail the gate
+  ci: PR #1 green on ubuntu-latest; switch PR pending
   not_covered: frontend build/tests/lint (bootstrap-frontend), E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js
 platforms: Windows 11 local (JDK 26, Docker Desktop); ubuntu-latest CI

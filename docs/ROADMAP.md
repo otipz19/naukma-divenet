@@ -27,7 +27,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
 | `bootstrap-backend` | Maven wrapper project, Boot 4.1 / Java 25, Spring Modulith verify test, Flyway + PostGIS + Testcontainers, ProblemDetail handler, springdoc and the `api/openapi.json` snapshot check, Spotless; back-end step added to `pnpm check`; CI installs Java 25 | — | — | archived |
-| `switch-to-layered-monolith` | Replace Spring Modulith with a plain layered monolith: feature packages, ArchUnit layer test, ADR-0008 superseding ADR-0002 | — | `bootstrap-backend` | proposed |
+| `switch-to-layered-monolith` | Replace Spring Modulith with a plain layered monolith: feature packages, ArchUnit layer test, ADR-0008 superseding ADR-0002 | — | `bootstrap-backend` | archived |
 | `bootstrap-frontend` | Vite + React + TS app as a pnpm workspace member, router, TanStack Query, i18n `en`/`uk` with the key-parity check, ESLint/Prettier, Vitest, generated API types, app shell with disclaimer footer; front-end step added to `pnpm check` | — | `bootstrap-backend` | planned |
 | `add-local-stack` | `compose.yaml` (db, backend, frontend/nginx), Dockerfiles, `.env.example` | — | `bootstrap-backend`, `bootstrap-frontend` | planned |
 | `add-authentication` | Register, login, refresh, logout, roles, admin bootstrap from env; login/register UI | — | `bootstrap-frontend` | planned |

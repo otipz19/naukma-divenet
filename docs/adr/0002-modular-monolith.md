@@ -1,6 +1,6 @@
 # 0002. Modular monolith with Spring Modulith
 
-Status: Accepted
+Status: Superseded by [0008](0008-layered-monolith.md)
 Date: 2026-10-25
 
 ## Context
