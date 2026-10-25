@@ -1,11 +1,11 @@
-goal: M0 (Foundation) — bootstrap-backend implemented on branch change/bootstrap-backend
+goal: M0 (Foundation) — bootstrap-backend archived; PR #1 merging
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (see git history up to e7a243f)
-  - bootstrap-backend tasks 0.1–7.5 + 8.1 (openspec/changes/bootstrap-backend/tasks.md); backend/ (Boot 4.1.2, Java 25), api/openapi.json
+  - bootstrap-backend: all 21 tasks done, PR #1 CI green, archived to openspec/changes/archive/2026-10-25-bootstrap-backend; specs in openspec/specs/shared/*
   - scripts/check.mjs backend step; check.yml setup-java 25 (user-approved boundary edits)
-wip: bootstrap-backend — uncommitted on change/bootstrap-backend; task 7.2 open until the PR's CI check is green
+wip: switch-to-layered-monolith — committed (f4c7960) on change/switch-to-layered-monolith, not pushed; needs rebase on master after PR #1 merges
 blocked: null
-next: commit + push change/bootstrap-backend, open PR, confirm CI green (task 7.2), /opsx:archive bootstrap-backend; then user reviews switch-to-layered-monolith proposal and applies it on its own branch
+next: rebase change/switch-to-layered-monolith on master, pnpm check, /opsx:archive switch-to-layered-monolith, push + PR
 decisions:
   - Stack and conventions: docs/adr/0001-0006; planning split: docs/adr/0007
   - No AI code review, no required human review; master protected (PR + green check job)
@@ -18,7 +18,7 @@ checks:
   gate: pnpm check
   last: pass 2026-10-25 on Windows, clean build — openspec + mvnw verify (4 unit, 17 integration tests)
   negative_probes: stale snapshot fails and is not rewritten; Spotless violation fails gate; Modulith catches non-exposed type
-  ci: not yet run for this branch (needs push)
+  ci: PR #1 check job green on ubuntu-latest
   not_covered: frontend build/tests/lint (bootstrap-frontend), E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js
 platforms: Windows 11 local (JDK 26, Docker Desktop); ubuntu-latest CI

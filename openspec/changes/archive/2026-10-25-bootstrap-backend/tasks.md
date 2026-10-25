@@ -39,7 +39,7 @@
 ## 7. Gate, CI and docs
 
 - [x] 7.1 Add the `backend: mvnw verify` step to `scripts/check.mjs` (platform-specific command, `cwd: backend`, `-B -ntp verify`), and update the file's header comment. Verify that `pnpm check` passes locally with Docker running. Verify that it exits non-zero when one formatting violation is introduced, and revert the violation afterwards.
-- [ ] 7.2 Add `actions/setup-java@v5` (Temurin 25, `cache: maven`) to `.github/workflows/check.yml`, and remove the M0 comment. Verify that the PR's `check` job is green.
+- [x] 7.2 Add `actions/setup-java@v5` (Temurin 25, `cache: maven`) to `.github/workflows/check.yml`, and remove the M0 comment. Verify that the PR's `check` job is green.
 - [x] 7.3 Update `docs/ARCHITECTURE.md`: remove **(planned)** from the parts that now exist (backend layout, `api/openapi.json`, the `shared` module notes), and document the open `shared` module. Verify by reading the diff against design D2.
 - [x] 7.4 Update `AGENTS.md`:
   - code map: back-end and API contract rows, with real check commands;
