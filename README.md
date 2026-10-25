@@ -5,8 +5,8 @@ dive log and blog posts. This is a NaUKMA university project, and all the code i
 written by coding agents (Claude Code, Codex or Gemini CLI). We plan, review and
 steer the agents.
 
-> **Status:** M0 (Foundation) is in progress. The back-end skeleton exists; the
-> front-end and the compose stack come next. See [docs/ROADMAP.md](docs/ROADMAP.md).
+> **Status:** M0 (Foundation) is in progress. The back-end and front-end skeletons
+> exist; the UI design, app shell and compose stack come next. See [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## 1. One-time setup
 
@@ -118,7 +118,7 @@ scripts/check.mjs    the single quality gate: `pnpm check`
 .github/workflows/   CI running `pnpm check`
 backend/             Spring Boot API
 api/openapi.json     committed API contract (generated, never edited by hand)
-frontend/            React + Vite SPA        (bootstrap-frontend, M0)
+frontend/            React + Vite SPA (@divenet/frontend)
 ```
 
 ## Running the app
@@ -142,3 +142,21 @@ Useful back-end commands (from `backend/`):
 | Fix formatting | `./mvnw spotless:apply` |
 | Regenerate `api/openapi.json` after an API change | `./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true` |
 | Full back-end check | `./mvnw verify` |
+
+### Front-end
+
+The UI is not designed yet, so the app only shows a placeholder page. With the
+back-end running as above, start the dev server from the repository root. It
+proxies `/api` to `http://localhost:8080` (override with `DIVENET_API_URL`):
+
+```sh
+pnpm --filter @divenet/frontend dev      # http://localhost:5173
+```
+
+Useful front-end commands (from the repository root):
+
+| What | Command |
+| --- | --- |
+| Fix formatting | `pnpm --filter @divenet/frontend exec prettier --write .` |
+| Regenerate API types after `api/openapi.json` changed | `pnpm --filter @divenet/frontend api:types` |
+| Run the tests in watch mode | `pnpm --filter @divenet/frontend exec vitest` |

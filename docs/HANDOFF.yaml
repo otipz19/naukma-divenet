@@ -1,23 +1,24 @@
-goal: M0 (Foundation) — back-end foundation done; next is the front-end bootstrap
+goal: M0 (Foundation) — back-end and front-end plumbing done; next is the UI design (Claude Design) and the app shell
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
-  - bootstrap-backend merged (PR #1) and archived; specs in openspec/specs/shared/*
-  - switch-to-layered-monolith archived on change/switch-to-layered-monolith (ADR-0008 supersedes 0002); PR open
+  - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
+  - bootstrap-frontend archived on change/bootstrap-frontend (frontend/, 7 gate steps); PR open, auto-merge queued
 wip: null
 blocked: null
-next: merge the switch-to-layered-monolith PR once CI is green, then /opsx:propose bootstrap-frontend (docs/ROADMAP.md M0)
+next: once the bootstrap-frontend PR merges, produce docs/DESIGN.md with Claude Design, then /opsx:propose add-app-shell (docs/ROADMAP.md M0)
 decisions:
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
   - No AI code review, no required human review; master protected (PR + green check job); repo allows auto-merge
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
-  - UI design (docs/DESIGN.md) to be produced later with Claude Design
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/]
+  - UI design (docs/DESIGN.md) via Claude Design; app shell + disclaimer footer moved to new roadmap item add-app-shell
+  - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-10-25-bootstrap-frontend/]
 checks:
   gate: pnpm check
-  last: pass 2026-10-25 on Windows, clean build after rebase on master — openspec (5 specs, 1 change) + mvnw verify (4 unit, 17 integration)
-  negative_probes: ArchUnit catches controller→repository and service→web DTO; stale snapshot and Spotless violations fail the gate
-  ci: PR #1 green on ubuntu-latest; switch PR pending
-  not_covered: frontend build/tests/lint (bootstrap-frontend), E2E (M6)
-  env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js
-platforms: Windows 11 local (JDK 26, Docker Desktop); ubuntu-latest CI
+  last: pass 2026-10-25 on Windows after clean pnpm install — openspec (8 specs after archive) + 7 frontend steps (33 Vitest tests) + mvnw verify (4 unit, 17 integration)
+  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes
+  ci: PRs #1 and #2 green on ubuntu-latest; bootstrap-frontend PR pending
+  not_covered: E2E (M6); Vite dev proxy only checked to forward (502 without a running back-end)
+  env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
+platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI

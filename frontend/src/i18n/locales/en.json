@@ -1,0 +1,12 @@
+{
+  "app": {
+    "name": "DiveNet"
+  },
+  "home": {
+    "placeholder": "The DiveNet interface is being designed."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "backHome": "Back to the home page"
+  }
+}
