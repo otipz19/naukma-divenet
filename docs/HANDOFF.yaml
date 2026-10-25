@@ -3,6 +3,7 @@ done:
   - AGENTS.md + CLAUDE.md + GEMINI.md (import AGENTS.md) — validate_setup.py passed
   - docs/PRODUCT.md, ARCHITECTURE.md, ROADMAP.md, adr/0001-0007 — English rewrite of the original course docs
   - OpenSpec 1.15.0 initialised for claude, codex, gemini; openspec/config.yaml context + rules
+  - README.md teammate onboarding; origin = github.com/otipz19/naukma-divenet
   - pnpm check (scripts/check.mjs) + .github/workflows/check.yml — gate passes; fails on an invalid change (probed)
 wip: null
 blocked: null
@@ -16,5 +17,6 @@ refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/config.yaml]
 checks:
   gate: pnpm check
   last: pass (openspec validate only; no code yet) 2026-10-25
-  not_covered: backend/frontend build, tests, lint (added by M0); CI not run yet (no remote)
-platforms: Windows 11 local only
+  ci: pass on GitHub Actions (ubuntu-latest), first push 2026-10-25
+  not_covered: backend/frontend build, tests, lint (added by M0)
+platforms: Windows 11 local; ubuntu-latest CI
