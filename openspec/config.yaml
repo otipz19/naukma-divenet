@@ -1,0 +1,41 @@
+schema: spec-driven
+
+context: |
+  Language: English
+  All artifacts must be written in English.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+
+  Project: DiveNet, a social platform for scuba divers (university project, built by agents).
+  Read before planning:
+  - docs/PRODUCT.md: scope, domain decisions, user-story backlog (US-xx IDs).
+  - docs/ARCHITECTURE.md and docs/adr/: project-wide rules every change must follow.
+  - docs/ROADMAP.md: the change ID, its stories, dependencies and status.
+  Stack: Java 25, Spring Boot 4.1, Maven wrapper (backend/), PostgreSQL + PostGIS,
+  Flyway, Spring Modulith; React + Vite + TypeScript, pnpm (frontend/); UI strings
+  in en and uk via react-i18next. Quality gate: `pnpm check` from the repository root.
+  Capability spec folders are named after backend modules (e.g. site, review, post).
+
+rules:
+  proposal:
+    - Use the change ID from docs/ROADMAP.md when one exists; otherwise add the item to the roadmap in the same change.
+    - Cite the user-story IDs (US-xx) the change covers and state what is out of scope or deferred.
+    - Name any departure from docs/ARCHITECTURE.md and the ADR that will record it.
+  design:
+    - Record only decisions local to this change; project-wide rules belong in docs/ARCHITECTURE.md or a new ADR.
+    - List new or changed REST endpoints, Flyway migrations and i18n namespaces.
+  specs:
+    - Every requirement has at least one WHEN/THEN scenario that an automated test can verify.
+  tasks:
+    - Each implementation task names the tests it adds (unit, integration or front-end).
+    - Include tasks to update api/openapi.json and generated front-end types when the API changes.
+    - Include adding en and uk translations for every new UI string.
+    - End with running `pnpm check` and updating docs/ROADMAP.md status and docs/HANDOFF.yaml.
+
+operations:
+  apply:
+    guidance:
+      - Before starting, set the change's status in docs/ROADMAP.md to in-progress.
+      - Stay within the module boundaries in docs/ARCHITECTURE.md; do not edit merged Flyway migrations.
+  archive:
+    guidance:
+      - Archive only after `pnpm check` passes; set the roadmap status to archived in the same commit.

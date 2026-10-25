@@ -1,0 +1,15 @@
+{
+  "name": "divenet",
+  "private": true,
+  "description": "DiveNet repository tooling: quality gate and OpenSpec CLI",
+  "packageManager": "pnpm@12.15.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "@fission-ai/openspec": "1.15.0"
+  }
+}
