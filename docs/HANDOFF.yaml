@@ -1,24 +1,23 @@
-goal: M0 (Foundation) — bootstrap-backend in PR; switch-to-layered-monolith implemented
+goal: M0 (Foundation) — back-end foundation done; next is the front-end bootstrap
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
-  - bootstrap-backend committed (e64003d), pushed, PR https://github.com/otipz19/naukma-divenet/pull/1
-  - switch-to-layered-monolith tasks 0.1–4.1 on branch change/switch-to-layered-monolith (cut from e64003d)
-wip: switch-to-layered-monolith — uncommitted on its branch; bootstrap-backend task 7.2 verified (PR #1 green) but not yet ticked on that branch
+  - bootstrap-backend merged (PR #1) and archived; specs in openspec/specs/shared/*
+  - switch-to-layered-monolith archived on change/switch-to-layered-monolith (ADR-0008 supersedes 0002); PR open
+wip: null
 blocked: null
-next: PR #1 green → tick bootstrap 7.2, /opsx:archive bootstrap-backend, merge; then commit switch, rebase on master, /opsx:archive switch-to-layered-monolith, open its PR
+next: merge the switch-to-layered-monolith PR once CI is green, then /opsx:propose bootstrap-frontend (docs/ROADMAP.md M0)
 decisions:
-  - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith: docs/adr/0008 (supersedes 0002)
+  - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
-  - No AI code review, no required human review; master protected (PR + green check job)
-  - bootstrap-backend design.md records deviations (FieldViolation, paging via properties, health probes off, .\mvnw.cmd)
-  - api-errors spec: absent `type` means about:blank (Spring omits it)
+  - No AI code review, no required human review; master protected (PR + green check job); repo allows auto-merge
+  - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design (docs/DESIGN.md) to be produced later with Claude Design
-refs: [AGENTS.md, docs/ROADMAP.md, docs/adr/0008-layered-monolith.md]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-10-25 on Windows, clean build, switch branch — openspec (2 changes) + mvnw verify (4 unit, 17 integration)
-  negative_probes: ArchUnit catches controller→repository and service→web DTO (probe removed); stale snapshot and Spotless violations fail the gate
-  ci: PR #1 check job green on ubuntu-latest (Temurin 25 + Docker); switch branch not pushed
+  last: pass 2026-10-25 on Windows, clean build after rebase on master — openspec (5 specs, 1 change) + mvnw verify (4 unit, 17 integration)
+  negative_probes: ArchUnit catches controller→repository and service→web DTO; stale snapshot and Spotless violations fail the gate
+  ci: PR #1 green on ubuntu-latest; switch PR pending
   not_covered: frontend build/tests/lint (bootstrap-frontend), E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js
 platforms: Windows 11 local (JDK 26, Docker Desktop); ubuntu-latest CI
