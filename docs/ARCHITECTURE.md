@@ -35,10 +35,13 @@ backend/                 Maven project (mvnw), Spring Boot app
   src/main/resources/db/migration/   Flyway migrations
   src/main/resources/seed/           demo seed data (JSON)           (planned)
   src/test/java/ua/ukma/divenet/     TestcontainersConfiguration, TestDiveNetApplication
-frontend/                Vite app, pnpm workspace member            (planned, bootstrap-frontend)
-  src/features/<feature>/            feature folders mirroring backend feature packages
+frontend/                Vite app, pnpm workspace member (@divenet/frontend)
+  src/app/                           App root, router, query client
+  src/api/                           typed client, ApiError, generated schema.gen.ts
   src/i18n/locales/{en,uk}.json
-  e2e/                               Playwright tests
+  src/features/<feature>/            feature folders mirroring backend feature packages (planned)
+  scripts/                           i18n parity and API types checks (gate steps)
+  e2e/                               Playwright tests                (planned, M6)
 api/openapi.json         committed OpenAPI snapshot (shared contract)
 compose.yaml             db + backend + frontend                    (planned, add-local-stack)
 scripts/check.mjs        the single quality gate
@@ -147,7 +150,10 @@ Each change that adds tables updates this diagram.
   to `api/openapi.json`. Front-end API types are generated from it (`openapi-typescript`).
   The quality gate fails if either the snapshot or the generated types are stale.
   `ApiContractTest` checks the snapshot; regenerate it with
-  `cd backend && ./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true`.
+  `cd backend && ./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true`, then
+  regenerate the types with `pnpm --filter @divenet/frontend api:types`.
+  Front-end code calls the API only through the typed client in `src/api/`;
+  every failed call rejects with `ApiError`.
   Any change to the contract updates the snapshot, the types and every affected
   front-end feature in the same PR.
 

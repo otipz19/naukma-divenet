@@ -45,8 +45,8 @@ PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently
 | OpenSpec | [openspec/config.yaml](openspec/config.yaml), `openspec/specs/`, `openspec/changes/` | Change proposals, designs, tasks, spec deltas | `openspec validate --all --strict` (part of `pnpm check`) |
 | Quality gate | [scripts/check.mjs](scripts/check.mjs), [.github/workflows/check.yml](.github/workflows/check.yml) | The single check command and CI | `pnpm check` |
 | Back-end | `backend/` | Spring Boot layered monolith; feature packages under `ua.ukma.divenet` (ADR-0008) | `backend/mvnw verify` (part of `pnpm check`) |
-| Front-end | `frontend/` (planned, `bootstrap-frontend`) | React SPA, i18n `en`/`uk` | planned |
-| API contract | `api/openapi.json` | REST contract shared by back-end and front-end | `ApiContractTest` (part of `backend/mvnw verify`) |
+| Front-end | `frontend/` | React SPA, i18n `en`/`uk`, typed API client | front-end steps of `pnpm check` |
+| API contract | `api/openapi.json` | REST contract shared by back-end and front-end | `ApiContractTest`; front-end types check `api:types:check` |
 | Design | `docs/DESIGN.md` (planned) | UI source of truth; consult it before any UI change once it exists | — |
 | Session state | [docs/HANDOFF.yaml](docs/HANDOFF.yaml) | What is done, in progress and next | — |
 
@@ -104,7 +104,7 @@ Do not edit these without asking the user:
 - Accepted ADRs in `docs/adr/`: supersede them with a new ADR instead of editing them.
 - Merged Flyway migrations in `backend/src/main/resources/db/migration/`: add a
   new `V<n>__<name>.sql` instead of editing one.
-- `api/openapi.json`: never edit by hand; regenerate it (see Checks).
+- `api/openapi.json` and `frontend/src/api/schema.gen.ts`: never edit by hand; regenerate them (see Checks).
 - Rules for `.env` files are in `docs/ARCHITECTURE.md`. Once `add-local-stack`
   creates them, add them to this list.
 
@@ -119,20 +119,29 @@ pnpm check
 
 It runs, in order:
 1. `openspec validate --all --strict`.
-2. `backend/mvnw verify`: compile, unit tests, integration tests against a
+2. Front-end (`frontend/`, Node only), one step each: i18n key parity
+   (`en`/`uk`), generated API types match `api/openapi.json`, `tsc` typecheck,
+   ESLint (including the ban on hard-coded JSX text), Prettier check, Vitest
+   tests, and the Vite production build.
+3. `backend/mvnw verify`: compile, unit tests, integration tests against a
    Testcontainers PostGIS, the ArchUnit layer check (`LayeredArchitectureTest`),
    the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
 
-`bootstrap-frontend` adds the front-end step. Every step must be check-only and
-must exit non-zero on failure.
+Every step must be check-only and must exit non-zero on failure. CI
+(`.github/workflows/check.yml`) runs the same command on every push to `master`
+and on every PR.
 
 Fix commands (never run by the gate):
-- Formatting: `cd backend && ./mvnw spotless:apply`.
+- Back-end formatting: `cd backend && ./mvnw spotless:apply`.
+- Front-end formatting: `pnpm --filter @divenet/frontend exec prettier --write .`
 - OpenAPI snapshot, after any API change:
-  `cd backend && ./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true`.
-  Commit the regenerated `api/openapi.json` with the change.
-- Run the API locally on a throwaway database: `cd backend && ./mvnw spring-boot:test-run`. CI (`.github/workflows/check.yml`) runs the same command on every push to
-`master` and on every PR.
+  `cd backend && ./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true`,
+  then the front-end types: `pnpm --filter @divenet/frontend api:types`.
+  Commit the regenerated `api/openapi.json` and `frontend/src/api/schema.gen.ts`
+  with the change.
+- Run the API locally on a throwaway database: `cd backend && ./mvnw spring-boot:test-run`.
+- Run the front-end dev server (proxies `/api` to the API above):
+  `pnpm --filter @divenet/frontend dev`.
 
 Prerequisites:
 - Node.js 24 or newer, and pnpm (`npm i -g pnpm`; recent Node versions no longer ship corepack).
@@ -141,7 +150,7 @@ Prerequisites:
 - JDK 25 or newer, and a running Docker daemon (Testcontainers; Compose later).
   Maven itself is not needed: use `backend/mvnw` (`mvnw.cmd` on Windows).
 
-Not covered yet: front-end build, tests and lint (`bootstrap-frontend`), E2E (M6).
+Not covered yet: E2E (M6).
 
 ## Handoff
 

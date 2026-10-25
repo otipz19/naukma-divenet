@@ -1,0 +1,12 @@
+{
+  "app": {
+    "name": "DiveNet"
+  },
+  "home": {
+    "placeholder": "Інтерфейс DiveNet зараз розробляється."
+  },
+  "notFound": {
+    "title": "Сторінку не знайдено",
+    "backHome": "Повернутися на головну"
+  }
+}
