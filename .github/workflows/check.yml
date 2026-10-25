@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      # M0 (`add-local-stack`) adds actions/setup-java (Temurin 25) here for the backend step.
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: maven
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
