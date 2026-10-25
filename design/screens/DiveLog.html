@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dive log · DiveNet</title>
+    <!-- @screen w=1280 h=1060 title="Dive log with the log-a-dive form" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+          <a class="dn-header__link" href="#" aria-current="page">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 32px; display: grid; gap: 24px">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: end">
+          <div style="display: grid; gap: 4px">
+            <h1 class="h1" style="margin: 0">Dive log</h1>
+            <span class="body" style="color: var(--ink-muted)">47 dives · 21 sites · deepest <span class="data">38.2 m</span></span>
+          </div>
+          <a class="dn-btn dn-btn--primary" href="#">Log a dive</a>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+          <section class="dn-card" style="flex: 999 1 560px; min-width: 0; padding: 0; overflow-x: auto" aria-label="Logged dives">
+            <table style="width: 100%; border-collapse: collapse">
+              <thead>
+                <tr style="background: var(--surface-2); text-align: left">
+                  <th class="label" style="padding: 12px 16px">Date</th>
+                  <th class="label" style="padding: 12px 16px">Site</th>
+                  <th class="label" style="padding: 12px 16px">Max depth</th>
+                  <th class="label" style="padding: 12px 16px">Water</th>
+                  <th class="label" style="padding: 12px 16px">Visibility</th>
+                  <th class="label" style="padding: 12px 16px"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-top: 1px solid var(--border)">
+                  <td class="body-sm" style="padding: 12px 16px">12 May 2026</td>
+                  <td style="padding: 12px 16px"><a href="#" class="label">SS Thistlegorm</a><div class="body-sm" style="color: var(--ink-muted)">Egypt · Red Sea</div></td>
+                  <td class="data" style="padding: 12px 16px">30.4 m</td>
+                  <td class="data" style="padding: 12px 16px">24 °C</td>
+                  <td class="data" style="padding: 12px 16px">25 m</td>
+                  <td style="padding: 12px 16px; text-align: right"><button class="dn-btn dn-btn--ghost dn-btn--sm">Edit</button></td>
+                </tr>
+                <tr style="border-top: 1px solid var(--border)">
+                  <td class="body-sm" style="padding: 12px 16px">11 May 2026</td>
+                  <td style="padding: 12px 16px"><a href="#" class="label">Shark and Yolanda Reef</a><div class="body-sm" style="color: var(--ink-muted)">Egypt · Ras Mohammed</div></td>
+                  <td class="data" style="padding: 12px 16px">26.0 m</td>
+                  <td class="data" style="padding: 12px 16px">25 °C</td>
+                  <td class="data" style="padding: 12px 16px">30 m</td>
+                  <td style="padding: 12px 16px; text-align: right"><button class="dn-btn dn-btn--ghost dn-btn--sm">Edit</button></td>
+                </tr>
+                <tr style="border-top: 1px solid var(--border)">
+                  <td class="body-sm" style="padding: 12px 16px">2 Apr 2026</td>
+                  <td style="padding: 12px 16px"><a href="#" class="label">Lighthouse Reef</a><div class="body-sm" style="color: var(--ink-muted)">Egypt · Dahab</div></td>
+                  <td class="data" style="padding: 12px 16px">14.8 m</td>
+                  <td class="data" style="padding: 12px 16px">22 °C</td>
+                  <td class="data" style="padding: 12px 16px">—</td>
+                  <td style="padding: 12px 16px; text-align: right"><button class="dn-btn dn-btn--ghost dn-btn--sm">Edit</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+          <form class="dn-card" style="flex: 1 1 340px; display: grid; gap: 16px" aria-labelledby="log-title">
+            <h2 id="log-title" class="h3" style="margin: 0">Log a dive</h2>
+            <label class="dn-field"><span class="dn-field__label">Site</span><input class="dn-input" type="search" value="Abu Dabbab" /><span class="dn-field__hint">Search the catalog or <a href="#">pick on the map</a>.</span></label>
+            <label class="dn-field"><span class="dn-field__label">Date</span><input class="dn-input" type="date" value="2026-05-13" /></label>
+            <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+              <label class="dn-field"><span class="dn-field__label">Max depth (m)</span><input class="dn-input" inputmode="decimal" value="18" /></label>
+              <label class="dn-field"><span class="dn-field__label">Visibility (m)</span><input class="dn-input" inputmode="decimal" /></label>
+              <label class="dn-field"><span class="dn-field__label">Water temp (°C)</span><input class="dn-input" inputmode="decimal" value="25" /></label>
+              <label class="dn-field"><span class="dn-field__label">Current</span><select class="dn-input"><option>Mild</option></select></label>
+            </div>
+            <label class="dn-field"><span class="dn-field__label">Buddies</span><input class="dn-input" value="Oleh K." /></label>
+            <label class="dn-field"><span class="dn-field__label">Notes</span><textarea class="dn-input" style="min-height: 80px">Turtle at the seagrass, 9 m.</textarea></label>
+            <div class="dn-alert dn-alert--success">
+              <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="m9 12 2 2 4-4" /></svg>
+              <div><strong class="dn-alert__title">Achievement unlocked: Wreck Explorer</strong><span class="dn-alert__body">You have logged dives on 3 wrecks.</span></div>
+            </div>
+            <button class="dn-btn dn-btn--primary">Save dive</button>
+          </form>
+        </div>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

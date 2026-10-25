@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Feed · DiveNet</title>
+    <!-- @screen w=1280 h=1160 title="Feed: global, filtered by region" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#" aria-current="page">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 32px; display: grid; gap: 24px">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: end">
+          <h1 class="h1" style="margin: 0">Feed</h1>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: end">
+            <label class="dn-field"><span class="dn-field__label">Country</span><select class="dn-input" style="min-width: 180px"><option>Egypt</option></select></label>
+            <label class="dn-field"><span class="dn-field__label">Region</span><select class="dn-input" style="min-width: 180px"><option>All regions</option></select></label>
+            <a class="dn-btn dn-btn--primary" href="#">Write a post</a>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+          <section style="flex: 999 1 560px; min-width: 0; max-width: var(--reading-max); display: grid; gap: 16px" aria-label="Posts">
+            <article class="dn-card" style="padding: 0; overflow: hidden; display: grid">
+              <div style="aspect-ratio: 3 / 1; background: var(--surface-2); display: grid; place-items: center; color: var(--ink-muted)" class="body-sm">[Cover photo]</div>
+              <div style="padding: 20px; display: grid; gap: 8px">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap"><span class="dn-badge">Red Sea</span><a href="#" class="dn-badge dn-badge--accent" style="text-decoration: none">SS Thistlegorm</a></div>
+                <h2 class="h2" style="margin: 0"><a href="#" style="color: var(--ink); text-decoration: none">Two days on the Thistlegorm</a></h2>
+                <p class="body" style="margin: 0; color: var(--ink-muted)">We booked the overnight boat to beat the crowds. Here is how the four dives went and what I would change next time.</p>
+                <span class="body-sm" style="color: var(--ink-muted)"><a href="#">Oleh Kravets</a> · 14 May 2026 · 6 min read</span>
+              </div>
+            </article>
+            <article class="dn-card" style="display: grid; gap: 8px">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap"><span class="dn-badge">Dahab</span></div>
+              <h2 class="h2" style="margin: 0"><a href="#" style="color: var(--ink); text-decoration: none">Shore diving in Dahab on a budget</a></h2>
+              <p class="body" style="margin: 0; color: var(--ink-muted)">Tank rental, transport to the Canyon and the Bells, and which sites are fine without a guide.</p>
+              <span class="body-sm" style="color: var(--ink-muted)"><a href="#">Mira Koval</a> · 9 May 2026 · 4 min read</span>
+            </article>
+            <nav aria-label="Pagination" style="display: flex; gap: 8px; align-items: center; justify-content: center">
+              <a class="dn-btn dn-btn--secondary dn-btn--sm" aria-disabled="true">Previous</a>
+              <span class="body-sm" style="color: var(--ink-muted)">Page 1 of 12</span>
+              <a class="dn-btn dn-btn--secondary dn-btn--sm" href="#">Next</a>
+            </nav>
+          </section>
+          <aside style="flex: 1 1 280px; display: grid; gap: 12px">
+            <h2 class="h3" style="margin: 0">Your drafts</h2>
+            <a class="dn-card" href="#" style="padding: 16px; display: grid; gap: 4px; text-decoration: none; color: var(--ink)"><span class="label">Night dive at Lighthouse</span><span class="dn-badge dn-badge--info" style="justify-self: start">Draft</span></a>
+          </aside>
+        </div>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

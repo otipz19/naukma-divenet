@@ -28,3 +28,4 @@ Date: YYYY-MM-DD
 | [0006](0006-local-media-storage.md) | Local-disk media behind `MediaStorage` | Accepted |
 | [0007](0007-planning-workflow.md) | Planning with project docs + OpenSpec | Accepted |
 | [0008](0008-layered-monolith.md) | Plain layered monolith | Accepted |
+| [0009](0009-design-in-repository.md) | UI design kept in the repository, Claude Design as a mirror | Accepted |

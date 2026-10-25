@@ -112,7 +112,8 @@ what is half-done and what comes next. Commit it to your branch. Whoever continu
 
 ```
 AGENTS.md            shared agent instructions (CLAUDE.md, GEMINI.md import it)
-docs/                product, architecture, roadmap, ADRs, handoff
+docs/                product, architecture, roadmap, ADRs, handoff, UI design rules
+design/              UI design system and screen mockups (open with `node design/serve.mjs`)
 openspec/            OpenSpec config, specs (built behaviour), changes (in progress)
 scripts/check.mjs    the single quality gate: `pnpm check`
 .github/workflows/   CI running `pnpm check`

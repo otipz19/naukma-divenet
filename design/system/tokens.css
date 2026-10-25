@@ -1,0 +1,151 @@
+/* DiveNet — generated from tokens.json */
+
+:root, [data-theme="light"] {
+  --surface-0: #f5f8f9;
+  --surface-1: #ffffff;
+  --surface-2: #e9f0f3;
+  --border: #cfdae1;
+  --border-strong: #7a909f;
+  --ink: #0d2232;
+  --ink-muted: #475f71;
+  --brand: #0e3a5c;
+  --on-brand: #f2f8fc;
+  --accent: #0a7570;
+  --accent-strong: #085c58;
+  --accent-soft: #ddf1ef;
+  --on-accent: #ffffff;
+  --focus: #0b5bb0;
+  --focus-inverse: #9fd4ff;
+  --rating: #a65f00;
+  --success: #1c6a44;
+  --success-soft: #e2f2e9;
+  --caution: #835000;
+  --caution-soft: #fcefd8;
+  --danger: #b2261e;
+  --danger-soft: #fbe6e4;
+  --info: #0b5bb0;
+  --info-soft: #e2edf9;
+  --scrim: #0d223299;
+  --shadow-1: 0 1px 2px #0d22321a, 0 1px 3px #0d22320f;
+  --shadow-2: 0 8px 24px #0d223224, 0 2px 6px #0d223214;
+}
+
+[data-theme="dark"] {
+  --surface-0: #0a1520;
+  --surface-1: #11202c;
+  --surface-2: #192c3a;
+  --border: #2b4051;
+  --border-strong: #6c8597;
+  --ink: #e5eef4;
+  --ink-muted: #a1b5c4;
+  --brand: #0e2a40;
+  --on-brand: #e5eef4;
+  --accent: #3cc4b8;
+  --accent-strong: #68d6cc;
+  --accent-soft: #0f3533;
+  --on-accent: #04211e;
+  --focus: #7ec1ff;
+  --focus-inverse: #7ec1ff;
+  --rating: #f4b649;
+  --success: #72d49e;
+  --success-soft: #123020;
+  --caution: #f3c06c;
+  --caution-soft: #38290c;
+  --danger: #ff8f86;
+  --danger-soft: #3c1714;
+  --info: #7ec1ff;
+  --info-soft: #0f2a44;
+  --scrim: #000000b3;
+  --shadow-1: 0 1px 2px #00000066;
+  --shadow-2: 0 8px 24px #000000a3;
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+  --header-height: 64px;
+  --content-max: 1200px;
+  --reading-max: 720px;
+  --sidebar-width: 360px;
+  --bp-md: 768px;
+  --bp-lg: 1100px;
+  --font-display: Manrope, "Golos Text", system-ui, sans-serif;
+  --font-sans: "Golos Text", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-size: 30px;
+  line-height: 38px;
+  font-weight: 700;
+  letter-spacing: -0.25px;
+}
+
+.h2 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 700;
+}
+
+.h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 600;
+}
+
+.body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.body-sm {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.label {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}
+
+.caption {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.data {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+}

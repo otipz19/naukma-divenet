@@ -28,9 +28,10 @@ When two sources disagree, the one higher in this list wins:
 5. [docs/ROADMAP.md](docs/ROADMAP.md): the order of work and each item's status. This is a plan.
 6. [docs/PRODUCT.md](docs/PRODUCT.md): scope, domain decisions and the backlog
    of what is wanted.
-7. UI design: `docs/DESIGN.md` **does not exist yet**. It is planned and will be
-   produced with Claude Design. Once it exists, it wins over existing UI code for
-   visual decisions. Until then, keep styling minimal.
+7. UI design: [docs/DESIGN.md](docs/DESIGN.md) and the files under `design/` (tokens,
+   component specs, screen mockups). They win over existing UI code for visual
+   decisions. They were made with Claude Design but live in this repository
+   (ADR-0009); you need no claude.ai access to use them.
 
 If an archived spec and PRODUCT.md disagree, the spec says what exists and
 PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently.
@@ -47,7 +48,7 @@ PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently
 | Back-end | `backend/` | Spring Boot layered monolith; feature packages under `ua.ukma.divenet` (ADR-0008) | `backend/mvnw verify` (part of `pnpm check`) |
 | Front-end | `frontend/` | React SPA, i18n `en`/`uk`, typed API client | front-end steps of `pnpm check` |
 | API contract | `api/openapi.json` | REST contract shared by back-end and front-end | `ApiContractTest`; front-end types check `api:types:check` |
-| Design | `docs/DESIGN.md` (planned) | UI source of truth; consult it before any UI change once it exists | — |
+| Design | [docs/DESIGN.md](docs/DESIGN.md), `design/` | UI source of truth: tokens (`design/system/tokens.json`), component specs, screen mockups; read before any UI change | `node design/build-tokens.mjs --check` |
 | Session state | [docs/HANDOFF.yaml](docs/HANDOFF.yaml) | What is done, in progress and next | — |
 
 ## How work happens
@@ -105,6 +106,7 @@ Do not edit these without asking the user:
 - Merged Flyway migrations in `backend/src/main/resources/db/migration/`: add a
   new `V<n>__<name>.sql` instead of editing one.
 - `api/openapi.json` and `frontend/src/api/schema.gen.ts`: never edit by hand; regenerate them (see Checks).
+- `design/system/tokens.css`: generated from `design/system/tokens.json`; run `node design/build-tokens.mjs`.
 - Rules for `.env` files are in `docs/ARCHITECTURE.md`. Once `add-local-stack`
   creates them, add them to this list.
 

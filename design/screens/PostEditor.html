@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit post · DiveNet</title>
+    <!-- @screen w=1280 h=1040 title="Post editor: draft or publish" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#" aria-current="page">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 32px; display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start">
+        <form style="flex: 999 1 560px; min-width: 0; max-width: var(--reading-max); display: grid; gap: 20px">
+          <div style="display: flex; gap: 8px; align-items: center"><span class="dn-badge dn-badge--info">Draft</span><span class="body-sm" style="color: var(--ink-muted)">Saved 2 minutes ago</span></div>
+          <label class="dn-field"><span class="dn-field__label">Title</span><input class="dn-input" style="font: 700 22px/30px var(--font-display)" value="Night dive at Lighthouse" /></label>
+          <div class="dn-field">
+            <span class="dn-field__label">Cover photo</span>
+            <div style="aspect-ratio: 3 / 1; border: 1px dashed var(--border-strong); border-radius: var(--radius-md); display: grid; place-items: center; background: var(--surface-1)"><button type="button" class="dn-btn dn-btn--secondary">Add cover photo</button></div>
+          </div>
+          <label class="dn-field"><span class="dn-field__label">Text</span><textarea class="dn-input" style="min-height: 320px">We entered at sunset from the Lighthouse beach. Torches on at 15 minutes...</textarea><span class="dn-field__hint">Paragraphs and images. Add images with the photo button below.</span></label>
+          <div style="display: flex; gap: 8px"><button type="button" class="dn-btn dn-btn--secondary dn-btn--sm">Add image</button></div>
+        </form>
+        <aside class="dn-card" style="flex: 1 1 300px; display: grid; gap: 16px">
+          <h2 class="h3" style="margin: 0">Publishing</h2>
+          <label class="dn-field"><span class="dn-field__label">Region</span><select class="dn-input"><option>Egypt · Dahab</option></select></label>
+          <label class="dn-field"><span class="dn-field__label">Site</span><input class="dn-input" type="search" value="Lighthouse Reef" /><span class="dn-field__hint">Optional. The post appears on the site page.</span></label>
+          <div style="display: grid; gap: 8px">
+            <button class="dn-btn dn-btn--primary">Publish</button>
+            <button class="dn-btn dn-btn--secondary">Save draft</button>
+            <button class="dn-btn dn-btn--danger">Delete post</button>
+          </div>
+        </aside>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
