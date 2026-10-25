@@ -5,8 +5,8 @@ dive log and blog posts. This is a NaUKMA university project, and all the code i
 written by coding agents (Claude Code, Codex or Gemini CLI). We plan, review and
 steer the agents.
 
-> **Status:** planning is done and no application code exists yet. The first
-> milestone is M0 (Foundation) in [docs/ROADMAP.md](docs/ROADMAP.md).
+> **Status:** M0 (Foundation) is in progress. The back-end skeleton exists; the
+> front-end and the compose stack come next. See [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## 1. One-time setup
 
@@ -18,11 +18,12 @@ Install:
 | Node.js | 24+ | repository tooling, front-end |
 | pnpm | 12+ | `npm i -g pnpm` (recent Node versions no longer include corepack) |
 | OpenSpec CLI | 1.15.0 | `npm i -g @fission-ai/openspec@1.15.0`; the agent commands call `openspec` |
-| JDK | 25+ | back-end (from M0 on) |
-| Docker Desktop | any recent | PostgreSQL/PostGIS, Testcontainers, Compose (from M0 on) |
+| JDK | 25+ | back-end |
+| Docker Desktop | any recent, **running** | PostgreSQL/PostGIS for back-end tests (Testcontainers), Compose later |
 | An agent | — | Claude Code, Codex or Gemini CLI |
 
-Maven is not needed. The back-end will use the Maven Wrapper (`backend/mvnw`).
+Maven is not needed. The back-end uses the Maven Wrapper: `backend/mvnw`, or
+`backend\mvnw.cmd` on Windows.
 
 Then clone the repository, install the tooling and run the checks:
 
@@ -30,7 +31,7 @@ Then clone the repository, install the tooling and run the checks:
 git clone https://github.com/otipz19/naukma-divenet.git
 cd naukma-divenet
 pnpm install
-pnpm check        # must print "All checks passed."
+pnpm check        # must print "All checks passed." (Docker must be running)
 ```
 
 ## 2. Read this first (about 15 minutes)
@@ -115,11 +116,29 @@ docs/                product, architecture, roadmap, ADRs, handoff
 openspec/            OpenSpec config, specs (built behaviour), changes (in progress)
 scripts/check.mjs    the single quality gate: `pnpm check`
 .github/workflows/   CI running `pnpm check`
-backend/             Spring Boot API         (created in M0)
-frontend/            React + Vite SPA        (created in M0)
+backend/             Spring Boot API
+api/openapi.json     committed API contract (generated, never edited by hand)
+frontend/            React + Vite SPA        (bootstrap-frontend, M0)
 ```
 
 ## Running the app
 
-This section is not available yet. The `add-local-stack` change (M0) will add the
-`docker compose up` instructions here.
+The full stack (`docker compose up`) arrives with `add-local-stack`. Until then
+you can run the back-end alone on a throwaway PostGIS container (Docker must be
+running):
+
+```sh
+cd backend
+./mvnw spring-boot:test-run      # Windows: .\mvnw.cmd spring-boot:test-run
+```
+
+- Health: <http://localhost:8080/actuator/health>
+- API docs: <http://localhost:8080/swagger-ui.html>
+
+Useful back-end commands (from `backend/`):
+
+| What | Command |
+| --- | --- |
+| Fix formatting | `./mvnw spotless:apply` |
+| Regenerate `api/openapi.json` after an API change | `./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true` |
+| Full back-end check | `./mvnw verify` |

@@ -44,9 +44,9 @@ PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently
 | Roadmap | [docs/ROADMAP.md](docs/ROADMAP.md) | Ordered OpenSpec change IDs and their status | — |
 | OpenSpec | [openspec/config.yaml](openspec/config.yaml), `openspec/specs/`, `openspec/changes/` | Change proposals, designs, tasks, spec deltas | `openspec validate --all --strict` (part of `pnpm check`) |
 | Quality gate | [scripts/check.mjs](scripts/check.mjs), [.github/workflows/check.yml](.github/workflows/check.yml) | The single check command and CI | `pnpm check` |
-| Back-end | `backend/` (planned, `bootstrap-backend`) | Spring Boot modular monolith | `backend/mvnw verify` (planned) |
+| Back-end | `backend/` | Spring Boot modular monolith; modules under `ua.ukma.divenet` | `backend/mvnw verify` (part of `pnpm check`) |
 | Front-end | `frontend/` (planned, `bootstrap-frontend`) | React SPA, i18n `en`/`uk` | planned |
-| API contract | `api/openapi.json` (planned) | REST contract shared by back-end and front-end | snapshot check (planned) |
+| API contract | `api/openapi.json` | REST contract shared by back-end and front-end | `ApiContractTest` (part of `backend/mvnw verify`) |
 | Design | `docs/DESIGN.md` (planned) | UI source of truth; consult it before any UI change once it exists | — |
 | Session state | [docs/HANDOFF.yaml](docs/HANDOFF.yaml) | What is done, in progress and next | — |
 
@@ -102,8 +102,11 @@ Do not edit these without asking the user:
   them with `openspec update` instead of editing them by hand.
 - `openspec/changes/archive/`: archived changes are history.
 - Accepted ADRs in `docs/adr/`: supersede them with a new ADR instead of editing them.
-- Rules for paths that M0 creates (Flyway migrations, `api/openapi.json`, `.env`
-  files) are in `docs/ARCHITECTURE.md`. Once those paths exist, add them to this list.
+- Merged Flyway migrations in `backend/src/main/resources/db/migration/`: add a
+  new `V<n>__<name>.sql` instead of editing one.
+- `api/openapi.json`: never edit by hand; regenerate it (see Checks).
+- Rules for `.env` files are in `docs/ARCHITECTURE.md`. Once `add-local-stack`
+  creates them, add them to this list.
 
 ## Checks
 
@@ -114,20 +117,31 @@ pnpm install
 pnpm check
 ```
 
-It currently runs `openspec validate --all --strict`. The `bootstrap-backend` and
-`bootstrap-frontend` changes add the back-end and front-end steps to
-`scripts/check.mjs`. Every step must be check-only and must exit non-zero on
-failure. CI (`.github/workflows/check.yml`) runs the same command on every push to
+It runs, in order:
+1. `openspec validate --all --strict`.
+2. `backend/mvnw verify`: compile, unit tests, integration tests against a
+   Testcontainers PostGIS, the Spring Modulith boundary check (`ModularityTest`),
+   the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
+
+`bootstrap-frontend` adds the front-end step. Every step must be check-only and
+must exit non-zero on failure.
+
+Fix commands (never run by the gate):
+- Formatting: `cd backend && ./mvnw spotless:apply`.
+- OpenAPI snapshot, after any API change:
+  `cd backend && ./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true`.
+  Commit the regenerated `api/openapi.json` with the change.
+- Run the API locally on a throwaway database: `cd backend && ./mvnw spring-boot:test-run`. CI (`.github/workflows/check.yml`) runs the same command on every push to
 `master` and on every PR.
 
 Prerequisites:
 - Node.js 24 or newer, and pnpm (`npm i -g pnpm`; recent Node versions no longer ship corepack).
 - The OpenSpec CLI on PATH: `npm i -g @fission-ai/openspec@1.15.0`. The agent
   skills call `openspec` directly. `pnpm check` uses the copy pinned in `package.json`.
-- From M0 onward: JDK 25 or newer, and Docker (Testcontainers, Compose). Maven
-  itself is not needed, because the project uses the Maven Wrapper.
+- JDK 25 or newer, and a running Docker daemon (Testcontainers; Compose later).
+  Maven itself is not needed: use `backend/mvnw` (`mvnw.cmd` on Windows).
 
-Not covered yet: build, tests, lint, E2E. They arrive with M0 and M6 (see the roadmap).
+Not covered yet: front-end build, tests and lint (`bootstrap-frontend`), E2E (M6).
 
 ## Handoff
 

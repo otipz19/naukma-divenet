@@ -1,23 +1,24 @@
-goal: Agentic workflow and project-level planning in place; start M0 (Foundation)
+goal: M0 (Foundation) — bootstrap-backend archived; PR #1 merging
 done:
-  - AGENTS.md + CLAUDE.md + GEMINI.md (import AGENTS.md) — validate_setup.py passed
-  - docs/PRODUCT.md, ARCHITECTURE.md, ROADMAP.md, adr/0001-0007 — English rewrite of the original course docs
-  - OpenSpec 1.15.0 initialised for claude, codex, gemini; openspec/config.yaml context + rules
-  - README.md teammate onboarding; origin = github.com/otipz19/naukma-divenet
-  - pnpm check (scripts/check.mjs) + .github/workflows/check.yml — gate passes; fails on an invalid change (probed)
-wip: null
+  - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (see git history up to e7a243f)
+  - bootstrap-backend: all 21 tasks done, PR #1 CI green, archived to openspec/changes/archive/2026-10-25-bootstrap-backend; specs in openspec/specs/shared/*
+  - scripts/check.mjs backend step; check.yml setup-java 25 (user-approved boundary edits)
+wip: switch-to-layered-monolith — committed (f4c7960) on change/switch-to-layered-monolith, not pushed; needs rebase on master after PR #1 merges
 blocked: null
-next: /opsx:propose bootstrap-backend (docs/ROADMAP.md M0)
+next: rebase change/switch-to-layered-monolith on master, pnpm check, /opsx:archive switch-to-layered-monolith, push + PR
 decisions:
-  - Stack and conventions: docs/adr/0001-0006
-  - Planning split (docs vs OpenSpec): docs/adr/0007
+  - Stack and conventions: docs/adr/0001-0006; planning split: docs/adr/0007
   - No AI code review, no required human review; master protected (PR + green check job)
-  - No handoff hooks committed
+  - bootstrap-backend design.md records deviations (FieldViolation name, paging via properties, health probes off, .\mvnw.cmd)
+  - api-errors spec: absent `type` means about:blank (Spring omits it)
+  - switch-to-layered-monolith proposed (feature packages, ArchUnit layers, separate change, skip_specs) — planning files untracked in this tree; keep out of the bootstrap commit
   - UI design (docs/DESIGN.md) to be produced later with Claude Design
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/config.yaml]
+refs: [AGENTS.md, docs/ROADMAP.md, openspec/changes/bootstrap-backend/tasks.md]
 checks:
   gate: pnpm check
-  last: pass (openspec validate only; no code yet) 2026-10-25
-  ci: pass on GitHub Actions (ubuntu-latest), first push 2026-10-25
-  not_covered: backend/frontend build, tests, lint (added by M0)
-platforms: Windows 11 local; ubuntu-latest CI
+  last: pass 2026-10-25 on Windows, clean build — openspec + mvnw verify (4 unit, 17 integration tests)
+  negative_probes: stale snapshot fails and is not rewritten; Spotless violation fails gate; Modulith catches non-exposed type
+  ci: PR #1 check job green on ubuntu-latest
+  not_covered: frontend build/tests/lint (bootstrap-frontend), E2E (M6)
+  env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js
+platforms: Windows 11 local (JDK 26, Docker Desktop); ubuntu-latest CI
