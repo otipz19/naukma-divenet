@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Write a review · DiveNet</title>
+    <!-- @screen w=1280 h=1080 title="Write or edit a review" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#" aria-current="page">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <main style="max-width: var(--reading-max); margin: 0 auto; padding: 32px; display: grid; gap: 24px">
+        <a href="#" class="body-sm">← Back to SS Thistlegorm</a>
+        <div style="display: grid; gap: 4px">
+          <h1 class="h1" style="margin: 0">Write a review</h1>
+          <p class="body" style="margin: 0; color: var(--ink-muted)">SS Thistlegorm · Egypt, Red Sea. Give a rating, write a review, or both.</p>
+        </div>
+        <form class="dn-card" style="display: grid; gap: 24px">
+          <fieldset style="border: 0; margin: 0; padding: 0; display: grid; gap: 8px">
+            <legend class="dn-field__label" style="padding: 0; margin-bottom: 8px">Your rating</legend>
+            <div style="display: flex; gap: 4px; align-items: center">
+              <label style="cursor: pointer"><input type="radio" name="rating" style="position: absolute; opacity: 0" /><svg width="32" height="32" viewBox="0 0 24 24" style="fill: var(--rating)" role="img" aria-label="1 star"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg></label>
+              <label style="cursor: pointer"><input type="radio" name="rating" style="position: absolute; opacity: 0" /><svg width="32" height="32" viewBox="0 0 24 24" style="fill: var(--rating)" role="img" aria-label="2 stars"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg></label>
+              <label style="cursor: pointer"><input type="radio" name="rating" style="position: absolute; opacity: 0" /><svg width="32" height="32" viewBox="0 0 24 24" style="fill: var(--rating)" role="img" aria-label="3 stars"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg></label>
+              <label style="cursor: pointer"><input type="radio" name="rating" checked="checked" style="position: absolute; opacity: 0" /><svg width="32" height="32" viewBox="0 0 24 24" style="fill: var(--rating)" role="img" aria-label="4 stars"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg></label>
+              <label style="cursor: pointer"><input type="radio" name="rating" style="position: absolute; opacity: 0" /><svg width="32" height="32" viewBox="0 0 24 24" style="fill: none; stroke: var(--border-strong); stroke-width: 1.5" role="img" aria-label="5 stars"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg></label>
+              <span class="data" style="margin-left: 8px">4 / 5</span>
+              <button type="button" class="dn-btn dn-btn--ghost dn-btn--sm" style="margin-left: auto">No rating</button>
+            </div>
+          </fieldset>
+          <fieldset style="border: 0; margin: 0; padding: 0">
+            <legend class="dn-field__label" style="padding: 0; margin-bottom: 8px">How difficult was it for you?</legend>
+            <div class="dn-chips">
+              <button type="button" class="dn-chip" aria-pressed="false">Beginner</button>
+              <button type="button" class="dn-chip" aria-pressed="false">Intermediate</button>
+              <button type="button" class="dn-chip" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Advanced</button>
+              <button type="button" class="dn-chip" aria-pressed="false">Technical</button>
+            </div>
+          </fieldset>
+          <label class="dn-field">
+            <span class="dn-field__label">Review</span>
+            <textarea class="dn-input" style="min-height: 180px">Great visibility in the morning. The current on the bow line was stronger than the briefing suggested.</textarea>
+            <span class="dn-field__hint">What should other divers know? Conditions, entry, highlights. Up to 4000 characters.</span>
+          </label>
+          <div class="dn-field">
+            <span class="dn-field__label">Photos</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap">
+              <div style="width: 96px; height: 64px; border-radius: var(--radius-sm); background: var(--surface-2)"></div>
+              <div style="width: 96px; height: 64px; border-radius: var(--radius-sm); background: var(--surface-2)"></div>
+              <button type="button" class="dn-btn dn-btn--secondary" style="height: 64px">Add photo</button>
+            </div>
+            <span class="dn-field__hint">JPEG, PNG or WebP up to 10 MB each.</span>
+          </div>
+          <div style="display: flex; gap: 8px; justify-content: flex-end">
+            <a class="dn-btn dn-btn--secondary" href="#">Cancel</a>
+            <button class="dn-btn dn-btn--primary">Publish review</button>
+          </div>
+        </form>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

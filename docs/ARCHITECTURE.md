@@ -46,7 +46,8 @@ api/openapi.json         committed OpenAPI snapshot (shared contract)
 compose.yaml             db + backend + frontend                    (planned, add-local-stack)
 scripts/check.mjs        the single quality gate
 openspec/                OpenSpec specs and changes
-docs/                    product, architecture, roadmap, ADRs, handoff
+design/                  UI design: system/ (tokens, component specs), screens/ (mockups)
+docs/                    product, architecture, roadmap, ADRs, handoff, DESIGN.md
 ```
 
 ## Back-end
@@ -193,9 +194,10 @@ Each change that adds tables updates this diagram.
   User-visible strings are never hard-coded. Every key exists in both locale
   files, and the gate checks this. Dates and numbers are formatted with `Intl`
   for the active locale. User content is not translated.
-- Styling and visual design follow `docs/DESIGN.md` once it exists (planned:
-  produced with Claude Design). Until then, use plain CSS modules and keep the
-  styling minimal.
+- Styling and visual design follow [DESIGN.md](DESIGN.md) and the files under
+  `design/` (ADR-0009): CSS modules that use only the tokens from
+  `design/system/tokens.css`, components as specified in `design/system/components/`,
+  and pages laid out as in `design/screens/`.
 - Every site page and the page footer show the safety disclaimer.
 
 ## Testing strategy

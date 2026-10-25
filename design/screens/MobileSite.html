@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Сайт, телефон · DiveNet</title>
+    <!-- @screen w=390 h=1400 title="Phone: site page, dark theme, Ukrainian" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div data-theme="dark" style="width: 390px; background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header" style="padding: 0 16px; gap: 12px">
+        <button class="dn-btn dn-btn--ghost" aria-label="Відкрити меню" style="color: var(--on-brand); padding: 0; width: 44px; height: 44px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <span class="dn-header__spacer"></span>
+        <a class="dn-avatar" href="#" aria-label="Ваш профіль">MK</a>
+      </header>
+      <main style="padding: 16px; display: grid; gap: 20px">
+        <div style="aspect-ratio: 3 / 2; border-radius: var(--radius-lg); background: var(--surface-2); display: grid; place-items: center; color: var(--ink-muted)" class="body-sm">[Фото сайту]</div>
+        <div style="display: grid; gap: 4px">
+          <h1 class="h1" style="margin: 0">SS Thistlegorm</h1>
+          <span class="data" style="color: var(--ink-muted)">27.8136° N, 33.9208° E</span>
+          <span class="dn-site-card__facts" style="margin-top: 8px"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.9</span><span class="dn-rating__count">(342)</span></span><span class="dn-badge dn-badge--info">Середній</span><span>16–32 м</span></span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+          <a class="dn-btn dn-btn--secondary" href="#" style="min-height: 44px">Записати занурення</a>
+          <a class="dn-btn dn-btn--primary" href="#" style="min-height: 44px">Написати відгук</a>
+        </div>
+        <div class="dn-alert dn-alert--danger">
+          <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+          <div><strong class="dn-alert__title">Небезпека · 2 дні тому · @mira</strong><span class="dn-alert__body">Сильна течія на носовому тросі. Спускайтеся по кормовому.</span></div>
+        </div>
+        <div class="dn-alert dn-alert--info">
+          <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
+          <span class="dn-alert__body">Інформація на DiveNet має довідковий характер і не замінює планування занурення за стандартами вашої агенції.</span>
+        </div>
+        <section style="display: grid; gap: 8px">
+          <h2 class="h2" style="margin: 0">Про сайт</h2>
+          <p class="body" style="margin: 0">Британське озброєне торгове судно, затонуле 1941 року. Лежить рівно на піщаному дні; у трюмах досі мотоцикли й вантажівки.</p>
+        </section>
+        <section style="display: grid; gap: 12px">
+          <h2 class="h2" style="margin: 0">Відгуки <span class="body-sm" style="color: var(--ink-muted)">342</span></h2>
+          <article class="dn-card" style="padding: 16px; display: grid; gap: 8px">
+            <div style="display: flex; gap: 12px; align-items: center"><span class="dn-avatar">OK</span><div style="display: grid"><span class="label">Олег Кравець</span><span class="body-sm" style="color: var(--ink-muted)">12 травня 2026</span></div></div>
+            <p class="body" style="margin: 0">Найкращий рек, на якому я пірнав. Заходьте в другий трюм рано, до приїзду груп.</p>
+          </article>
+        </section>
+      </main>
+      <footer class="dn-footer" style="margin-top: 16px; padding: 24px 16px">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Безпека:</strong> інформація на DiveNet має довідковий характер і не замінює планування занурення за стандартами вашої агенції.</p>
+          <span class="dn-header__lang" role="group" aria-label="Мова" style="justify-self: start"><button aria-pressed="false">EN</button><button aria-pressed="true">UK</button></span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

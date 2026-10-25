@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log in · DiveNet</title>
+    <!-- @screen w=1280 h=860 title="Log in and sign up (with a failed login)" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-header__link" href="#" aria-current="page">Log in</a>
+        <a class="dn-btn dn-btn--primary dn-btn--sm" href="#">Sign up</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 48px 32px; display: flex; flex-wrap: wrap; gap: 32px; justify-content: center">
+        <form class="dn-card" style="flex: 1 1 360px; max-width: 420px; display: grid; gap: 20px; align-content: start">
+          <h1 class="h1" style="margin: 0">Log in</h1>
+          <div class="dn-alert dn-alert--danger" role="alert">
+            <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+            <span class="dn-alert__body">Email or password is incorrect.</span>
+          </div>
+          <label class="dn-field"><span class="dn-field__label">Email</span><input class="dn-input" type="email" value="mira@example.com" /></label>
+          <label class="dn-field"><span class="dn-field__label">Password</span><input class="dn-input" type="password" value="password" /></label>
+          <button class="dn-btn dn-btn--primary">Log in</button>
+          <p class="body-sm" style="margin: 0; color: var(--ink-muted)">New to DiveNet? <a href="#">Create an account</a></p>
+        </form>
+        <form class="dn-card" style="flex: 1 1 360px; max-width: 420px; display: grid; gap: 20px; align-content: start">
+          <h2 class="h1" style="margin: 0">Sign up</h2>
+          <label class="dn-field"><span class="dn-field__label">Display name</span><input class="dn-input" value="Mira Koval" /><span class="dn-field__hint">Shown on your reviews and posts.</span></label>
+          <label class="dn-field"><span class="dn-field__label">Email</span><input class="dn-input" type="email" value="mira@example.com" /></label>
+          <label class="dn-field"><span class="dn-field__label">Password</span><input class="dn-input" type="password" value="short" aria-invalid="true" /><span class="dn-field__error">Must be at least 8 characters.</span></label>
+          <button class="dn-btn dn-btn--primary">Create account</button>
+          <p class="body-sm" style="margin: 0; color: var(--ink-muted)">Already have an account? <a href="#">Log in</a></p>
+        </form>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

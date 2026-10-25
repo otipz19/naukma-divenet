@@ -30,7 +30,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `switch-to-layered-monolith` | Replace Spring Modulith with a plain layered monolith: feature packages, ArchUnit layer test, ADR-0008 superseding ADR-0002 | — | `bootstrap-backend` | archived |
 | `bootstrap-frontend` | Vite + React + TS app as a pnpm workspace member, router, TanStack Query, i18n `en`/`uk` with the key-parity check and the hard-coded-text lint rule, ESLint/Prettier, Vitest, generated API types and typed client; front-end steps added to `pnpm check`. No UI: placeholder pages only | — | `bootstrap-backend` | archived |
 | `add-local-stack` | `compose.yaml` (db, backend, frontend/nginx), Dockerfiles, `.env.example` | — | `bootstrap-backend`, `bootstrap-frontend` | planned |
-| `add-app-shell` | App layout and navigation, language switcher, safety disclaimer footer, base styles, following `docs/DESIGN.md` (produced with Claude Design) | — | `bootstrap-frontend`, `docs/DESIGN.md` | planned |
+| `add-app-shell` | App layout and navigation, language switcher, safety disclaimer footer, base styles, following `docs/DESIGN.md` and `design/`: imports `design/system/tokens.css`, self-hosted fonts, theme switch, `build-tokens --check` in the gate | — | `bootstrap-frontend` | planned |
 | `add-authentication` | Register, login, refresh, logout, roles, admin bootstrap from env; login/register UI | — | `add-app-shell` | planned |
 
 ## M1 — Sites and map
@@ -75,7 +75,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
-| `apply-ui-design` | Apply `docs/DESIGN.md` (produced separately with Claude Design) across all pages | — | `docs/DESIGN.md` exists | planned |
+| `apply-ui-design` | Audit every page against `docs/DESIGN.md` (both themes, phone width, `uk`) and fix the gaps; features build to the design as they go | — | M1–M5 | planned |
 | `complete-demo-seed` | Full demo dataset: users, reviews, dive logs, posts, warnings, media | — | M1–M5 | planned |
 | `add-e2e-suite` | Playwright journeys against the compose stack; CI job | — | `add-local-stack`, M1–M5 | planned |
 | `polish-release` | i18n completeness, accessibility pass, empty/error states, README with run instructions | — | M1–M5 | planned |

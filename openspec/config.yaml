@@ -13,6 +13,7 @@ context: |
   Stack: Java 25, Spring Boot 4.1, Maven wrapper (backend/), PostgreSQL + PostGIS,
   Flyway, plain layered monolith with ArchUnit layer rules; React + Vite + TypeScript, pnpm (frontend/); UI strings
   in en and uk via react-i18next. Quality gate: `pnpm check` from the repository root.
+  UI design: docs/DESIGN.md and design/ (tokens, component specs, screen mockups); UI changes follow them.
   Capability spec folders are named after backend feature packages (e.g. site, review, post).
 
 rules:

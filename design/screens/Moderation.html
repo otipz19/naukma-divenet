@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Moderation · DiveNet</title>
+    <!-- @screen w=1280 h=960 title="Admin moderation: sites, certificates, warnings" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+          <a class="dn-header__link" href="#" aria-current="page">Moderation</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">AD</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 32px; display: grid; gap: 24px">
+        <h1 class="h1" style="margin: 0">Moderation</h1>
+        <div role="tablist" aria-label="Queues" style="display: flex; gap: 4px; border-bottom: 1px solid var(--border)">
+          <button role="tab" aria-selected="true" class="label" style="border: 0; background: none; padding: 12px 16px; color: var(--accent-strong); box-shadow: inset 0 -2px 0 var(--accent); cursor: pointer">Sites <span class="dn-badge dn-badge--caution">3</span></button>
+          <button role="tab" aria-selected="false" class="label" style="border: 0; background: none; padding: 12px 16px; color: var(--ink-muted); cursor: pointer">Certificates <span class="dn-badge">5</span></button>
+          <button role="tab" aria-selected="false" class="label" style="border: 0; background: none; padding: 12px 16px; color: var(--ink-muted); cursor: pointer">Warnings</button>
+        </div>
+        <section role="tabpanel" style="display: grid; gap: 12px">
+          <article class="dn-card" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+            <div style="width: 200px; height: 120px; border-radius: var(--radius-md); background: var(--info-soft); border: 1px solid var(--border); position: relative"><span style="position: absolute; left: 46%; top: 36%; width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); border: 2px solid var(--surface-1)"></span></div>
+            <div style="flex: 1 1 360px; display: grid; gap: 6px">
+              <h2 class="h3" style="margin: 0">Abu Galawa Soraya</h2>
+              <span class="data" style="color: var(--ink-muted)">24.6203° N, 35.1648° E · 4–18 m</span>
+              <span class="body-sm">Egypt · Red Sea · <span class="dn-badge dn-badge--success">Beginner</span></span>
+              <p class="body-sm" style="margin: 0; color: var(--ink-muted)">A small tugboat wreck on a shallow reef, good for a second dive.</p>
+              <span class="body-sm" style="color: var(--ink-muted)">Submitted by <a href="#">Mira Koval</a> · today</span>
+            </div>
+            <div style="flex: 1 1 260px; display: grid; gap: 8px">
+              <label class="dn-field"><span class="dn-field__label">Rejection reason</span><input class="dn-input" placeholder="Required to reject" /></label>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <button class="dn-btn dn-btn--secondary dn-btn--sm">Reject</button>
+                <button class="dn-btn dn-btn--primary dn-btn--sm">Approve</button>
+              </div>
+            </div>
+          </article>
+          <article class="dn-card" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: center">
+            <div style="flex: 1 1 360px; display: grid; gap: 4px">
+              <h2 class="h3" style="margin: 0">Canyon (north entrance)</h2>
+              <span class="body-sm" style="color: var(--ink-muted)">Egypt · Dahab · submitted by <a href="#">Andrii P.</a> · 2 days ago</span>
+            </div>
+            <div class="dn-alert dn-alert--caution" style="flex: 1 1 300px">
+              <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+              <span class="dn-alert__body">Possible duplicate: "The Canyon" is 180 m away.</span>
+            </div>
+            <a class="dn-btn dn-btn--secondary dn-btn--sm" href="#">Review</a>
+          </article>
+        </section>
+      </main>
+      <footer class="dn-footer">
+        <div class="dn-footer__inner">
+          <p class="dn-footer__disclaimer" style="margin: 0"><strong>Safety:</strong> information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.</p>
+          <p class="dn-footer__meta" style="margin: 0">DiveNet · NaUKMA course project · Map data © OpenStreetMap contributors</p>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

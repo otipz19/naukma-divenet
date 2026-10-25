@@ -1,0 +1,21 @@
+<!-- @dsCard group="Forms" height=260 subtitle="Default, with hint, with error, multi-line" -->
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; padding: 24px; background: var(--surface-1)">
+  <label class="dn-field">
+    <span class="dn-field__label">Email</span>
+    <input class="dn-input" type="email" placeholder="you@example.com" />
+  </label>
+  <label class="dn-field">
+    <span class="dn-field__label">Max depth (m)</span>
+    <input class="dn-input" inputmode="decimal" value="18.5" />
+    <span class="dn-field__hint">Deepest point of this dive.</span>
+  </label>
+  <label class="dn-field">
+    <span class="dn-field__label">Password</span>
+    <input class="dn-input" type="password" value="short" aria-invalid="true" />
+    <span class="dn-field__error">Must be at least 8 characters.</span>
+  </label>
+  <label class="dn-field">
+    <span class="dn-field__label">Notes</span>
+    <textarea class="dn-input" style="min-height: 72px">Strong current at the arch, turned at 30 m.</textarea>
+  </label>
+</div>

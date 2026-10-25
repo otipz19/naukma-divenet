@@ -1,0 +1,31 @@
+<!-- @dsCard height=288 -->
+<div style="position: relative; width: 960px; height: 288px; background: var(--surface-0); overflow: hidden">
+  <!--
+    blocks: brand 320x288 (bleeds top/bottom), accent 160x144 (radius-lg), accent-soft 160x144, surface-2 120x96 (radius-md)
+    arrangement: one tall navy slab bleeding off the right edge, a teal slab and its tint stacked to its left, like depth bands
+    pattern: literal motif (wave) - a few concentric half-rounds cut from the brand slab, the system speaks of "deep water" and "waves" markers
+    scales: space-4 (16) gaps and ring pitch, radius-lg and radius-md corners, radius-full for the arcs
+  -->
+  <svg width="960" height="288" viewBox="0 0 960 288" aria-hidden="true" style="position: absolute; inset: 0">
+    <style>
+      .brand { fill: var(--brand); }
+      .accent { fill: var(--accent); }
+      .soft { fill: var(--accent-soft); }
+      .sunk { fill: var(--surface-2); }
+      .ring { fill: none; stroke: var(--accent); stroke-width: 16; }
+      .ring-soft { fill: none; stroke: var(--on-brand); stroke-width: 2; opacity: 0.5; }
+    </style>
+    <rect class="brand" x="640" y="-16" width="336" height="320" />
+    <rect class="accent" x="480" y="144" width="144" height="144" rx="16" />
+    <rect class="soft" x="480" y="0" width="144" height="128" rx="16" />
+    <rect class="sunk" x="520" y="40" width="64" height="48" rx="10" />
+    <circle class="ring" cx="960" cy="288" r="112" />
+    <circle class="ring-soft" cx="960" cy="288" r="176" />
+    <circle class="ring-soft" cx="960" cy="288" r="224" />
+    <circle class="ring-soft" cx="960" cy="288" r="272" />
+  </svg>
+  <div style="position: absolute; left: 40px; bottom: 40px; max-width: 420px">
+    <div style="font: 800 104px/0.92 var(--font-display); letter-spacing: -2px; color: var(--ink)">DiveNet</div>
+    <div style="margin-top: 16px; font: 400 14px/20px var(--font-sans); color: var(--ink-muted)">A calm, map-first place for divers to find sites, read others' experience and log their dives.</div>
+  </div>
+</div>

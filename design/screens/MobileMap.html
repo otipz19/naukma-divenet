@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Map, phone · DiveNet</title>
+    <!-- @screen w=390 h=844 title="Phone: map with results sheet" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--info-soft); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header" style="padding: 0 16px; gap: 12px">
+        <button class="dn-btn dn-btn--ghost" aria-label="Open menu" style="color: var(--on-brand); padding: 0; width: 44px; height: 44px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <span class="dn-header__spacer"></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <svg width="390" height="780" viewBox="0 0 390 780" aria-hidden="true" style="position: absolute; top: 64px; left: 0">
+        <path d="M0 0 H180 C160 120 210 200 170 320 C140 420 90 520 40 780 H0 Z" style="fill: var(--surface-1); stroke: var(--border)" />
+        <path d="M390 0 H280 C300 110 260 200 300 300 C330 380 340 480 390 560 Z" style="fill: var(--surface-1); stroke: var(--border)" />
+      </svg>
+      <div style="position: absolute; top: 80px; left: 16px; right: 16px; display: flex; gap: 8px">
+        <input class="dn-input" type="search" placeholder="Search sites" aria-label="Search sites" style="flex: 1; box-shadow: var(--shadow-2)" />
+        <button class="dn-btn dn-btn--secondary" style="box-shadow: var(--shadow-2); min-height: 44px">Filters · 2</button>
+      </div>
+      <span style="position: absolute; left: 70px; top: 220px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-full); background: var(--brand); color: var(--on-brand); font: 500 14px/20px var(--font-sans); box-shadow: 0 0 0 6px var(--surface-1)">24</span>
+      <span style="position: absolute; left: 210px; top: 300px; width: 36px; height: 36px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent-strong); border: 3px solid var(--surface-1)"></span>
+      <span style="position: absolute; left: 240px; top: 400px; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); border: 2px solid var(--surface-1)"></span>
+      <section aria-label="Results" style="position: absolute; left: 0; right: 0; bottom: 0; height: 330px; padding: 8px 16px 16px; display: grid; gap: 12px; align-content: start; background: var(--surface-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-2)">
+        <span style="justify-self: center; width: 40px; height: 4px; border-radius: var(--radius-full); background: var(--border-strong)" aria-hidden="true"></span>
+        <div style="display: flex; justify-content: space-between"><h2 class="label" style="margin: 0">12 sites match</h2><button class="dn-btn dn-btn--ghost dn-btn--sm">List</button></div>
+        <a class="dn-site-card" href="#" style="background: var(--accent-soft); outline: 2px solid var(--accent)">
+          <h3 class="dn-site-card__title">SS Thistlegorm</h3>
+          <span class="dn-site-card__place">Egypt · Sha'ab Ali</span>
+          <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.9</span></span><span class="dn-badge dn-badge--info">Intermediate</span><span>16–32 m</span></span>
+        </a>
+        <a class="dn-site-card" href="#">
+          <h3 class="dn-site-card__title">Shark and Yolanda Reef</h3>
+          <span class="dn-site-card__place">Egypt · Ras Mohammed</span>
+        </a>
+        <p class="caption" style="margin: 0; color: var(--ink-muted)">For reference only; does not replace dive planning to your agency's standards.</p>
+      </section>
+    </div>
+  </body>
+</html>
