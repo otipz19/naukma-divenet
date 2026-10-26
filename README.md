@@ -78,6 +78,7 @@ it, then the agent implements it.
    sure `pnpm check` passes.
 5. **Archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`). The
    change's specs merge into `openspec/specs/`, and the roadmap status becomes `archived`.
+   Archive before opening the PR, and before applying any other change.
 6. **Open a PR** to `master` that contains the change, its archive and the
    roadmap update. CI (`pnpm check`) must be green before merging.
    Direct pushes to `master` are blocked.

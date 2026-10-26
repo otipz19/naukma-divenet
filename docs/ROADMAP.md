@@ -12,9 +12,11 @@ ID is the folder name under `openspec/changes/`. Story IDs refer to
 2. **Propose:** run `/opsx:propose <change-id>` (Codex: `$openspec-propose`), then
    set the item's status to `proposed`. The proposal cites the story IDs and
    lists anything it defers.
-3. **Apply:** run `/opsx:apply`, then set the status to `in-progress`.
-4. **Archive:** once the change is merged and `pnpm check` passes, run `/opsx:archive`.
-   Set the status to `archived` in the same PR.
+3. **Apply:** run `/opsx:apply`, then set the status to `in-progress`. Only one item
+   may be `in-progress` at a time: archive it before applying another.
+4. **Archive:** as soon as apply finishes and `pnpm check` passes, run `/opsx:archive`
+   on the same branch and set the status to `archived` in that commit. Then open
+   the PR, so the change, its code and its archive merge together.
 5. **Scope changes:** to split, add or reorder items, edit this file in its own small
    PR, or in the PR of the change that discovered the need, and say so in that
    change's proposal. Never silently drop a story; move it to *Stretch* or *Out
