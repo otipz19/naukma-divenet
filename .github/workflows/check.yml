@@ -37,4 +37,6 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
+          # No dependencies to cache; the default would look for pnpm (packageManager), which this job does not install.
+          package-manager-cache: false
       - run: node scripts/smoke-stack.mjs
