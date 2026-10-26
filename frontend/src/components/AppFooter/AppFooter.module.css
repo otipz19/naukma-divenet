@@ -1,0 +1,38 @@
+/* design/system/components/bundle.css: dn-footer */
+.footer {
+  margin-top: var(--space-7);
+  padding: var(--space-6);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.footer :focus-visible {
+  outline-color: var(--focus-inverse);
+}
+
+.inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: grid;
+  gap: var(--space-3);
+}
+
+.disclaimer {
+  max-width: var(--reading-max);
+  margin: 0;
+}
+
+.disclaimer strong {
+  font-weight: 600;
+}
+
+.meta {
+  margin: 0;
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  .footer {
+    padding: var(--space-5) var(--space-4);
+  }
+}

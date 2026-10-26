@@ -1,11 +1,18 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
+import { AppLayout } from "./AppLayout";
 import { HomePage } from "./routes/HomePage";
 import { NotFoundPage } from "./routes/NotFoundPage";
 
-// Feature changes add their routes here from src/features/<feature>/.
+// Every page renders inside the app shell. Feature changes add their routes to `children`
+// from src/features/<feature>/, and their navigation entries to ./navigation.ts.
 export const routes: RouteObject[] = [
-  { path: "/", element: <HomePage /> },
-  { path: "*", element: <NotFoundPage /> },
+  {
+    element: <AppLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
 ];
 
 export function createAppRouter() {

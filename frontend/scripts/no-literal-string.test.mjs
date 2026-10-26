@@ -25,7 +25,9 @@ afterEach(() => {
   rmSync(probeDir, { recursive: true, force: true });
 });
 
-describe("shared/i18n: User-visible text is never hard-coded", () => {
+// The first type-aware lint builds a TypeScript program over all of src/, which outgrows the
+// default 5s timeout while other test files run in parallel.
+describe("shared/i18n: User-visible text is never hard-coded", { timeout: 30_000 }, () => {
   it("rejects literal JSX text and reports its line", async () => {
     const messages = await lintComponent(
       ["export function Probe() {", "  return <p>Hello</p>;", "}", ""].join("\n"),

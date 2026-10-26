@@ -1,0 +1,27 @@
+/* design/system/components/bundle.css: dn-header__nav, dn-header__link */
+.list {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.vertical {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.link {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--on-brand);
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--on-brand);
+  text-decoration: underline;
+}
+
+.link[aria-current="page"] {
+  box-shadow: inset 0 -2px 0 var(--on-brand);
+  border-radius: 0;
+}

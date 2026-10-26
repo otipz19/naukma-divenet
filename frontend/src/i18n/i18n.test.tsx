@@ -8,7 +8,7 @@ describe("shared/i18n: The UI supports English and Ukrainian", () => {
   it("shows the uk text when the active locale is uk", () => {
     renderRoute("/", { language: "uk" });
 
-    expect(screen.getByText("Інтерфейс DiveNet зараз розробляється.")).toBeInTheDocument();
+    expect(screen.getByText("Мапа місць для занурень незабаром з’явиться.")).toBeInTheDocument();
   });
 
   it("falls back to en for a key missing from uk", () => {

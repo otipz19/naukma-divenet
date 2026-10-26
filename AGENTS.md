@@ -121,11 +121,14 @@ pnpm check
 
 It runs, in order:
 1. `openspec validate --all --strict`.
-2. Front-end (`frontend/`, Node only), one step each: i18n key parity
-   (`en`/`uk`), generated API types match `api/openapi.json`, `tsc` typecheck,
-   ESLint (including the ban on hard-coded JSX text), Prettier check, Vitest
-   tests, and the Vite production build.
-3. `backend/mvnw verify`: compile, unit tests, integration tests against a
+2. `node design/build-tokens.mjs --check`: `design/system/tokens.css` matches `tokens.json`.
+3. Front-end (`frontend/`, Node only), one step each: i18n key parity
+   (`en`/`uk`), tokens-only CSS (no literal colours, no px other than 1-2px
+   hairlines, no redefined tokens), generated API types match `api/openapi.json`,
+   `tsc` typecheck, ESLint (including the ban on hard-coded JSX text), Prettier
+   check, Vitest tests, the Vite production build, and the build output check
+   (design tokens and self-hosted fonts present, no Google Fonts host).
+4. `backend/mvnw verify`: compile, unit tests, integration tests against a
    Testcontainers PostGIS, the ArchUnit layer check (`LayeredArchitectureTest`),
    the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
 
