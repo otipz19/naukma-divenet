@@ -1,0 +1,38 @@
+/* design/system/components/bundle.css: dn-alert. Type comes from the .body-sm class. */
+.alert {
+  display: grid;
+  /* A 20px icon column. */
+  grid-template-columns: calc(var(--space-4) + var(--space-1)) 1fr;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.title {
+  display: block;
+  font-weight: 600;
+}
+
+.body {
+  color: var(--ink);
+}
+
+.info {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+.caution {
+  background: var(--caution-soft);
+  color: var(--caution);
+}
+
+.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.success {
+  background: var(--success-soft);
+  color: var(--success);
+}

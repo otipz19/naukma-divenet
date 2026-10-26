@@ -2,6 +2,7 @@ package ua.ukma.divenet.shared.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -25,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.ukma.divenet.TestcontainersConfiguration;
 
-/** Spec shared/api-errors. */
+/** Spec shared/api-errors. Writes carry a test JWT, since spec auth protects them. */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Import({TestcontainersConfiguration.class, ApiErrorsIT.ErrorsTestController.class})
@@ -48,7 +49,7 @@ class ApiErrorsIT {
 
     @Test
     void unsupportedHttpMethod() throws Exception {
-        mvc.perform(delete(BASE))
+        mvc.perform(delete(BASE).with(jwt()))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.status").value(405));
@@ -56,7 +57,10 @@ class ApiErrorsIT {
 
     @Test
     void invalidRequestBodyField() throws Exception {
-        mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content("{\"name\": \"\"}"))
+        mvc.perform(post(BASE)
+                        .with(jwt())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\": \"\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.status").value(400))
@@ -67,7 +71,10 @@ class ApiErrorsIT {
 
     @Test
     void malformedJsonBody() throws Exception {
-        mvc.perform(post(BASE).contentType(MediaType.APPLICATION_JSON).content("{not json"))
+        mvc.perform(post(BASE)
+                        .with(jwt())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{not json"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_PROBLEM_JSON))
                 .andExpect(jsonPath("$.status").value(400));

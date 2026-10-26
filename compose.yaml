@@ -26,6 +26,11 @@ services:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:?set POSTGRES_DB in .env (see .env.example)}
       DB_USERNAME: ${POSTGRES_USER:?set POSTGRES_USER in .env (see .env.example)}
       DB_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env (see .env.example)}
+      # Signs access tokens (ADR-0004); required, at least 32 bytes.
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (see .env.example)}
+      # Optional: both set creates the first admin at startup.
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
     depends_on:
       db:
         condition: service_healthy

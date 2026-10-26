@@ -1,10 +1,12 @@
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { server } from "../test/server";
+import { MIRA, authResponse } from "../test/auth";
+import { refreshUrl, server } from "../test/server";
 import { ApiError } from "./ApiError";
-import { apiBaseUrl, createApiClient } from "./client";
+import { api, apiBaseUrl, createApiClient } from "./client";
+import { getSession, signIn } from "./session";
 
-// The real api/openapi.json has no paths yet, so the tests use their own contract.
+// A contract of its own, so these tests do not depend on the real API's paths.
 interface TestPaths {
   "/sites": {
     get: {
@@ -119,5 +121,58 @@ describe("shared/api-client: Network failures become the same error type", () =>
 
     expect(error.kind).toBe("network");
     expect(error.status).toBeUndefined();
+  });
+});
+
+describe("auth: The web app keeps the session without storing the access token", () => {
+  const meUrl = `${window.location.origin}/api/v1/auth/me`;
+  const loginUrl = `${window.location.origin}/api/v1/auth/login`;
+
+  it("renews an expired access token once and retries the call with the new token", async () => {
+    signIn(authResponse("expired-token"));
+    const seen: (string | null)[] = [];
+    server.use(
+      http.get(meUrl, ({ request }) => {
+        const header = request.headers.get("Authorization");
+        seen.push(header);
+        return header === "Bearer fresh-token"
+          ? HttpResponse.json(MIRA)
+          : new HttpResponse(null, { status: 401 });
+      }),
+      http.post(refreshUrl(), () => HttpResponse.json(authResponse("fresh-token"))),
+    );
+
+    const { data } = await api.GET("/api/v1/auth/me");
+
+    expect(data).toEqual(MIRA);
+    expect(seen).toEqual(["Bearer expired-token", "Bearer fresh-token"]);
+  });
+
+  it("does not refresh after a 401 from the login endpoint", async () => {
+    let refreshes = 0;
+    server.use(
+      http.post(loginUrl, () => new HttpResponse(null, { status: 401 })),
+      http.post(refreshUrl(), () => {
+        refreshes += 1;
+        return new HttpResponse(null, { status: 401 });
+      }),
+    );
+
+    const error = await failure(
+      api.POST("/api/v1/auth/login", { body: { email: "a@b.c", password: "x" } }),
+    );
+
+    expect(error.status).toBe(401);
+    expect(refreshes).toBe(0);
+  });
+
+  it("signs out and rejects when the refresh after a 401 fails", async () => {
+    signIn(authResponse("expired-token"));
+    server.use(http.get(meUrl, () => new HttpResponse(null, { status: 401 })));
+
+    const error = await failure(api.GET("/api/v1/auth/me"));
+
+    expect(error.status).toBe(401);
+    expect(getSession().status).toBe("signedOut");
   });
 });

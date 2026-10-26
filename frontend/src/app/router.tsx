@@ -1,4 +1,5 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
+import { authRoutes } from "../features/auth/routes";
 import { AppLayout } from "./AppLayout";
 import { HomePage } from "./routes/HomePage";
 import { NotFoundPage } from "./routes/NotFoundPage";
@@ -10,6 +11,7 @@ export const routes: RouteObject[] = [
     element: <AppLayout />,
     children: [
       { index: true, element: <HomePage /> },
+      ...authRoutes,
       { path: "*", element: <NotFoundPage /> },
     ],
   },

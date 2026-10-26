@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,13 +40,28 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 
+    /** No valid access token; the security entry point delegates here (spec auth). */
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<Object> handleAuthentication(AuthenticationException ex, HttpServletRequest request) {
+        return problem(HttpStatus.UNAUTHORIZED, "A valid access token is required.", request);
+    }
+
+    /** Signed in, but without the role the endpoint needs. */
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        return problem(HttpStatus.FORBIDDEN, "You do not have permission to do this.", request);
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<Object> handleUnexpected(Exception ex, HttpServletRequest request) {
         log.error("Unhandled exception for {} {}", request.getMethod(), request.getRequestURI(), ex);
-        ProblemDetail body =
-                ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.");
+        return problem(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred.", request);
+    }
+
+    private static ResponseEntity<Object> problem(HttpStatus status, String detail, HttpServletRequest request) {
+        ProblemDetail body = ProblemDetail.forStatusAndDetail(status, detail);
         body.setInstance(URI.create(request.getRequestURI()));
-        return ResponseEntity.internalServerError().body(body);
+        return ResponseEntity.status(status).body(body);
     }
 
     @Override

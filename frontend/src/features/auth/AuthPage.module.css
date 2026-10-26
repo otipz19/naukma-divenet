@@ -1,0 +1,34 @@
+/* design/screens/Auth.html: one centred card per page, like dn-card. */
+.page {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-7) var(--space-6);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-5);
+  align-content: start;
+  width: 100%;
+  max-width: calc(var(--space-8) * 6 + var(--space-5));
+  padding: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-1);
+}
+
+.title {
+  margin: 0;
+}
+
+.switch {
+  margin: 0;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-5) var(--space-4);
+  }
+}

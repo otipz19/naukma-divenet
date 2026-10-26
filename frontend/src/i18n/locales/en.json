@@ -28,6 +28,51 @@
       "disclaimer": "Information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.",
       "project": "DiveNet · NaUKMA course project",
       "mapData": "Map data © OpenStreetMap contributors"
+    },
+    "account": {
+      "logIn": "Log in",
+      "signUp": "Sign up",
+      "menu": "Account menu: {{name}}",
+      "logOut": "Log out"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "submitting": "Logging in…",
+      "failed": "Email or password is incorrect.",
+      "newHere": "New to DiveNet?",
+      "createAccount": "Create an account"
+    },
+    "register": {
+      "title": "Sign up",
+      "displayName": "Display name",
+      "displayNameHint": "Shown on your reviews and posts.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create account",
+      "submitting": "Creating account…",
+      "haveAccount": "Already have an account?",
+      "logIn": "Log in"
+    },
+    "errors": {
+      "emailRequired": "Enter your email.",
+      "emailInvalid": "Enter a valid email address.",
+      "passwordRequired": "Enter your password.",
+      "passwordTooShort": "Must be at least 8 characters.",
+      "passwordTooLong": "Too long: use at most 72 characters, or fewer with non-Latin letters.",
+      "displayNameRequired": "Enter a display name.",
+      "displayNameTooLong": "Must be at most 50 characters.",
+      "emailTaken": "This email is already registered. Log in instead.",
+      "generic": "Something went wrong. Try again.",
+      "server": {
+        "email": "Enter a valid email address of at most 254 characters.",
+        "displayName": "Use 1 to 50 characters.",
+        "password": "Use at least 8 characters, and at most 72 bytes."
+      }
     }
   }
 }

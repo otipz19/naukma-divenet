@@ -40,5 +40,15 @@ management:
       probes:
         enabled: false
 
+divenet:
+  auth:
+    # Local development and test default only; compose requires JWT_SECRET (design D8).
+    jwt-secret: ${JWT_SECRET:dev-only-jwt-secret-change-me-0123456789}
+    admin:
+      # Both set: the first admin is created at startup. Either unset or blank: no admin.
+      email: ${ADMIN_EMAIL:}
+      password: ${ADMIN_PASSWORD:}
+      display-name: ${ADMIN_DISPLAY_NAME:Admin}
+
 springdoc:
   paths-to-match: /api/v1/**

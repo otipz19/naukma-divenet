@@ -1,6 +1,7 @@
 // Compose configuration check (gate step; spec shared/local-stack). Renders compose.yaml with
 // `docker compose config` and checks the rules in compose-rules.mjs, that a missing database
-// password is refused, and that WEB_PORT sets the published port. Builds and starts nothing.
+// password or JWT key is refused, that the auth settings reach the back-end, and that WEB_PORT
+// sets the published port. Builds and starts nothing.
 // Usage: node scripts/check-compose.mjs   (exits 1 and lists each problem)
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -12,7 +13,10 @@ import { PUBLIC_SERVICE, findComposeProblems, publishedPorts, readDockerfiles } 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const ENV_EXAMPLE = join(ROOT, ".env.example");
 // Variables the stack reads; the caller's own values must not hide a problem.
-const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_)/i;
+const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_)/i;
+// Compose must refuse to render without these rather than fall back to a built-in value.
+const REQUIRED_VARIABLES = ["POSTGRES_PASSWORD", "JWT_SECRET"];
+const AUTH_VARIABLES = ["JWT_SECRET", "ADMIN_EMAIL", "ADMIN_PASSWORD"];
 
 /**
  * Runs `docker compose config` from the repository root with a scrubbed environment.
@@ -39,20 +43,28 @@ function main() {
   const config = JSON.parse(example.stdout);
   problems.push(...findComposeProblems(config, readDockerfiles(config)));
 
-  // Scenario "Missing password is rejected".
+  // Scenarios "Missing password is rejected" and "Missing JWT key is rejected".
   const dir = mkdtempSync(join(tmpdir(), "divenet-compose-"));
   try {
-    const noPassword = join(dir, "no-password.env");
     const lines = readFileSync(ENV_EXAMPLE, "utf8").split(/\r?\n/);
-    writeFileSync(noPassword, lines.filter((line) => !line.startsWith("POSTGRES_PASSWORD=")).join("\n"));
-    const missing = renderConfig(noPassword);
-    if (missing.status === 0) {
-      problems.push("compose.yaml: renders without POSTGRES_PASSWORD; it must refuse to");
-    } else if (!missing.stderr.includes("POSTGRES_PASSWORD")) {
-      problems.push(`compose.yaml: the error for a missing password does not name POSTGRES_PASSWORD: ${missing.stderr.trim()}`);
+    for (const variable of REQUIRED_VARIABLES) {
+      const envFile = join(dir, `no-${variable}.env`);
+      writeFileSync(envFile, lines.filter((line) => !line.startsWith(`${variable}=`)).join("\n"));
+      const missing = renderConfig(envFile);
+      if (missing.status === 0) {
+        problems.push(`compose.yaml: renders without ${variable}; it must refuse to`);
+      } else if (!missing.stderr.includes(variable)) {
+        problems.push(`compose.yaml: the error for a missing ${variable} does not name it: ${missing.stderr.trim()}`);
+      }
     }
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+
+  // Scenario "Auth settings reach the back-end".
+  const backendEnv = config.services.backend?.environment ?? {};
+  for (const variable of AUTH_VARIABLES) {
+    if (!(variable in backendEnv)) problems.push(`backend: environment has no ${variable}`);
   }
 
   // Scenario "Web port is configurable".

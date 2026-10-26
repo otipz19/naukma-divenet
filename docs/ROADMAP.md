@@ -36,7 +36,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `add-local-stack` | `compose.yaml` (db, backend, frontend/nginx), Dockerfiles, `.env.example` | — | `bootstrap-backend`, `bootstrap-frontend` | archived |
 | `retry-stack-image-pulls` | Smoke test pulls the stack's images with retries before building, so a transient registry error does not fail CI `stack` | — | `add-local-stack` | archived |
 | `add-app-shell` | App layout and navigation, language switcher, safety disclaimer footer, base styles, following `docs/DESIGN.md` and `design/`: imports `design/system/tokens.css`, self-hosted fonts, theme switch, `build-tokens --check` in the gate | — | `bootstrap-frontend` | archived |
-| `add-authentication` | Register, login, refresh, logout, roles, admin bootstrap from env; login/register UI | — | `add-app-shell` | planned |
+| `add-authentication` | Register, login, refresh, logout, roles, admin bootstrap from env; login/register UI | — | `add-app-shell` | archived |
 
 ## M1 — Sites and map
 
