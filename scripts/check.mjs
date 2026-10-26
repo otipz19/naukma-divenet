@@ -2,7 +2,7 @@
 // Runs every step in order and exits non-zero on the first failure.
 // Steps are check-only: no formatting fixes, no installs, no servers.
 // Front-end steps need only Node; they run first so they fail fast.
-// The back-end step needs JDK 25+ and a running Docker daemon (Testcontainers).
+// The compose and back-end steps need a running Docker daemon; the back-end also needs JDK 25+.
 import { spawnSync } from "node:child_process";
 
 // Explicit relative paths: cmd.exe may be configured not to search the current directory.
@@ -23,6 +23,9 @@ const frontend = (name, script) => ({
 const steps = [
   { name: "openspec: validate specs and changes", cmd: "openspec", args: ["validate", "--all", "--strict", "--no-interactive"] },
   { name: "design: tokens.css matches tokens.json", cmd: "node", args: ["design/build-tokens.mjs", "--check"] },
+  { name: "scripts: unit tests", cmd: "node", args: ["--test", '"scripts/**/*.test.mjs"'] },
+  // Renders compose.yaml without building: services, health checks, ports, volume, pinned images, env.
+  { name: "compose: configuration", cmd: "node", args: ["scripts/check-compose.mjs"] },
   frontend("i18n key parity", "i18n:check"),
   // Literal colours, px lengths other than 1-2px hairlines and redefined tokens (docs/DESIGN.md rule 1).
   frontend("tokens-only CSS", "css:check"),

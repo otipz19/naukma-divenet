@@ -31,7 +31,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `bootstrap-backend` | Maven wrapper project, Boot 4.1 / Java 25, Spring Modulith verify test, Flyway + PostGIS + Testcontainers, ProblemDetail handler, springdoc and the `api/openapi.json` snapshot check, Spotless; back-end step added to `pnpm check`; CI installs Java 25 | — | — | archived |
 | `switch-to-layered-monolith` | Replace Spring Modulith with a plain layered monolith: feature packages, ArchUnit layer test, ADR-0008 superseding ADR-0002 | — | `bootstrap-backend` | archived |
 | `bootstrap-frontend` | Vite + React + TS app as a pnpm workspace member, router, TanStack Query, i18n `en`/`uk` with the key-parity check and the hard-coded-text lint rule, ESLint/Prettier, Vitest, generated API types and typed client; front-end steps added to `pnpm check`. No UI: placeholder pages only | — | `bootstrap-backend` | archived |
-| `add-local-stack` | `compose.yaml` (db, backend, frontend/nginx), Dockerfiles, `.env.example` | — | `bootstrap-backend`, `bootstrap-frontend` | planned |
+| `add-local-stack` | `compose.yaml` (db, backend, frontend/nginx), Dockerfiles, `.env.example` | — | `bootstrap-backend`, `bootstrap-frontend` | archived |
 | `add-app-shell` | App layout and navigation, language switcher, safety disclaimer footer, base styles, following `docs/DESIGN.md` and `design/`: imports `design/system/tokens.css`, self-hosted fonts, theme switch, `build-tokens --check` in the gate | — | `bootstrap-frontend` | archived |
 | `add-authentication` | Register, login, refresh, logout, roles, admin bootstrap from env; login/register UI | — | `add-app-shell` | planned |
 

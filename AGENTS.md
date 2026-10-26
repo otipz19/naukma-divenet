@@ -126,8 +126,9 @@ Do not edit these without asking the user:
   new `V<n>__<name>.sql` instead of editing one.
 - `api/openapi.json` and `frontend/src/api/schema.gen.ts`: never edit by hand; regenerate them (see Checks).
 - `design/system/tokens.css`: generated from `design/system/tokens.json`; run `node design/build-tokens.mjs`.
-- Rules for `.env` files are in `docs/ARCHITECTURE.md`. Once `add-local-stack`
-  creates them, add them to this list.
+- `.env` files: never commit one, and never put a real secret in `.env.example`.
+  `.env.example` is the only committed env file; a change that adds a variable to
+  `compose.yaml` adds it to `.env.example` in the same PR.
 
 ## Checks
 
@@ -141,19 +142,26 @@ pnpm check
 It runs, in order:
 1. `openspec validate --all --strict`.
 2. `node design/build-tokens.mjs --check`: `design/system/tokens.css` matches `tokens.json`.
-3. Front-end (`frontend/`, Node only), one step each: i18n key parity
+3. `node --test "scripts/**/*.test.mjs"`: tests of the repository scripts.
+4. `node scripts/check-compose.mjs`: renders `compose.yaml` (builds nothing) and
+   checks services, health checks, start order, that only `web` publishes a port,
+   the database volume, pinned image tags, and that a missing database password is refused.
+5. Front-end (`frontend/`, Node only), one step each: i18n key parity
    (`en`/`uk`), tokens-only CSS (no literal colours, no px other than 1-2px
    hairlines, no redefined tokens), generated API types match `api/openapi.json`,
    `tsc` typecheck, ESLint (including the ban on hard-coded JSX text), Prettier
    check, Vitest tests, the Vite production build, and the build output check
    (design tokens and self-hosted fonts present, no Google Fonts host).
-4. `backend/mvnw verify`: compile, unit tests, integration tests against a
+6. `backend/mvnw verify`: compile, unit tests, integration tests against a
    Testcontainers PostGIS, the ArchUnit layer check (`LayeredArchitectureTest`),
    the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
 
 Every step must be check-only and must exit non-zero on failure. CI
 (`.github/workflows/check.yml`) runs the same command on every push to `master`
-and on every PR.
+and on every PR. A second CI job, `stack`, runs `pnpm smoke:stack`: it builds and
+starts the compose stack, checks it over HTTP, restarts it and tears it down. It is
+not part of `pnpm check` because it takes minutes; run it locally after changing
+`compose.yaml`, a Dockerfile or `nginx.conf`.
 
 Fix commands (never run by the gate):
 - Back-end formatting: `cd backend && ./mvnw spotless:apply`.
@@ -166,12 +174,15 @@ Fix commands (never run by the gate):
 - Run the API locally on a throwaway database: `cd backend && ./mvnw spring-boot:test-run`.
 - Run the front-end dev server (proxies `/api` to the API above):
   `pnpm --filter @divenet/frontend dev`.
+- Run the full stack: `cp .env.example .env && docker compose up --build`
+  (http://localhost:8080). Smoke-test it: `pnpm smoke:stack`.
 
 Prerequisites:
 - Node.js 24 or newer, and pnpm (`npm i -g pnpm`; recent Node versions no longer ship corepack).
 - The OpenSpec CLI on PATH: `npm i -g @fission-ai/openspec@1.15.0`. The agent
   skills call `openspec` directly. `pnpm check` uses the copy pinned in `package.json`.
-- JDK 25 or newer, and a running Docker daemon (Testcontainers; Compose later).
+- JDK 25 or newer, and a running Docker daemon with Compose v2 (Testcontainers,
+  the compose check and the stack).
   Maven itself is not needed: use `backend/mvnw` (`mvnw.cmd` on Windows).
 
 Not covered yet: E2E (M6).
