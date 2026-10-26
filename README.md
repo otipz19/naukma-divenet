@@ -77,9 +77,11 @@ it, then the agent implements it.
 4. **Apply.** Run `/opsx:apply` (Codex: `$openspec-apply-change`). The agent
    implements the tasks and ticks them off. Review the code as it goes, and make
    sure `pnpm check` passes.
-5. **Archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`). The
-   change's specs merge into `openspec/specs/`, and the roadmap status becomes `archived`.
-   Archive before opening the PR, and before applying any other change.
+5. **Sync, then archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`).
+   If the change has spec deltas, choose **Sync now** when it asks, so they merge
+   into `openspec/specs/` first; never archive without syncing them. The roadmap
+   status becomes `archived`. Archive before opening the PR, and before applying
+   any other change.
 6. **Open a PR** to `master` that contains the change, its archive and the
    roadmap update. CI (`pnpm check`) must be green before merging.
    Direct pushes to `master` are blocked.

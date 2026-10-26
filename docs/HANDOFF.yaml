@@ -9,13 +9,14 @@ done:
   - add-local-stack implemented and archived (spec shared/local-stack); compose.yaml, Dockerfiles, nginx, compose gate step, CI job `stack`
 wip: add-local-stack PR (change, code and archive) from change/add-local-stack
 blocked: null
-next: confirm check + stack are green on the PR; user makes `stack` a required check; after merge, /opsx:propose add-authentication (or add-reference-data)
+next: after PR #8 merges, /opsx:propose add-authentication (or add-reference-data)
 decisions:
   - add-local-stack design.md D1-D9 + implementation notes; test approach (user, 2026-10-26): gate step validates compose config; smoke script runs the stack in a separate CI job `stack`
   - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
-  - No AI code review, no required human review; master protected (PR + green check job); repo allows auto-merge
+  - No AI code review, no required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
+  - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
   - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)

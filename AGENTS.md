@@ -61,10 +61,13 @@ All feature work goes through OpenSpec, in the order set by `docs/ROADMAP.md`:
    in Codex. Then stop and wait for the user to review the proposal.
 3. Apply: `/opsx:apply` or `$openspec-apply-change`. Implement the tasks in order,
    ticking each one off in `tasks.md` as you go.
-4. Archive: `/opsx:archive` or `$openspec-archive-change`, as soon as every task is
-   ticked and `pnpm check` passes, on the same branch. Update the roadmap status in
-   the same commit.
-5. Open the PR: push the branch and open a PR to `master` that holds the change,
+4. Sync: if the change has delta specs that `openspec/specs/` does not reflect yet,
+   merge them into the main specs (`/opsx:sync`, or "Sync now" when the archive
+   asks), then run `openspec validate --all --strict`.
+5. Archive: `/opsx:archive` or `$openspec-archive-change`, as soon as every task is
+   ticked, the specs are synced and `pnpm check` passes, on the same branch. Update
+   the roadmap status in the same commit.
+6. Open the PR: push the branch and open a PR to `master` that holds the change,
    its implementation and its archive.
 
 Workflow rules:
@@ -73,7 +76,11 @@ Workflow rules:
   the user before it is written. No code change starts without a proposal.
 - **Implement with apply.** All code is written inside `/opsx:apply` for an
   approved change, never outside it.
-- **Archive right after apply.** When apply finishes, run the archive next,
+- **Sync before archive, whenever it is needed.** A change with delta specs is
+  archived only after its deltas are merged into `openspec/specs/` and the result
+  validates. Never choose "Archive without syncing" for a change whose deltas are
+  not in the main specs yet; a change with no delta specs needs no sync.
+- **Archive right after apply.** When apply finishes, sync if needed and run the archive next,
   before opening the PR. Never open the PR first and archive after the merge: the
   specs in `master` must never lag behind its code.
 - **One applied change at a time.** Do not start `/opsx:apply` on a change while

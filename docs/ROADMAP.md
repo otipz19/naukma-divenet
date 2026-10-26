@@ -14,8 +14,10 @@ ID is the folder name under `openspec/changes/`. Story IDs refer to
    lists anything it defers.
 3. **Apply:** run `/opsx:apply`, then set the status to `in-progress`. Only one item
    may be `in-progress` at a time: archive it before applying another.
-4. **Archive:** as soon as apply finishes and `pnpm check` passes, run `/opsx:archive`
-   on the same branch and set the status to `archived` in that commit. Then open
+4. **Sync and archive:** as soon as apply finishes and `pnpm check` passes, run
+   `/opsx:archive` on the same branch. If the change has spec deltas, sync them into
+   `openspec/specs/` first (the archive's "Sync now"). Set the status to `archived`
+   in that commit. Then open
    the PR, so the change, its code and its archive merge together.
 5. **Scope changes:** to split, add or reorder items, edit this file in its own small
    PR, or in the PR of the change that discovered the need, and say so in that
