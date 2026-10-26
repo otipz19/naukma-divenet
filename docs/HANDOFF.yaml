@@ -1,25 +1,27 @@
-goal: M0 (Foundation) — add-app-shell implemented; PR open with auto-merge
+goal: M0 (Foundation) — add-app-shell archived; next roadmap item to propose
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
   - bootstrap-frontend merged (PR #3) and archived
   - UI design (Claude Design) merged (PR #4): design/system, design/screens, docs/DESIGN.md, ADR-0009
-wip: add-app-shell PR from change/add-app-shell (auto-merge on green check)
+  - add-app-shell merged (PR #5) and archived; specs shared/app-shell, shared/design-tokens
+wip: archive PR from change/archive-add-app-shell
 blocked: null
-next: after the add-app-shell PR merges, /opsx:archive it and set the roadmap status to archived in the same commit
+next: after the archive PR merges, /opsx:propose the next roadmap item (see docs/ROADMAP.md)
 decisions:
+  - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
   - No AI code review, no required human review; master protected (PR + green check job); repo allows auto-merge
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
   - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-10-25-bootstrap-frontend/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-10-26-add-app-shell/]
 checks:
   gate: pnpm check
   last: pass 2026-10-26 on Windows — openspec + design tokens + 9 frontend steps (72 Vitest tests) + mvnw verify (4 unit, 17 integration)
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS
-  ci: PRs #1-#4 green on ubuntu-latest
+  ci: PRs #1-#5 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI
