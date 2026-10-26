@@ -61,8 +61,26 @@ All feature work goes through OpenSpec, in the order set by `docs/ROADMAP.md`:
    in Codex. Then stop and wait for the user to review the proposal.
 3. Apply: `/opsx:apply` or `$openspec-apply-change`. Implement the tasks in order,
    ticking each one off in `tasks.md` as you go.
-4. Archive: `/opsx:archive` or `$openspec-archive-change`, once `pnpm check` passes.
-   Update the roadmap status in the same commit.
+4. Archive: `/opsx:archive` or `$openspec-archive-change`, as soon as every task is
+   ticked and `pnpm check` passes, on the same branch. Update the roadmap status in
+   the same commit.
+5. Open the PR: push the branch and open a PR to `master` that holds the change,
+   its implementation and its archive.
+
+Workflow rules:
+
+- **Plan with propose.** All code is planned with `/opsx:propose` and reviewed by
+  the user before it is written. No code change starts without a proposal.
+- **Implement with apply.** All code is written inside `/opsx:apply` for an
+  approved change, never outside it.
+- **Archive right after apply.** When apply finishes, run the archive next,
+  before opening the PR. Never open the PR first and archive after the merge: the
+  specs in `master` must never lag behind its code.
+- **One applied change at a time.** Do not start `/opsx:apply` on a change while
+  another one has been applied but not archived. Before applying, run
+  `openspec list --json`: if any other active change has completed tasks, or any
+  roadmap item is `in-progress`, finish and archive that one first. Proposing the
+  next change in the meantime is fine.
 
 Other commands: `/opsx:explore` (think something through before proposing),
 `/opsx:update`, `/opsx:sync`. Small fixes that change no behaviour, such as docs,
@@ -71,7 +89,8 @@ tooling and typos, do not need an OpenSpec change.
 Git: work on a branch named `change/<change-id>` (or `fix/<topic>`) and open a PR
 to `master`. `master` is protected: changes land only through a PR with a green
 `check` job. Commit messages are imperative, in English, and name the change ID.
-Do not push or merge unless the user asks.
+Once a change is archived, push its branch and open the PR without waiting to be
+asked. Otherwise, do not push unless the user asks, and never merge unless the user asks.
 
 ## Working rules
 
