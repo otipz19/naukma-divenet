@@ -165,8 +165,9 @@ It runs, in order:
 
 Every step must be check-only and must exit non-zero on failure. CI
 (`.github/workflows/check.yml`) runs the same command on every push to `master`
-and on every PR. A second CI job, `stack`, runs `pnpm smoke:stack`: it builds and
-starts the compose stack, checks it over HTTP, restarts it and tears it down. It is
+and on every PR. A second CI job, `stack`, runs `pnpm smoke:stack`: it pulls the stack's images (up to 3
+attempts each, so a transient registry error is retried), builds and starts the
+compose stack, checks it over HTTP, restarts it and tears it down. It is
 not part of `pnpm check` because it takes minutes; run it locally after changing
 `compose.yaml`, a Dockerfile or `nginx.conf`.
 

@@ -1,7 +1,7 @@
 // Tests for scripts/compose-rules.mjs (spec shared/local-stack). Run: node --test "scripts/**/*.test.mjs"
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { baseImages, findComposeProblems, isPinned, publishedPorts } from "./compose-rules.mjs";
+import { baseImages, externalImages, findComposeProblems, isPinned, publishedPorts } from "./compose-rules.mjs";
 
 const healthcheck = { test: ["CMD", "true"], interval: "10s" };
 const BACKEND_DOCKERFILE = "FROM eclipse-temurin:25-jdk AS build\nRUN true\nFROM eclipse-temurin:25-jre\n";
@@ -144,5 +144,40 @@ describe("isPinned and baseImages", () => {
       "node:24",
       "nginx:1.29",
     ]);
+  });
+});
+
+describe("externalImages", () => {
+  it("lists service images and Dockerfile base images, skipping stages", () => {
+    assert.deepEqual(externalImages(rendered(), dockerfiles), [
+      "postgis/postgis:17-3.5",
+      "eclipse-temurin:25-jdk",
+      "eclipse-temurin:25-jre",
+      "node:24-alpine",
+      "nginx:1.29-alpine",
+    ]);
+  });
+
+  it("lists the # syntax= frontend image before the base images", () => {
+    const config = { services: { app: { build: { context: "/repo" } } } };
+    const text = "# syntax=docker/dockerfile:1\n# A comment.\nFROM nginx:1.29-alpine\n";
+    assert.deepEqual(externalImages(config, { app: text }), ["docker/dockerfile:1", "nginx:1.29-alpine"]);
+  });
+
+  it("ignores a syntax comment after the first instruction", () => {
+    const config = { services: { app: { build: { context: "/repo" } } } };
+    const text = "FROM nginx:1.29-alpine\n# syntax=docker/dockerfile:1\n";
+    assert.deepEqual(externalImages(config, { app: text }), ["nginx:1.29-alpine"]);
+  });
+
+  it("skips a FROM that names an earlier stage", () => {
+    const config = { services: { app: { build: { context: "/repo" } } } };
+    const text = "FROM node:24-alpine AS deps\nFROM deps AS build\nFROM nginx:1.29-alpine\n";
+    assert.deepEqual(externalImages(config, { app: text }), ["node:24-alpine", "nginx:1.29-alpine"]);
+  });
+
+  it("lists an image shared by two services once", () => {
+    const config = { services: { a: { image: "redis:8.2" }, b: { image: "redis:8.2" }, c: { build: {} } } };
+    assert.deepEqual(externalImages(config, { c: "FROM redis:8.2\n" }), ["redis:8.2"]);
   });
 });

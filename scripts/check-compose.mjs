@@ -7,7 +7,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { PUBLIC_SERVICE, findComposeProblems, publishedPorts } from "./compose-rules.mjs";
+import { PUBLIC_SERVICE, findComposeProblems, publishedPorts, readDockerfiles } from "./compose-rules.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const ENV_EXAMPLE = join(ROOT, ".env.example");
@@ -26,25 +26,6 @@ function renderConfig(envFile, extraEnv = {}) {
     env: { ...env, ...extraEnv },
     encoding: "utf8",
   });
-}
-
-/**
- * @param {any} config
- * @returns {Record<string, string>} Dockerfile text by service name
- */
-function readDockerfiles(config) {
-  /** @type {Record<string, string>} */
-  const dockerfiles = {};
-  for (const [name, service] of Object.entries(config.services ?? {})) {
-    const build = /** @type {any} */ (service).build;
-    if (!build) continue;
-    try {
-      dockerfiles[name] = readFileSync(join(build.context, build.dockerfile ?? "Dockerfile"), "utf8");
-    } catch {
-      // Reported as "Dockerfile not found" by findComposeProblems.
-    }
-  }
-  return dockerfiles;
 }
 
 function main() {

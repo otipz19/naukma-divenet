@@ -97,3 +97,49 @@ describe("runSmoke", () => {
     assert.equal(await runSmoke(changing, fakeHttp(), DATABASE, () => {}), 1);
   });
 });
+
+describe("runSmoke image pulls", () => {
+  const IMAGES = ["postgis/postgis:17-3.5", "eclipse-temurin:25-jdk"];
+
+  /**
+   * A fake `docker pull` that fails the first `failures` attempts for `image`.
+   * @param {string} image
+   * @param {number} failures
+   * @param {string[][]} calls shared with fakeRun, so the order of pulls and compose calls shows
+   */
+  function fakePull(image, failures, calls) {
+    let left = failures;
+    return (/** @type {string} */ name) => {
+      calls.push(["pull", name]);
+      if (name === image && left-- > 0) return { status: 1, stdout: "", stderr: "502 Bad Gateway" };
+      return { status: 0, stdout: "", stderr: "" };
+    };
+  }
+
+  it("retries a transient pull failure and goes on to start the stack", async () => {
+    const { run, calls } = fakeRun();
+    const waits = /** @type {number[]} */ ([]);
+    const pull = fakePull("eclipse-temurin:25-jdk", 1, calls);
+    const sleep = async (/** @type {number} */ ms) => void waits.push(ms);
+    assert.equal(await runSmoke(run, fakeHttp(), DATABASE, () => {}, { images: IMAGES, pull, sleep }), 0);
+    assert.deepEqual(calls.slice(0, 4).map((args) => args.join(" ")), [
+      "pull postgis/postgis:17-3.5",
+      "pull eclipse-temurin:25-jdk",
+      "pull eclipse-temurin:25-jdk",
+      "up --build --wait --wait-timeout 300",
+    ]);
+    assert.deepEqual(waits, [10_000]);
+  });
+
+  it("fails, names the image and tears down when a pull keeps failing", async () => {
+    const { run, calls } = fakeRun();
+    const lines = /** @type {string[]} */ ([]);
+    const pull = fakePull("eclipse-temurin:25-jdk", 3, calls);
+    const options = { images: IMAGES, pull, sleep: async () => {} };
+    assert.equal(await runSmoke(run, fakeHttp(), DATABASE, (line) => lines.push(line), options), 1);
+    assert.ok(lines.some((line) => line.includes("could not pull eclipse-temurin:25-jdk after 3 attempts")));
+    assert.equal(calls.filter((args) => args[0] === "pull").length, 4);
+    assert.ok(!calls.some((args) => args[0] === "up"));
+    assert.deepEqual(last(calls), ["down", "-v", "--remove-orphans"]);
+  });
+});

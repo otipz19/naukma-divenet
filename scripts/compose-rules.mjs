@@ -1,5 +1,8 @@
 // Rules for the rendered compose configuration (`docker compose config --format json`),
-// used by the gate step scripts/check-compose.mjs. Pure functions: no Docker needed.
+// used by the gate step scripts/check-compose.mjs and by scripts/smoke-stack.mjs.
+// Pure functions apart from readDockerfiles, which reads files: no Docker needed.
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 export const SERVICES = ["db", "backend", "web"];
 export const PUBLIC_SERVICE = "web";
@@ -48,6 +51,65 @@ export function baseImages(text) {
     if (match[2]) stages.add(match[2].toLowerCase());
   }
   return images;
+}
+
+/**
+ * Dockerfile text by service name, for the services that have a `build` section.
+ * A Dockerfile that cannot be read is left out (findComposeProblems reports it).
+ * @param {any} config the rendered compose configuration
+ * @returns {Record<string, string>}
+ */
+export function readDockerfiles(config) {
+  /** @type {Record<string, string>} */
+  const dockerfiles = {};
+  for (const [name, service] of Object.entries(config.services ?? {})) {
+    const build = /** @type {any} */ (service).build;
+    if (!build) continue;
+    try {
+      dockerfiles[name] = readFileSync(join(build.context, build.dockerfile ?? "Dockerfile"), "utf8");
+    } catch {
+      // Reported as "Dockerfile not found" by findComposeProblems.
+    }
+  }
+  return dockerfiles;
+}
+
+/**
+ * Images the stack pulls from a registry: the image of each service without `build`, and
+ * the `# syntax=` frontend and base images of each built service's Dockerfile. No duplicates,
+ * in service order.
+ * @param {any} config the rendered compose configuration
+ * @param {Record<string, string>} dockerfiles Dockerfile text by service name
+ * @returns {string[]}
+ */
+export function externalImages(config, dockerfiles) {
+  const images = new Set();
+  for (const [name, service] of Object.entries(config.services ?? {})) {
+    const { build, image } = /** @type {any} */ (service);
+    if (!build) {
+      if (image) images.add(image);
+    } else if (dockerfiles[name] !== undefined) {
+      const syntax = syntaxImage(dockerfiles[name]);
+      if (syntax) images.add(syntax);
+      for (const base of baseImages(dockerfiles[name])) images.add(base);
+    }
+  }
+  return [...images];
+}
+
+/**
+ * The BuildKit frontend image named by a `# syntax=` directive, which must come before any
+ * instruction; null when the Dockerfile has none.
+ * @param {string} text Dockerfile contents
+ * @returns {string | null}
+ */
+export function syntaxImage(text) {
+  for (const line of text.split(/\r?\n/)) {
+    const match = /^\s*#\s*syntax\s*=\s*(\S+)/i.exec(line);
+    if (match) return match[1];
+    if (line.trim() !== "" && !line.trim().startsWith("#")) return null;
+  }
+  return null;
 }
 
 /** @param {any} healthcheck */

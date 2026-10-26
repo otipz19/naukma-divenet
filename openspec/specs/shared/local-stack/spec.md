@@ -105,3 +105,14 @@ and checks the scenarios above that need it running.
 - **WHEN** the smoke test finishes, whether its checks passed or failed
 - **THEN** its compose project's containers, network and volumes are removed
 - **AND** its exit code is non-zero if any check failed
+
+#### Scenario: Transient image pull failure is retried
+- **WHEN** pulling one of the stack's images fails and a later attempt, within the retry limit of 3 attempts, succeeds
+- **THEN** the smoke test goes on to start the stack and run its checks
+- **AND** its exit code is 0 if every check passes
+
+#### Scenario: Image pull keeps failing
+- **WHEN** every attempt to pull one of the stack's images fails
+- **THEN** the smoke test does not start the stack and exits non-zero
+- **AND** its output names that image
+- **AND** its compose project's containers, network and volumes are removed

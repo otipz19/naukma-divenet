@@ -1,4 +1,4 @@
-goal: M0 (Foundation) — add-local-stack archived; PR open
+goal: M0 (Foundation) — add-local-stack archived; retry-stack-image-pulls (CI stack fix) applied and archived on the same PR
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -7,10 +7,11 @@ done:
   - add-app-shell merged (PR #5) and archived (PR #6); specs shared/app-shell, shared/design-tokens
   - Workflow rules (archive before PR, one applied change at a time) merged (PR #7)
   - add-local-stack implemented and archived (spec shared/local-stack); compose.yaml, Dockerfiles, nginx, compose gate step, CI job `stack`
-wip: add-local-stack PR (change, code and archive) from change/add-local-stack
+wip: PR #8 from change/add-local-stack holds add-local-stack and retry-stack-image-pulls (user, 2026-10-26: same PR)
 blocked: null
 next: after PR #8 merges, /opsx:propose add-authentication (or add-reference-data)
 decisions:
+  - retry-stack-image-pulls design.md D1-D4 + notes: smoke test pre-pulls 6 images (incl. # syntax= frontend), 3 attempts each; CI stack had failed on a Docker Hub 502
   - add-local-stack design.md D1-D9 + implementation notes; test approach (user, 2026-10-26): gate step validates compose config; smoke script runs the stack in a separate CI job `stack`
   - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
@@ -20,10 +21,10 @@ decisions:
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
   - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-10-26-add-local-stack/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-10-26-add-local-stack/, openspec/changes/archive/2026-10-26-retry-stack-image-pulls/]
 checks:
   gate: pnpm check
-  last: pass 2026-10-26 on Windows — openspec + design tokens + 18 script tests + compose config + 9 frontend steps (72 Vitest tests) + mvnw verify (4 unit, 17 integration); pnpm smoke:stack passed locally
+  last: pass 2026-10-26 on Windows — openspec + design tokens + 25 script tests + compose config + 9 frontend steps (72 Vitest tests) + mvnw verify (4 unit, 17 integration); pnpm smoke:stack passed locally (pulls 6 images with retries)
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service
   ci: PRs #1-#7 green on ubuntu-latest
   not_covered: E2E (M6)

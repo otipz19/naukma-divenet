@@ -1,12 +1,15 @@
 // Smoke test of the running compose stack (CI job `stack`; spec shared/local-stack).
 // Builds and starts the stack as the compose project `divenet-smoke` on WEB_PORT 18080, so it
 // never touches a developer's own stack, checks it over HTTP, restarts it, and always removes
-// its containers, network and volume. Needs Docker; takes a few minutes.
+// its containers, network and volume. Before building, it pulls every image the stack uses
+// (service images, Dockerfile `# syntax=` frontends and base images), trying each up to 3 times, so a transient
+// registry error does not fail the run. Needs Docker; takes a few minutes.
 // Usage: node scripts/smoke-stack.mjs   (or `pnpm smoke:stack`; exits 1 when a check fails)
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { externalImages, readDockerfiles } from "./compose-rules.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const ENV_EXAMPLE = join(ROOT, ".env.example");
@@ -15,12 +18,16 @@ export const WEB_PORT = "18080";
 const SERVICES = ["db", "backend", "web"];
 const WAIT = ["--wait", "--wait-timeout", "300"];
 const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_)/i;
+// Waits before the 2nd and 3rd pull attempt: a registry error such as a 502 is often over by then.
+export const PULL_WAITS_MS = [10_000, 30_000];
 
 /**
  * @typedef {{ status: number | null, stdout: string, stderr: string }} RunResult
  * @typedef {(args: string[]) => RunResult} Run runs `docker compose <args>` for the smoke project
  * @typedef {{ status: number, contentType: string, body: string }} HttpResult
  * @typedef {(path: string) => Promise<HttpResult>} Http sends GET <path> to the web port
+ * @typedef {(image: string) => RunResult} Pull runs `docker pull -q <image>`
+ * @typedef {{ images?: string[], pull?: Pull, sleep?: (ms: number) => Promise<void> }} PullOptions
  */
 
 /**
@@ -60,16 +67,45 @@ function migrationHistory(run, database) {
 }
 
 /**
- * Starts the stack, runs every check, and always tears it down.
+ * Pulls each image before anything is built, retrying a failed pull, so a transient registry
+ * error does not fail the run; the build then uses the local images.
+ * @param {string[]} images
+ * @param {Pull} pull
+ * @param {(ms: number) => Promise<void>} sleep
+ * @param {(line: string) => void} log
+ */
+async function pullImages(images, pull, sleep, log) {
+  for (const image of images) {
+    for (let attempt = 1; ; attempt++) {
+      const result = pull(image);
+      if (result.status === 0) break;
+      if (attempt > PULL_WAITS_MS.length) {
+        throw new Error(`could not pull ${image} after ${attempt} attempts
+${result.stderr.trim()}`);
+      }
+      const wait = PULL_WAITS_MS[attempt - 1];
+      log(`    pulling ${image} failed (attempt ${attempt}), retrying in ${wait / 1000} s: ${result.stderr.trim()}`);
+      await sleep(wait);
+    }
+    log(`ok  pulled ${image}`);
+  }
+}
+
+/**
+ * Pulls the images, starts the stack, runs every check, and always tears it down.
  * @param {Run} run
  * @param {Http} http
  * @param {{ db: string, user: string }} database names from the env file
  * @param {(line: string) => void} log
+ * @param {PullOptions} options images to pull first, and the runner and wait used for it
  * @returns {Promise<number>} the exit code
  */
-export async function runSmoke(run, http, database, log = console.log) {
+export async function runSmoke(run, http, database, log = console.log, options = {}) {
+  const { images = [], pull = () => ({ status: 0, stdout: "", stderr: "" }), sleep = wait } = options;
   let failed = false;
   try {
+    await pullImages(images, pull, sleep, log);
+
     log("Starting the stack (build, then wait until healthy)...");
     mustRun(run, ["up", "--build", ...WAIT]);
 
@@ -131,6 +167,9 @@ export async function runSmoke(run, http, database, log = console.log) {
   return failed ? 1 : 0;
 }
 
+/** @param {number} ms */
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /** @returns {{ db: string, user: string }} */
 function readDatabase() {
   const values = Object.fromEntries(
@@ -155,12 +194,19 @@ async function main() {
     });
     return { status: result.error ? -1 : result.status, stdout: result.stdout ?? "", stderr: result.stderr || (result.error?.message ?? "") };
   };
+  /** @type {Pull} */
+  const pull = (image) => {
+    const result = spawnSync("docker", ["pull", "-q", image], { env, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
+    return { status: result.error ? -1 : result.status, stdout: result.stdout ?? "", stderr: result.stderr || (result.error?.message ?? "") };
+  };
+  const config = JSON.parse(mustRun(run, ["config", "--format", "json"]));
+  const images = externalImages(config, readDockerfiles(config));
   /** @type {Http} */
   const http = async (path) => {
     const response = await fetch(`http://localhost:${WEB_PORT}${path}`);
     return { status: response.status, contentType: response.headers.get("content-type") ?? "", body: await response.text() };
   };
-  process.exit(await runSmoke(run, http, readDatabase()));
+  process.exit(await runSmoke(run, http, readDatabase(), console.log, { images, pull }));
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) await main();
