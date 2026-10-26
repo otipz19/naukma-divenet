@@ -63,10 +63,12 @@ describe("shared/app-shell: Narrow screens use a navigation drawer", () => {
     renderRoute("/");
     await userEvent.click(menuButton());
     const dialog = screen.getByRole("dialog");
+    // The account links (add-authentication) come last, after the language switch.
+    const lastControl = await within(dialog).findByRole("link", { name: "Sign up" });
 
     await userEvent.tab({ shift: true });
 
-    expect(within(dialog).getByRole("button", { name: "UK" })).toHaveFocus();
+    expect(lastControl).toHaveFocus();
     await userEvent.tab();
     expect(within(dialog).getByRole("button", { name: "Close menu" })).toHaveFocus();
   });

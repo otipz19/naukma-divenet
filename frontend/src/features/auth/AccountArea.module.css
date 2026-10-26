@@ -1,0 +1,98 @@
+/* design/system/components/AppHeader: the account area on the navy bar and in the drawer. */
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.drawerLinks {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+/* dn-header__link */
+.link {
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--on-brand);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.link:hover {
+  color: var(--on-brand);
+  text-decoration: underline;
+}
+
+.link[aria-current="page"] {
+  box-shadow: inset 0 -2px 0 var(--on-brand);
+  border-radius: 0;
+}
+
+.account {
+  position: relative;
+}
+
+/* dn-avatar: 32px, initials when there is no photo. */
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 20;
+  display: grid;
+  min-width: calc(var(--space-8) * 3);
+  padding: var(--space-2) 0;
+  background: var(--surface-1);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-2);
+}
+
+/* The menu sits on a light surface, unlike the navy header around it. */
+.menu :focus-visible {
+  outline-color: var(--focus);
+}
+
+.name {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  color: var(--ink-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.item {
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--surface-2);
+}
+
+.drawerName {
+  margin: 0;
+  padding: 0 var(--space-3);
+}

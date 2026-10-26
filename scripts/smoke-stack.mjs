@@ -17,7 +17,7 @@ export const PROJECT = "divenet-smoke";
 export const WEB_PORT = "18080";
 const SERVICES = ["db", "backend", "web"];
 const WAIT = ["--wait", "--wait-timeout", "300"];
-const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_)/i;
+const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_)/i;
 // Waits before the 2nd and 3rd pull attempt: a registry error such as a 502 is often over by then.
 export const PULL_WAITS_MS = [10_000, 30_000];
 

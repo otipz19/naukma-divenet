@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterAll, afterEach, beforeAll } from "vitest";
+import { resetSession } from "../api/session";
 import { server } from "./server";
 
 // jsdom has no matchMedia. This default matches no query: a light system theme and a viewport
@@ -21,5 +22,6 @@ afterEach(() => {
   cleanup();
   if (typeof window !== "undefined") localStorage.clear();
   server.resetHandlers();
+  resetSession();
 });
 afterAll(() => server.close());

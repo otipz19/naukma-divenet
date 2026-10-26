@@ -114,7 +114,10 @@ Rules:
 - Name search uses `ILIKE` backed by a `pg_trgm` GIN index. There is no external search engine.
 - The API never exposes JTS types. DTOs carry `lat` and `lng` as plain numbers.
 
-### Data model overview (planned)
+### Data model overview
+
+`users` and `refresh_tokens` exist (`add-authentication`); the other tables are
+**(planned)**.
 
 ```mermaid
 erDiagram
@@ -175,9 +178,15 @@ Each change that adds tables updates this diagram.
   `HttpOnly`, `SameSite=Strict` cookie scoped to `/api/v1/auth`.
 - The roles are `USER` and `ADMIN`. Authorisation uses method security (`@PreAuthorize`) plus
   explicit ownership checks in services: only the author edits or deletes their own content.
+- The `User` entity lives in `user.domain`; other features map it as `@ManyToOne User`.
+  The filter chain and JWT beans live in `shared.security`. A request's user id is the
+  access token's subject (`@AuthenticationPrincipal Jwt`).
+- The first admin is created at startup from `ADMIN_EMAIL` and `ADMIN_PASSWORD`
+  (with an optional `ADMIN_DISPLAY_NAME`), when both are set and no account with that
+  email exists.
 - GET requests for public content are anonymous. Admin endpoints live under `/api/v1/admin/**`.
-- Secrets (JWT key, DB password) come from environment variables. Only
-  `.env.example` is committed.
+- Secrets (JWT key `JWT_SECRET`, DB password) come from environment variables. Only
+  `.env.example` is committed. The app refuses a `JWT_SECRET` shorter than 32 bytes.
 
 ### Media (ADR-0006)
 

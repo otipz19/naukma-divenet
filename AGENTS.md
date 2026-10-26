@@ -152,7 +152,8 @@ It runs, in order:
 3. `node --test "scripts/**/*.test.mjs"`: tests of the repository scripts.
 4. `node scripts/check-compose.mjs`: renders `compose.yaml` (builds nothing) and
    checks services, health checks, start order, that only `web` publishes a port,
-   the database volume, pinned image tags, and that a missing database password is refused.
+   the database volume, pinned image tags, that a missing database password or
+   `JWT_SECRET` is refused, and that the auth settings reach the back-end.
 5. Front-end (`frontend/`, Node only), one step each: i18n key parity
    (`en`/`uk`), tokens-only CSS (no literal colours, no px other than 1-2px
    hairlines, no redefined tokens), generated API types match `api/openapi.json`,

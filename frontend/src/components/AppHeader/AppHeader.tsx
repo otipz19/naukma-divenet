@@ -1,5 +1,5 @@
 import { Menu } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { LanguageSwitch } from "../LanguageSwitch/LanguageSwitch";
@@ -7,12 +7,15 @@ import { NavDrawer } from "../NavDrawer/NavDrawer";
 import styles from "./AppHeader.module.css";
 import { NavLinks } from "./NavLinks";
 
+/** Renders the account area for the header bar or the drawer; the drawer passes its close action. */
+export type RenderAccount = (placement: "header" | "drawer", onNavigate?: () => void) => ReactNode;
+
 /**
- * The sticky navy bar: wordmark, main navigation and language switch. Below 768px a menu
- * button replaces the navigation and the switch and opens the drawer that holds both.
- * add-authentication adds the account area after the switch.
+ * The sticky navy bar: wordmark, main navigation, language switch and account area. Below 768px
+ * a menu button replaces them and opens the drawer that holds all three. The app layer supplies
+ * the account area, so this component knows nothing about features (add-authentication D10).
  */
-export function AppHeader() {
+export function AppHeader({ account }: { account?: RenderAccount }) {
   const { t } = useTranslation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
@@ -41,7 +44,8 @@ export function AppHeader() {
       </nav>
       <span className={styles.spacer} />
       <LanguageSwitch className={styles.wide} />
-      {drawerOpen && <NavDrawer id="nav-drawer" onClose={closeDrawer} />}
+      {account && <div className={styles.wide}>{account("header")}</div>}
+      {drawerOpen && <NavDrawer id="nav-drawer" onClose={closeDrawer} account={account} />}
     </header>
   );
 }

@@ -135,13 +135,20 @@ The whole product runs in Docker Compose: PostGIS, the back-end, and nginx
 serving the front-end build and proxying `/api`. From the repository root:
 
 ```sh
-cp .env.example .env        # then change POSTGRES_PASSWORD
+cp .env.example .env        # then change POSTGRES_PASSWORD, JWT_SECRET and ADMIN_PASSWORD
 docker compose up --build   # first build takes a few minutes
 ```
 
 Open <http://localhost:8080> (or the `WEB_PORT` you set in `.env`). Only that
 port is published; the database and the API are reachable only through it or
 with `docker compose exec`.
+
+Accounts:
+- `JWT_SECRET` signs the access tokens. Compose refuses to start without it; use
+  a random string of at least 32 bytes (`openssl rand -base64 32`).
+- When `ADMIN_EMAIL` and `ADMIN_PASSWORD` are both set, the back-end creates
+  that account as an admin on its first start. Log in with it at `/login`.
+  Everyone else signs up at `/register`.
 
 | What | Command |
 | --- | --- |

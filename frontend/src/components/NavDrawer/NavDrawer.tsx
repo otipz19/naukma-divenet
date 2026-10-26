@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
+import type { RenderAccount } from "../AppHeader/AppHeader";
 import { NavLinks } from "../AppHeader/NavLinks";
 import { LanguageSwitch } from "../LanguageSwitch/LanguageSwitch";
 import styles from "./NavDrawer.module.css";
@@ -11,11 +12,19 @@ const FOCUSABLE = "a[href], button:not([disabled])";
 
 /**
  * The narrow-screen menu: a modal dialog sliding in from the left over a scrim, holding the
- * navigation and the language switch. It closes on its close button, the scrim, Escape, a
+ * navigation, the language switch and the account links. It closes on its close button, the scrim, Escape, a
  * followed link, and when the viewport widens past the breakpoint; the opener restores focus.
  * Not a native <dialog>: jsdom has no showModal(), so the behaviour could not be tested.
  */
-export function NavDrawer({ id, onClose }: { id: string; onClose: () => void }) {
+export function NavDrawer({
+  id,
+  onClose,
+  account,
+}: {
+  id: string;
+  onClose: () => void;
+  account?: RenderAccount;
+}) {
   const { t } = useTranslation();
   const panel = useRef<HTMLDivElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
@@ -76,6 +85,7 @@ export function NavDrawer({ id, onClose }: { id: string; onClose: () => void }) 
           <NavLinks vertical onNavigate={onClose} />
         </nav>
         <LanguageSwitch className={styles.language} />
+        {account?.("drawer", onClose)}
       </div>
     </div>,
     document.body,
