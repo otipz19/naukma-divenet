@@ -1,0 +1,17 @@
+# Build context of frontend/Dockerfile (the repository root).
+**/node_modules
+**/dist
+**/coverage
+**/*.tsbuildinfo
+.git
+.github
+.agents
+.claude
+.gemini
+backend
+openspec
+docs
+api
+design/screens
+.env
+.env.*

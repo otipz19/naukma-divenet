@@ -25,7 +25,11 @@ flowchart LR
 | `db` | PostgreSQL 17 + PostGIS 3 (`postgis/postgis` image) | The only datastore. There is no separate cache or search engine. |
 | media | A local directory, mounted as a Docker volume | Accessed only through the `MediaStorage` interface (ADR-0006). |
 
-`compose.yaml` at the repository root runs the full stack **(planned, M0)**.
+`compose.yaml` at the repository root runs the full stack: `db`, `backend` and
+`web` (nginx with the SPA build). Only `web` publishes a port (`WEB_PORT`); the
+database and the back-end are reachable only inside the compose network.
+Configuration comes from `.env` (template: `.env.example`), and the database
+keeps its data in a named volume.
 
 ## Repository layout
 
@@ -43,10 +47,12 @@ frontend/                Vite app, pnpm workspace member (@divenet/frontend)
   src/i18n/locales/{en,uk}.json
   src/features/<feature>/            feature folders mirroring backend feature packages (planned)
   scripts/                           gate checks: i18n parity, API types, tokens-only CSS, build output
+  Dockerfile, nginx.conf             web image: SPA build served by nginx, /api and /media proxied
   e2e/                               Playwright tests                (planned, M6)
 api/openapi.json         committed OpenAPI snapshot (shared contract)
-compose.yaml             db + backend + frontend                    (planned, add-local-stack)
+compose.yaml             db + backend + web (nginx); .env.example is its env template
 scripts/check.mjs        the single quality gate
+scripts/check-compose.mjs, smoke-stack.mjs   compose config check (gate) and stack smoke test (CI `stack`)
 openspec/                OpenSpec specs and changes
 design/                  UI design: system/ (tokens, component specs), screens/ (mockups)
 docs/                    product, architecture, roadmap, ADRs, handoff, DESIGN.md

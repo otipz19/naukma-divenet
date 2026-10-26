@@ -5,8 +5,9 @@ dive log and blog posts. This is a NaUKMA university project, and all the code i
 written by coding agents (Claude Code, Codex or Gemini CLI). We plan, review and
 steer the agents.
 
-> **Status:** M0 (Foundation) is in progress. The back-end and front-end skeletons
-> exist; the UI design, app shell and compose stack come next. See [docs/ROADMAP.md](docs/ROADMAP.md).
+> **Status:** M0 (Foundation) is in progress. The back-end and front-end skeletons,
+> the UI design, the app shell and the compose stack exist; authentication comes
+> next. See [docs/ROADMAP.md](docs/ROADMAP.md).
 
 ## 1. One-time setup
 
@@ -76,9 +77,11 @@ it, then the agent implements it.
 4. **Apply.** Run `/opsx:apply` (Codex: `$openspec-apply-change`). The agent
    implements the tasks and ticks them off. Review the code as it goes, and make
    sure `pnpm check` passes.
-5. **Archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`). The
-   change's specs merge into `openspec/specs/`, and the roadmap status becomes `archived`.
-   Archive before opening the PR, and before applying any other change.
+5. **Sync, then archive.** Run `/opsx:archive` (Codex: `$openspec-archive-change`).
+   If the change has spec deltas, choose **Sync now** when it asks, so they merge
+   into `openspec/specs/` first; never archive without syncing them. The roadmap
+   status becomes `archived`. Archive before opening the PR, and before applying
+   any other change.
 6. **Open a PR** to `master` that contains the change, its archive and the
    roadmap update. CI (`pnpm check`) must be green before merging.
    Direct pushes to `master` are blocked.
@@ -120,14 +123,40 @@ scripts/check.mjs    the single quality gate: `pnpm check`
 .github/workflows/   CI running `pnpm check`
 backend/             Spring Boot API
 api/openapi.json     committed API contract (generated, never edited by hand)
-frontend/            React + Vite SPA (@divenet/frontend)
+frontend/            React + Vite SPA (@divenet/frontend), its Dockerfile and nginx.conf
+compose.yaml         full stack: db + backend + web (nginx); config from .env (template .env.example)
 ```
 
 ## Running the app
 
-The full stack (`docker compose up`) arrives with `add-local-stack`. Until then
-you can run the back-end alone on a throwaway PostGIS container (Docker must be
-running):
+### Full stack (Docker)
+
+The whole product runs in Docker Compose: PostGIS, the back-end, and nginx
+serving the front-end build and proxying `/api`. From the repository root:
+
+```sh
+cp .env.example .env        # then change POSTGRES_PASSWORD
+docker compose up --build   # first build takes a few minutes
+```
+
+Open <http://localhost:8080> (or the `WEB_PORT` you set in `.env`). Only that
+port is published; the database and the API are reachable only through it or
+with `docker compose exec`.
+
+| What | Command |
+| --- | --- |
+| Stop, keeping the database | `docker compose down` |
+| Stop and delete the database | `docker compose down -v` |
+| Open a database shell | `docker compose exec db psql -U divenet divenet` |
+| Smoke-test the stack (what the CI `stack` job runs) | `pnpm smoke:stack` |
+
+`pnpm smoke:stack` uses its own compose project (`divenet-smoke`) on port 18080,
+and removes it afterwards, so it does not touch your stack.
+
+### Back-end alone
+
+For back-end development you can run the API alone on a throwaway PostGIS
+container (Docker must be running):
 
 ```sh
 cd backend
@@ -145,10 +174,9 @@ Useful back-end commands (from `backend/`):
 | Regenerate `api/openapi.json` after an API change | `./mvnw test -Dtest=ApiContractTest -Dopenapi.update=true` |
 | Full back-end check | `./mvnw verify` |
 
-### Front-end
+### Front-end dev server
 
-The UI is not designed yet, so the app only shows a placeholder page. With the
-back-end running as above, start the dev server from the repository root. It
+With the back-end running as above, start the dev server from the repository root. It
 proxies `/api` to `http://localhost:8080` (override with `DIVENET_API_URL`):
 
 ```sh

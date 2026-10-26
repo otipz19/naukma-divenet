@@ -26,3 +26,17 @@ jobs:
           cache: maven
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+
+  # Builds and starts compose.yaml, checks it over HTTP and tears it down (spec shared/local-stack).
+  # Needs only Node and Docker on the runner; both builds run inside Docker.
+  stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          # No dependencies to cache; the default would look for pnpm (packageManager), which this job does not install.
+          package-manager-cache: false
+      - run: node scripts/smoke-stack.mjs

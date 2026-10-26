@@ -31,7 +31,7 @@ rules:
     - Include tasks to update api/openapi.json and generated front-end types when the API changes.
     - Include adding en and uk translations for every new UI string.
     - End with running `pnpm check` and updating docs/ROADMAP.md status and docs/HANDOFF.yaml.
-    - The workflow follow-up is archive on the same branch, then open the PR; never archive after the merge.
+    - The workflow follow-up is sync the delta specs (when there are any), archive on the same branch, then open the PR; never archive after the merge.
 
 operations:
   apply:
@@ -39,8 +39,9 @@ operations:
       - Before starting, run `openspec list --json`; if another active change has completed tasks or a roadmap item is in-progress, stop and archive that change first.
       - Before starting, set the change's status in docs/ROADMAP.md to in-progress.
       - Follow the layer rules in docs/ARCHITECTURE.md; do not edit merged Flyway migrations.
-      - When every task is done and `pnpm check` passes, run the archive workflow next, before opening the PR.
+      - When every task is done and `pnpm check` passes, run the archive workflow next (syncing delta specs first when there are any), before opening the PR.
   archive:
     guidance:
       - Archive only after `pnpm check` passes; set the roadmap status to archived in the same commit.
+      - When the change has delta specs not yet in openspec/specs/, sync them first (choose Sync now) and validate; never archive without syncing them.
       - Archive on the change's branch before its PR is opened, so the PR carries the spec sync; then push and open the PR.
