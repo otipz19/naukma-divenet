@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next";
+import styles from "./Page.module.css";
 
-// Placeholder until the app shell is designed (docs/DESIGN.md, add-app-shell).
+// Placeholder until add-dive-site-catalog replaces it with the map.
 export function HomePage() {
   const { t } = useTranslation();
   return (
-    <main>
-      <h1>{t("app.name")}</h1>
-      <p>{t("home.placeholder")}</p>
-    </main>
+    <div className={styles.page}>
+      <h1 className="h1">{t("app.name")}</h1>
+      <p className="body">{t("home.placeholder")}</p>
+    </div>
   );
 }

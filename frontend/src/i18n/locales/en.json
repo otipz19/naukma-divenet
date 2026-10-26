@@ -3,10 +3,31 @@
     "name": "DiveNet"
   },
   "home": {
-    "placeholder": "The DiveNet interface is being designed."
+    "placeholder": "The dive-site map is coming soon."
   },
   "notFound": {
     "title": "Page not found",
     "backHome": "Back to the home page"
+  },
+  "shell": {
+    "skipToContent": "Skip to content",
+    "nav": {
+      "label": "Main",
+      "map": "Map"
+    },
+    "menu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "label": "Menu"
+    },
+    "language": {
+      "label": "Language"
+    },
+    "footer": {
+      "safetyLead": "Safety:",
+      "disclaimer": "Information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.",
+      "project": "DiveNet · NaUKMA course project",
+      "mapData": "Map data © OpenStreetMap contributors"
+    }
   }
 }

@@ -1,0 +1,25 @@
+/* design/system/components/bundle.css: dn-header__lang. Sits on the navy header and drawer. */
+.switch {
+  display: inline-flex;
+  border: 1px solid var(--on-brand);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.option {
+  border: 0;
+  background: transparent;
+  color: var(--on-brand);
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+}
+
+/* The pill clips an outer ring, so the ring is drawn inside the button. */
+.option:focus-visible {
+  outline-offset: -2px;
+}
+
+.option[aria-pressed="true"] {
+  background: var(--on-brand);
+  color: var(--brand);
+}

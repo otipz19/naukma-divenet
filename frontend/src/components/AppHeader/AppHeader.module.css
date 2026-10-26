@@ -1,0 +1,63 @@
+/* design/system/components/bundle.css: dn-header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  height: var(--header-height);
+  padding: 0 var(--space-6);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.header :focus-visible {
+  outline-color: var(--focus-inverse);
+}
+
+/* The mockup's 800 20px/28px matches no type style: .h3 (18/26) at weight 800 (design.md D3). */
+.logo {
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--on-brand);
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: var(--on-brand);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* 44px touch target, as in design/screens/MobileSite.html. */
+.menuButton {
+  display: none;
+  place-items: center;
+  width: calc(var(--space-6) + var(--space-3));
+  height: calc(var(--space-6) + var(--space-3));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--on-brand);
+  cursor: pointer;
+}
+
+@media (max-width: 767px) {
+  .header {
+    padding: 0 var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .nav,
+  .wide {
+    display: none;
+  }
+
+  .menuButton {
+    display: inline-grid;
+  }
+}

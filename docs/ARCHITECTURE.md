@@ -36,11 +36,13 @@ backend/                 Maven project (mvnw), Spring Boot app
   src/main/resources/seed/           demo seed data (JSON)           (planned)
   src/test/java/ua/ukma/divenet/     TestcontainersConfiguration, TestDiveNetApplication
 frontend/                Vite app, pnpm workspace member (@divenet/frontend)
-  src/app/                           App root, router, query client
+  src/app/                           App root, router, layout route, navigation entries, theme, query client
   src/api/                           typed client, ApiError, generated schema.gen.ts
+  src/components/<Name>/             shared UI: <Name>.tsx + <Name>.module.css (AppHeader, AppFooter, ...)
+  src/styles/                        global base styles and self-hosted font imports
   src/i18n/locales/{en,uk}.json
   src/features/<feature>/            feature folders mirroring backend feature packages (planned)
-  scripts/                           i18n parity and API types checks (gate steps)
+  scripts/                           gate checks: i18n parity, API types, tokens-only CSS, build output
   e2e/                               Playwright tests                (planned, M6)
 api/openapi.json         committed OpenAPI snapshot (shared contract)
 compose.yaml             db + backend + frontend                    (planned, add-local-stack)
@@ -197,7 +199,13 @@ Each change that adds tables updates this diagram.
 - Styling and visual design follow [DESIGN.md](DESIGN.md) and the files under
   `design/` (ADR-0009): CSS modules that use only the tokens from
   `design/system/tokens.css`, components as specified in `design/system/components/`,
-  and pages laid out as in `design/screens/`.
+  and pages laid out as in `design/screens/`. The gate rejects literal colours, px
+  other than 1-2px hairlines and redefined tokens in `frontend/src/**/*.css`.
+- Every route renders inside the app shell (`src/app/AppLayout.tsx`): header,
+  one `main` landmark, footer. Feature changes add routes to `routes` in
+  `src/app/router.tsx` and menu entries to `src/app/navigation.ts`.
+- The theme follows the system `prefers-color-scheme` (`data-theme` on `<html>`);
+  there is no manual toggle.
 - Every site page and the page footer show the safety disclaimer.
 
 ## Testing strategy

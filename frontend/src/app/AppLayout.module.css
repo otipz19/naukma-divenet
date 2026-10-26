@@ -1,0 +1,14 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main {
+  flex: 1;
+}
+
+/* Focus lands here from the skip link; the container itself needs no ring. */
+.main:focus {
+  outline: none;
+}

@@ -22,7 +22,10 @@ const frontend = (name, script) => ({
 // A shell is used so Windows resolves `.cmd` shims (pnpm bins, mvnw.cmd).
 const steps = [
   { name: "openspec: validate specs and changes", cmd: "openspec", args: ["validate", "--all", "--strict", "--no-interactive"] },
+  { name: "design: tokens.css matches tokens.json", cmd: "node", args: ["design/build-tokens.mjs", "--check"] },
   frontend("i18n key parity", "i18n:check"),
+  // Literal colours, px lengths other than 1-2px hairlines and redefined tokens (docs/DESIGN.md rule 1).
+  frontend("tokens-only CSS", "css:check"),
   frontend("API types match api/openapi.json", "api:types:check"),
   frontend("typecheck", "typecheck"),
   // Includes the ban on hard-coded JSX text (i18next/no-literal-string).
@@ -30,6 +33,8 @@ const steps = [
   frontend("format check", "format:check"),
   frontend("unit tests", "test"),
   frontend("production build", "build"),
+  // The build carries the design tokens and self-hosted fonts, and no third-party font host.
+  frontend("build output", "build:check"),
   // Compile, unit + integration tests, ArchUnit layer rules, OpenAPI snapshot check, Spotless check.
   { name: "backend: mvnw verify", cmd: mvnw, args: ["-B", "-ntp", "verify"], cwd: "backend" },
 ];
