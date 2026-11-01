@@ -10,5 +10,6 @@ export interface NavItem {
 // The main navigation in the header and the drawer. Feature changes add their entries here.
 export const navItems: NavItem[] = [
   { to: "/", labelKey: "shell.nav.map", end: true },
+  { to: "/feed", labelKey: "shell.nav.feed" },
   { to: "/dive-log", labelKey: "shell.nav.diveLog" },
 ];

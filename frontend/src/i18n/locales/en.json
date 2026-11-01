@@ -11,7 +11,8 @@
     "nav": {
       "label": "Main",
       "map": "Map",
-      "diveLog": "Dive log"
+      "diveLog": "Dive log",
+      "feed": "Feed"
     },
     "menu": {
       "open": "Open menu",
@@ -574,13 +575,30 @@
       "confirmYes": "Yes, delete",
       "confirmNo": "Keep it",
       "failure": "The post could not be saved. Please try again.",
-      "siteHint": "Optional. Search for an approved site."
+      "siteHint": "Optional. The post appears on the site page."
     },
     "errors": {
       "titleRequired": "Enter a title.",
       "titleTooLong": "Use at most 200 characters.",
       "textRequired": "A published post needs text.",
       "textTooLong": "Use at most 20000 characters."
+    },
+    "feed": {
+      "title": "Feed",
+      "posts": "Posts",
+      "country": "Country",
+      "allCountries": "All countries",
+      "region": "Region",
+      "allRegions": "All regions",
+      "empty": "No posts here yet.",
+      "siteFilter": "Posts about {{name}}.",
+      "siteFilterGeneric": "Posts about one site.",
+      "allPosts": "See all posts"
+    },
+    "site": {
+      "title": "Posts about this site",
+      "by": "by {{name}} · {{date}}",
+      "seeAll": "See all posts"
     }
   }
 }

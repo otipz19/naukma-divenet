@@ -5,8 +5,14 @@ import { formatReviewDate } from "../review/ReviewCard";
 import type { PostSummary } from "./api";
 import styles from "./Post.module.css";
 
-/** A published post in a list, as in design/screens/Feed.html. */
-export function PostCard({ post }: { post: PostSummary }) {
+/** A published post in a list, as in design/screens/Feed.html. A profile leaves out its own subject, the author. */
+export function PostCard({
+  post,
+  showAuthor = false,
+}: {
+  post: PostSummary;
+  showAuthor?: boolean;
+}) {
   const { t, i18n } = useTranslation();
   return (
     <article className={styles.card}>
@@ -25,6 +31,12 @@ export function PostCard({ post }: { post: PostSummary }) {
         </h3>
         <p className={`body ${styles.flush} ${styles.muted}`}>{post.excerpt}</p>
         <span className={`body-sm ${styles.muted}`}>
+          {showAuthor && (
+            <>
+              <Link to={`/users/${post.author.id}`}>{post.author.displayName}</Link>
+              {" · "}
+            </>
+          )}
           {`${formatReviewDate(post.publishedAt ?? post.updatedAt, i18n.language)} · ${t("post.readMinutes", { n: post.readMinutes })}`}
         </span>
       </div>

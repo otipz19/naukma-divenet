@@ -28,6 +28,20 @@ export function useBlog(userId: number, page: number) {
   });
 }
 
+export function useFeed(query: {
+  countryCode?: string;
+  regionCode?: string;
+  siteId?: number;
+  page: number;
+  size?: number;
+}) {
+  return useQuery({
+    queryKey: ["posts", "feed", query],
+    queryFn: async () => (await api.GET("/api/v1/posts", { params: { query } })).data,
+    placeholderData: keepPreviousData,
+  });
+}
+
 /** Enabled only for the owner: nobody else's drafts are even requested. */
 export function useDrafts(enabled: boolean) {
   return useQuery({
