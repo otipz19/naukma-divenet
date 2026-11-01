@@ -1,4 +1,4 @@
-goal: M4 (Posts and feeds) — add-posts applied, synced and archived; PR open
+goal: M4 (Posts and feeds) — add-posts merged (PR #21); add-feeds proposed on change/add-feeds, awaiting user review
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -10,10 +10,10 @@ done:
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
   - add-diver-profile (PR #18), add-dive-log (PR #19) merged and archived (specs user/profile, divelog/entries, divelog/log-page; review/site-reviews, warning/site-warnings, site/details updated)
   - add-certificates merged (PR #20) and archived (specs user/certificates, user/certificate-verification; user/profile, review/site-reviews, site/moderation updated)
-  - add-posts implemented and archived (specs post/posts, post/editor, post/pages; user/profile updated)
-wip: PR from change/add-posts (change + archive); awaiting CI and user merge
+  - add-posts merged (PR #21) and archived (specs post/posts, post/editor, post/pages; user/profile updated)
+wip: openspec/changes/add-feeds (planning only, committed, not pushed)
 blocked: null
-next: after the PR merges, /opsx:propose add-feeds, absorbing its note from add-posts
+next: after the user approves the proposal, /opsx:apply add-feeds
 decisions:
   - add-posts design.md D1-D6 (plain text with images after it; a draft answers 404 to all but its author; a site's post takes its region; published_at survives moving to drafts; PostPublished left to add-achievements)
   - add-certificates design.md D1-D6 (hidden certificates answer 403; number, photo, reason and rejected ones owner/admin only; editing returns a certificate to pending; moderation page has tabs)
@@ -33,7 +33,7 @@ checks:
   gate: pnpm check
   last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate; browser journey on the stack (WEB_PORT=18080): draft with cover and image, publish with site, anonymous blog, move to drafts, delete
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
-  ci: PRs #1-#20 green on ubuntu-latest
+  ci: PRs #1-#21 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI
