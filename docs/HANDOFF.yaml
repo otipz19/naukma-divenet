@@ -1,4 +1,4 @@
-goal: M3 (Divers) — add-dive-log applied, synced and archived; PR open
+goal: M3 (Divers) — add-dive-log merged (PR #19); add-certificates proposed on change/add-certificates, awaiting user review
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -10,10 +10,10 @@ done:
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
   - add-diver-profile merged (PR #18) and archived (spec user/profile; review/site-reviews, warning/site-warnings updated)
-  - add-dive-log implemented and archived (specs divelog/entries, divelog/log-page; user/profile, site/details updated)
-wip: PR from change/add-dive-log (change + archive); awaiting CI and user merge
+  - add-dive-log merged (PR #19) and archived (specs divelog/entries, divelog/log-page; user/profile, site/details updated)
+wip: openspec/changes/add-certificates (planning only, committed, not pushed)
 blocked: null
-next: after the PR merges, /opsx:propose add-certificates (absorbing docs/plan-updates/add-certificates/)
+next: after the user approves the proposal, /opsx:apply add-certificates
 decisions:
   - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-diver-profile design.md D1-D5 + notes (privacy flags stored, enforced by add-dive-log and add-certificates through notes; profile fields on users; avatar URL derived from the id)
@@ -33,7 +33,7 @@ checks:
   gate: pnpm check
   last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (309 Vitest; mvnw verify 27 unit, 249 integration); browser journey on the stack (WEB_PORT=18080): site page to log, search, edit, delete, hidden history as anonymous
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
-  ci: PRs #1-#18 green on ubuntu-latest
+  ci: PRs #1-#19 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI
