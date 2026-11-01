@@ -1,4 +1,4 @@
-goal: M2 (Reviews, media, safety) — add-media-uploads applied, synced and archived; PR #14 open
+goal: M2 (Reviews, media, safety); workflow fix plan-update notes (ADR-0010) on fix/plan-update-notes
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -10,11 +10,12 @@ done:
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
   - add-reference-data (PR #10), add-dive-site-catalog (PR #11) merged and archived (specs geo, site/catalog, site/map, site/details, site/gear-catalog)
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
-  - add-media-uploads implemented and archived (specs media/uploads, media/photo-field; shared/local-stack updated); migration renumbered V8 after merging master
-wip: PR #14 from change/add-media-uploads (change + archive, master merged in); awaiting CI and user merge
+  - add-media-uploads merged (PR #14) and archived (specs media/uploads, media/photo-field)
+wip: fix/plan-update-notes PR open (plan-update notes + gate step); awaiting CI and user merge
 blocked: null
-next: after PR #14 merges, /opsx:propose add-site-reviews (M2; uses MediaService.attach/release and PhotoField)
+next: after the plan-update-notes PR merges, /opsx:propose add-site-reviews (M2; absorb docs/plan-updates/add-site-reviews/ if any; uses MediaService.attach/release and PhotoField)
 decisions:
+  - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
   - add-media-uploads design.md D1-D8; test setup gives jsdom Node's File/FormData (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
   - add-site-submission-and-moderation design.md D1-D6 + notes (unapproved sites answer 404 except to author and admins; @ParameterObject on paged endpoints)
   - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
@@ -30,8 +31,8 @@ decisions:
 refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-media-uploads/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows after merging master (189 Vitest; mvnw verify 27 unit, 137 integration); before the merge: smoke:stack incl. 10 MiB upload + restart, PhotoField browser check (en/uk, light/dark, desktop/phone)
-  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend
+  last: pass 2026-11-01 on Windows on fix/plan-update-notes (54 script tests incl. 17 plan-update; mvnw verify 27 unit, 137 integration)
+  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
   ci: PRs #1-#12 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0

@@ -10,6 +10,8 @@ context: |
   - docs/PRODUCT.md: scope, domain decisions, user-story backlog (US-xx IDs).
   - docs/ARCHITECTURE.md and docs/adr/: project-wide rules every change must follow.
   - docs/ROADMAP.md: the change ID, its stories, dependencies and status.
+  - docs/plan-updates/<change-id>/: open notes from other changes that change this item's plan
+    (format and lifecycle: docs/plan-updates/README.md, ADR-0010).
   Stack: Java 25, Spring Boot 4.1, Maven wrapper (backend/), PostgreSQL + PostGIS,
   Flyway, plain layered monolith with ArchUnit layer rules; React + Vite + TypeScript, pnpm (frontend/); UI strings
   in en and uk via react-i18next. Quality gate: `pnpm check` from the repository root.
@@ -21,6 +23,8 @@ rules:
     - Use the change ID from docs/ROADMAP.md when one exists; otherwise add the item to the roadmap in the same change.
     - Cite the user-story IDs (US-xx) the change covers and state what is out of scope or deferred.
     - Name any departure from docs/ARCHITECTURE.md and the ADR that will record it.
+    - Absorb every open note in docs/plan-updates/<change-id>/ and list each note file under a "## Plan updates absorbed" heading (or "None"); a declined note is listed with its reason.
+    - When this change alters another roadmap item's plan, write a note in docs/plan-updates/<target>/<change-id>--<slug>.md; never edit another item's roadmap row, PRODUCT.md stories or change folder.
   design:
     - Record only decisions local to this change; project-wide rules belong in docs/ARCHITECTURE.md or a new ADR.
     - List new or changed REST endpoints, Flyway migrations and i18n namespaces.
@@ -30,6 +34,7 @@ rules:
     - Each implementation task names the tests it adds (unit, integration or front-end).
     - Include tasks to update api/openapi.json and generated front-end types when the API changes.
     - Include adding en and uk translations for every new UI string.
+    - When the proposal absorbs plan-update notes, include a task that applies the roadmap and PRODUCT.md edits they ask for and deletes the note files.
     - End with running `pnpm check` and updating docs/ROADMAP.md status and docs/HANDOFF.yaml.
     - The workflow follow-up is sync the delta specs (when there are any), archive on the same branch, then open the PR; never archive after the merge.
 
@@ -39,9 +44,11 @@ operations:
       - Before starting, run `openspec list --json`; if another active change has completed tasks or a roadmap item is in-progress, stop and archive that change first.
       - Before starting, set the change's status in docs/ROADMAP.md to in-progress.
       - Follow the layer rules in docs/ARCHITECTURE.md; do not edit merged Flyway migrations.
+      - When the work shows that another roadmap item must change, write a plan-update note for it (docs/plan-updates/README.md) and commit it with this change; if this change's own plan must change, use /opsx:update.
       - When every task is done and `pnpm check` passes, run the archive workflow next (syncing delta specs first when there are any), before opening the PR.
   archive:
     guidance:
       - Archive only after `pnpm check` passes; set the roadmap status to archived in the same commit.
+      - After merging master, check docs/plan-updates/<change-id>/; absorb any open note with /opsx:update and implement it, or retarget it, before archiving. The gate fails on an open note for an archived item.
       - When the change has delta specs not yet in openspec/specs/, sync them first (choose Sync now) and validate; never archive without syncing them.
       - Archive on the change's branch before its PR is opened, so the PR carries the spec sync; then push and open the PR.

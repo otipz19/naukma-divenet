@@ -7,11 +7,12 @@ ID is the folder name under `openspec/changes/`. Story IDs refer to
 
 ## How to use this file
 
-1. **Pick:** take the first item with status `planned` whose dependencies are all `archived`.
-   Items in the same milestone with no dependency between them may run in parallel.
+1. **Pick:** take the first item with status `planned` whose dependencies are all `archived`,
+   counting `depends-on` notes in its [plan-updates](plan-updates/README.md) folder as
+   dependencies. Items in the same milestone with no dependency between them may run in parallel.
 2. **Propose:** run `/opsx:propose <change-id>` (Codex: `$openspec-propose`), then
-   set the item's status to `proposed`. The proposal cites the story IDs and
-   lists anything it defers.
+   set the item's status to `proposed`. The proposal cites the story IDs, lists
+   anything it defers, and absorbs the open notes in `docs/plan-updates/<change-id>/`.
 3. **Apply:** run `/opsx:apply`, then set the status to `in-progress`. Only one item
    may be `in-progress` at a time: archive it before applying another.
 4. **Sync and archive:** as soon as apply finishes and `pnpm check` passes, run
@@ -19,10 +20,12 @@ ID is the folder name under `openspec/changes/`. Story IDs refer to
    `openspec/specs/` first (the archive's "Sync now"). Set the status to `archived`
    in that commit. Then open
    the PR, so the change, its code and its archive merge together.
-5. **Scope changes:** to split, add or reorder items, edit this file in its own small
-   PR, or in the PR of the change that discovered the need, and say so in that
-   change's proposal. Never silently drop a story; move it to *Stretch* or *Out
-   of scope* in PRODUCT.md instead.
+5. **Scope changes:** a change edits only its own row. When it finds that another item
+   must deliver more, less or differently, depend on something, be split or be dropped,
+   it writes a [plan-update note](plan-updates/README.md) for that item instead, and
+   the item applies the row edit when it absorbs the note. A new item gets a note and a
+   new row from the change that found it, or from a small roadmap-only PR. Never
+   silently drop a story; move it to *Stretch* or *Out of scope* in PRODUCT.md instead.
 
 Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (with reason).
 
