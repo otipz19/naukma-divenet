@@ -5,6 +5,8 @@ import { useSearchParams } from "react-router";
 import { api } from "../../api/client";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
+import { useAchievements } from "../achievement/api";
+import { UnlockedBanner } from "../achievement/UnlockedBanner";
 import { useSession } from "../auth/useSession";
 import { formatDiveNumber, useDiveLog, useDiveStats, type DiveEntry } from "./api";
 import { DiveForm } from "./DiveForm";
@@ -29,6 +31,18 @@ export function DiveLogPage() {
   const log = useDiveLog(userId);
   const stats = useDiveStats(userId);
   const [editing, setEditing] = useState<DiveEntry | null>(null);
+  const achievements = useAchievements(userId);
+  const [unlocked, setUnlocked] = useState<string[]>([]);
+  // What is earned now but was not before the save (add-achievements design D5).
+  const announceUnlocked = async () => {
+    const before = achievements.data;
+    const { data: after } = await achievements.refetch();
+    if (!before || !after) return setUnlocked([]);
+    const earned = new Set(before.filter((item) => item.earnedAt).map((item) => item.code));
+    setUnlocked(
+      after.filter((item) => item.earnedAt && !earned.has(item.code)).map((item) => item.code),
+    );
+  };
   // A new key starts the form over. The site from the URL applies only until the first save.
   const [formKey, setFormKey] = useState(0);
   const entries = log.data?.pages.flatMap((page) => page.content) ?? [];
@@ -70,6 +84,7 @@ export function DiveLogPage() {
               entries={entries}
               onEdit={(entry) => {
                 setEditing(entry);
+                setUnlocked([]);
                 setFormKey((key) => key + 1);
               }}
             />
@@ -89,7 +104,9 @@ export function DiveLogPage() {
             key={`${formKey}-${picked?.id ?? ""}`}
             entry={editing}
             site={picked}
+            banner={<UnlockedBanner codes={unlocked} />}
             onDone={() => {
+              void announceUnlocked();
               setEditing(null);
               setFormKey((key) => key + 1);
             }}

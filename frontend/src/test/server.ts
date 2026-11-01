@@ -43,6 +43,7 @@ export const server = setupServer(
   http.get("*/api/v1/users/:id/visited-sites", () => HttpResponse.json([])),
   http.get("*/api/v1/users/:id/dive-stats", () => HttpResponse.json({ dives: 0, sites: 0 })),
   http.get("*/api/v1/users/:id/certificates", () => HttpResponse.json([])),
+  http.get("*/api/v1/users/:id/achievements", () => HttpResponse.json([])),
   http.get("*/api/v1/posts", () =>
     HttpResponse.json({
       content: [],

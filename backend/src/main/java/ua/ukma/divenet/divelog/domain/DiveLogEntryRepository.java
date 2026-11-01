@@ -28,6 +28,8 @@ public interface DiveLogEntryRepository extends JpaRepository<DiveLogEntry, Long
 
         long getSites();
 
+        long getCountries();
+
         @Nullable
         BigDecimal getDeepest();
     }
@@ -45,7 +47,8 @@ public interface DiveLogEntryRepository extends JpaRepository<DiveLogEntry, Long
     List<VisitedSite> visitedSites(long userId);
 
     @Query("""
-            select count(e) as dives, count(distinct e.site.id) as sites, max(e.maxDepth) as deepest
+            select count(e) as dives, count(distinct e.site.id) as sites,
+                   count(distinct e.site.region.country.code) as countries, max(e.maxDepth) as deepest
             from DiveLogEntry e where e.user.id = :userId
             """)
     Stats stats(long userId);

@@ -53,5 +53,10 @@ export function useDrafts(enabled: boolean) {
 
 export function useInvalidatePosts() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: ["posts"] });
+  return () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["posts"] }),
+      // Publishing can earn an achievement.
+      queryClient.invalidateQueries({ queryKey: ["achievements"] }),
+    ]);
 }

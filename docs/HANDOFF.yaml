@@ -1,26 +1,26 @@
-goal: M4 (Posts and feeds) complete — add-feeds applied, synced and archived; PR open
+goal: M5 (Gamification) complete — add-achievements applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
   - UI design (Claude Design) merged (PR #4): design/system, design/screens, docs/DESIGN.md, ADR-0009
   - add-app-shell merged (PR #5) and archived (PR #6); specs shared/app-shell, shared/design-tokens
   - add-local-stack + retry-stack-image-pulls merged (PR #8) and archived (spec shared/local-stack)
-  - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
-  - add-reference-data (PR #10), add-dive-site-catalog (PR #11), add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (M1: specs geo, site/*)
+  - add-authentication (PR #9) and M1 (PRs #10-#13) merged and archived (specs auth, geo, site/*)
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
   - add-diver-profile (PR #18), add-dive-log (PR #19) merged and archived (specs user/profile, divelog/entries, divelog/log-page; review/site-reviews, warning/site-warnings, site/details updated)
   - add-certificates merged (PR #20) and archived (specs user/certificates, user/certificate-verification; user/profile, review/site-reviews, site/moderation updated)
-  - add-posts (PR #21) merged and archived (specs post/posts, post/editor, post/pages; user/profile updated); add-feeds implemented and archived (spec post/feed; site/details, post/editor updated)
-wip: PR from change/add-feeds (change + archive); awaiting CI and user merge
+  - M4 done: add-posts (PR #21), add-feeds (PR #22) merged and archived (specs post/*; user/profile, site/details updated)
+  - add-achievements implemented and archived (spec achievement/achievements; user/profile, divelog/log-page updated)
+wip: PR from change/add-achievements (change + archive); awaiting CI and user merge
 blocked: null
-next: after the PR merges, /opsx:propose add-achievements (M5), absorbing its notes from add-dive-log and add-posts
+next: after the PR merges, pick the first M6 item in docs/ROADMAP.md and /opsx:propose it
 decisions:
+  - add-achievements design.md D1-D6 (rules read live data; awards permanent; after-commit listener in the request thread; progress follows showStatistics; banner compares before and after)
   - add-feeds design.md D1-D6 (one list endpoint with optional filters; fixed newest-first order; unknown filter values give an empty page; filters and page in the URL)
   - add-posts design.md D1-D6 (plain text with images after it; a draft answers 404 to all but its author; a site's post takes its region; published_at survives moving to drafts; PostPublished left to add-achievements)
   - add-certificates design.md D1-D6 (hidden certificates answer 403; number, photo, reason and rejected ones owner/admin only; editing returns a certificate to pending; moderation page has tabs)
   - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-diver-profile design.md D1-D5 + notes (privacy flags stored, enforced by add-dive-log and add-certificates through notes; profile fields on users; avatar URL derived from the id)
-  - add-site-warnings design.md D1-D7 + impl: WarningType stays in warning.domain while WarningView/WarningRequest/WarningResponse use String with @Schema(allowableValues=...) so web never imports domain (ArchUnit) and OpenAPI keeps the 4-value union
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
   - add-media-uploads design.md D1-D8; test setup gives jsdom Node's File/FormData (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
@@ -28,12 +28,12 @@ decisions:
   - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-02-add-feeds/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-02-add-achievements/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-02 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate; browser journey on the stack (WEB_PORT=18080): feed signed out and in, paging, country and region filters, reload, site section to the filtered feed
+  last: pass 2026-11-02 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate; browser journey on the stack (WEB_PORT=18080): first dive banner, profile cards, admin approval earns first-site, anonymous profile with statistics hidden
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
-  ci: PRs #1-#21 green on ubuntu-latest
+  ci: PRs #1-#22 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI

@@ -600,5 +600,48 @@
       "by": "by {{name}} · {{date}}",
       "seeAll": "See all posts"
     }
+  },
+  "achievement": {
+    "title": "Achievements",
+    "earnedCount": "{{earned}} of {{total}} earned",
+    "earnedOn": "Earned {{date}}",
+    "progress": "{{progress}} / {{target}}",
+    "progressLabel": "Progress towards {{name}}",
+    "unlocked": "Achievement unlocked: {{name}}",
+    "loadError": "The achievements could not be loaded. Please try again later.",
+    "items": {
+      "first-dive": {
+        "name": "First dive",
+        "description": "Log your first dive"
+      },
+      "ten-dives": {
+        "name": "Ten dives",
+        "description": "Log 10 dives"
+      },
+      "ten-sites": {
+        "name": "Site collector",
+        "description": "Dive at 10 different sites"
+      },
+      "globetrotter": {
+        "name": "Globetrotter",
+        "description": "Dive in 5 countries"
+      },
+      "deep-diver": {
+        "name": "Deep diver",
+        "description": "Log a dive to 40 m or deeper"
+      },
+      "first-post": {
+        "name": "First post",
+        "description": "Publish your first post"
+      },
+      "five-posts": {
+        "name": "Storyteller",
+        "description": "Have 5 published posts"
+      },
+      "first-site": {
+        "name": "Site scout",
+        "description": "Get a submitted site approved"
+      }
+    }
   }
 }

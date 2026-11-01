@@ -8,6 +8,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,13 +32,19 @@ public class DiveLogService {
     private final SiteCatalogService catalog;
     private final UserRepository users;
     private final Clock clock;
+    private final ApplicationEventPublisher events;
 
     public DiveLogService(
-            DiveLogEntryRepository entries, SiteCatalogService catalog, UserRepository users, Clock clock) {
+            DiveLogEntryRepository entries,
+            SiteCatalogService catalog,
+            UserRepository users,
+            Clock clock,
+            ApplicationEventPublisher events) {
         this.entries = entries;
         this.catalog = catalog;
         this.users = users;
         this.clock = clock;
+        this.events = events;
     }
 
     public record EntryContent(
@@ -69,6 +76,13 @@ public class DiveLogService {
     public record StatsView(
             long dives, long sites, @Nullable BigDecimal deepest) {}
 
+    /** A user's activity for the achievement rules, whatever their privacy settings. */
+    public record ActivityView(
+            long dives,
+            long sites,
+            long countries,
+            @Nullable BigDecimal deepest) {}
+
     private static ErrorResponseException problem(HttpStatus status, String detail) {
         return new ErrorResponseException(status, ProblemDetail.forStatusAndDetail(status, detail), null);
     }
@@ -83,13 +97,16 @@ public class DiveLogService {
     @Transactional
     public EntryView create(long userId, EntryContent content) {
         DiveLogEntry entry = new DiveLogEntry(users.getReferenceById(userId), details(content), now());
-        return view(entries.save(entry), true);
+        EntryView view = view(entries.save(entry), true);
+        events.publishEvent(new DiveLogged(userId));
+        return view;
     }
 
     @Transactional
     public EntryView update(long id, long userId, EntryContent content) {
         DiveLogEntry entry = owned(id, userId);
         entry.update(details(content), now());
+        events.publishEvent(new DiveLogged(userId));
         return view(entry, true);
     }
 
@@ -121,6 +138,12 @@ public class DiveLogService {
         }
         DiveLogEntryRepository.Stats stats = entries.stats(ownerId);
         return new StatsView(stats.getDives(), stats.getSites(), stats.getDeepest());
+    }
+
+    @Transactional(readOnly = true)
+    public ActivityView activity(long userId) {
+        DiveLogEntryRepository.Stats stats = entries.stats(userId);
+        return new ActivityView(stats.getDives(), stats.getSites(), stats.getCountries(), stats.getDeepest());
     }
 
     /** Answers whether the viewer is the owner, who alone may see buddies and notes. */

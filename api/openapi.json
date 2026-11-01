@@ -1,6 +1,27 @@
 {
   "components" : {
     "schemas" : {
+      "AchievementResponse" : {
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "earnedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "progress" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "target" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "code", "target" ],
+        "type" : "object"
+      },
       "AuthResponse" : {
         "properties" : {
           "accessToken" : {
@@ -2618,6 +2639,36 @@
           }
         },
         "tags" : [ "profile-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/achievements" : {
+      "get" : {
+        "operationId" : "list_3",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/AchievementResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "achievement-controller" ]
       }
     },
     "/api/v1/users/{id}/certificates" : {

@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SiteRepository extends JpaRepository<Site, Long>, JpaSpecificationExecutor<Site> {
 
+    long countByAuthor_IdAndStatus(long authorId, SiteStatus status);
+
     List<Site> findByAuthor_IdOrderByCreatedAtDescIdDesc(long authorId);
 
     /** The moderation queue, oldest first. */
