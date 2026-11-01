@@ -59,7 +59,9 @@ All feature work goes through OpenSpec, in the order set by `docs/ROADMAP.md`:
 1. Read `docs/HANDOFF.yaml`, then pick the next roadmap item as described in
    [docs/ROADMAP.md](docs/ROADMAP.md#how-to-use-this-file).
 2. Propose: `/opsx:propose <change-id>` in Claude Code or Gemini, `$openspec-propose`
-   in Codex. Then stop and wait for the user to review the proposal.
+   in Codex, on the branch `change/<change-id>`. Commit the planning artifacts, the
+   plan-update notes it wrote, the roadmap status and the handoff in one commit
+   (do not push), then stop and wait for the user to review the proposal.
 3. Apply: `/opsx:apply` or `$openspec-apply-change`. Implement the tasks in order,
    ticking each one off in `tasks.md` as you go.
 4. Sync: if the change has delta specs that `openspec/specs/` does not reflect yet,
@@ -75,6 +77,8 @@ Workflow rules:
 
 - **Plan with propose.** All code is planned with `/opsx:propose` and reviewed by
   the user before it is written. No code change starts without a proposal.
+- **Commit after propose.** A finished proposal is committed on its change branch
+  before the user reviews it, so review changes show as a diff on top of it.
 - **Implement with apply.** All code is written inside `/opsx:apply` for an
   approved change, never outside it.
 - **Sync before archive, whenever it is needed.** A change with delta specs is

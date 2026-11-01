@@ -341,5 +341,50 @@
         "failed": "The review could not be saved. Please try again."
       }
     }
+  },
+  "warning": {
+    "title": "Recent warnings",
+    "report": "Report a warning",
+    "empty": "No warnings have been reported for this site.",
+    "loadError": "The warnings could not be loaded. Please try again later.",
+    "showAll": "Show all warnings ({{n}})",
+    "loadMore": "Load more warnings",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this warning?",
+    "confirmDeleteYes": "Yes, delete",
+    "deleteFailed": "The warning could not be deleted. Please try again.",
+    "hide": "Hide",
+    "hideConfirm": "Hide this warning?",
+    "confirmHideYes": "Yes, hide",
+    "hideFailed": "The warning could not be hidden. Please try again.",
+    "cancel": "Cancel",
+    "types": {
+      "HAZARD": "Hazard",
+      "INCIDENT": "Incident",
+      "CHANGED_CONDITIONS": "Changed conditions",
+      "MARINE_LIFE": "Marine life"
+    },
+    "form": {
+      "titleNew": "Report a warning",
+      "titleEdit": "Edit warning",
+      "back": "Back to {{name}}",
+      "intro": "{{name}} · {{place}}. Warn other divers about hazards, incidents or changed conditions.",
+      "type": "Warning type",
+      "typePlaceholder": "Choose a type…",
+      "text": "Warning details",
+      "textHint": "Describe what other divers need to watch out for. Up to 1000 characters.",
+      "cancel": "Cancel",
+      "post": "Post warning",
+      "save": "Save warning",
+      "saving": "Saving…",
+      "notFound": "This warning was not found.",
+      "errors": {
+        "typeRequired": "Choose a warning type.",
+        "textRequired": "Write the warning details.",
+        "textTooLong": "Use at most 1000 characters.",
+        "failed": "The warning could not be saved. Please try again."
+      }
+    }
   }
 }

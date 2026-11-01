@@ -124,9 +124,10 @@ Rules:
 
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
-`media` (`add-media-uploads`), and `reviews` and `review_media` (`add-site-reviews`) exist; the
-other tables are **(planned)**. A site's rating aggregates are columns of `sites`, kept by the
-`review` feature in the same transaction as every review write.
+`media` (`add-media-uploads`), `reviews` and `review_media` (`add-site-reviews`), and
+`warnings` (`add-site-warnings`) exist; the other tables are **(planned)**. A site's rating
+aggregates are columns of `sites`, kept by the `review` feature in the same transaction as
+every review write.
 
 ```mermaid
 erDiagram
@@ -143,6 +144,7 @@ erDiagram
   users ||--o{ reviews : writes
   reviews ||--o{ review_media : has
   sites ||--o{ warnings : has
+  users ||--o{ warnings : posts
   users ||--o{ dive_log_entries : logs
   sites ||--o{ dive_log_entries : "dived at"
   users ||--o{ user_achievements : earns

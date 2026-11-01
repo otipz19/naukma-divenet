@@ -2,6 +2,7 @@ import { createBrowserRouter, type RouteObject } from "react-router";
 import { authRoutes } from "../features/auth/routes";
 import { reviewRoutes } from "../features/review/routes";
 import { siteRoutes } from "../features/site/routes";
+import { warningRoutes } from "../features/warning/routes";
 import { AppLayout } from "./AppLayout";
 import { NotFoundPage } from "./routes/NotFoundPage";
 
@@ -13,6 +14,7 @@ export const routes: RouteObject[] = [
     children: [
       ...siteRoutes,
       ...reviewRoutes,
+      ...warningRoutes,
       ...authRoutes,
       { path: "*", element: <NotFoundPage /> },
     ],

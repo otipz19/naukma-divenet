@@ -14,21 +14,24 @@ export function Alert({
   tone,
   title,
   live = false,
+  actions,
   children,
 }: {
   tone: AlertTone;
   title?: string;
   live?: boolean;
+  actions?: ReactNode;
   children: ReactNode;
 }) {
   const Icon = ICONS[tone];
   return (
     <div className={`body-sm ${styles.alert} ${styles[tone]}`} role={live ? "alert" : undefined}>
       <Icon size={20} aria-hidden="true" />
-      <span className={styles.body}>
+      <div className={styles.body}>
         {title && <strong className={styles.title}>{title}</strong>}
         {children}
-      </span>
+        {actions}
+      </div>
     </div>
   );
 }

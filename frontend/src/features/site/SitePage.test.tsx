@@ -246,3 +246,35 @@ describe("site/details: The site page offers to write or edit a review", () => {
     expect(screen.queryByRole("link", { name: "Write a review" })).not.toBeInTheDocument();
   });
 });
+
+describe("warning/site-warnings: Section placement and unapproved site", () => {
+  it("places Recent warnings before About this site on an approved site", async () => {
+    siteReturns();
+    renderRoute("/sites/7");
+
+    const warningsHeading = await screen.findByRole("heading", { name: "Recent warnings" });
+    const aboutHeading = screen.getByRole("heading", { name: "About this site" });
+    expect(
+      warningsHeading.compareDocumentPosition(aboutHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("shows no warnings section and sends no warnings request on a pending site", async () => {
+    const warningRequests: string[] = [];
+    siteReturns(blueHole({ status: "PENDING" }));
+    server.use(
+      http.get(`${window.location.origin}/api/v1/sites/7/warnings`, ({ request }) => {
+        warningRequests.push(request.url);
+        return HttpResponse.json({
+          content: [],
+          page: { size: 10, number: 0, totalElements: 0, totalPages: 0 },
+        });
+      }),
+    );
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { level: 1, name: "Blue Hole" });
+    expect(screen.queryByRole("heading", { name: "Recent warnings" })).not.toBeInTheDocument();
+    expect(warningRequests).toHaveLength(0);
+  });
+});
