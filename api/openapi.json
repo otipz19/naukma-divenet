@@ -80,6 +80,96 @@
         "required" : [ "code", "name", "regions" ],
         "type" : "object"
       },
+      "EntryRequest" : {
+        "properties" : {
+          "buddies" : {
+            "maxLength" : 200,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "current" : {
+            "enum" : [ "NONE", "MILD", "MODERATE", "STRONG" ],
+            "pattern" : "NONE|MILD|MODERATE|STRONG",
+            "type" : "string"
+          },
+          "date" : {
+            "format" : "date",
+            "type" : "string"
+          },
+          "maxDepth" : {
+            "maximum" : 400,
+            "minimum" : 0,
+            "type" : "number"
+          },
+          "notes" : {
+            "maxLength" : 2000,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "siteId" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "visibility" : {
+            "maximum" : 200,
+            "minimum" : 0,
+            "type" : "number"
+          },
+          "waterTemperature" : {
+            "maximum" : 40,
+            "minimum" : -5,
+            "type" : "number"
+          }
+        },
+        "required" : [ "date", "siteId" ],
+        "type" : "object"
+      },
+      "EntryResponse" : {
+        "properties" : {
+          "buddies" : {
+            "type" : "string"
+          },
+          "countryCode" : {
+            "type" : "string"
+          },
+          "current" : {
+            "enum" : [ "NONE", "MILD", "MODERATE", "STRONG" ],
+            "type" : "string"
+          },
+          "date" : {
+            "format" : "date",
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "maxDepth" : {
+            "type" : "number"
+          },
+          "notes" : {
+            "type" : "string"
+          },
+          "regionCode" : {
+            "type" : "string"
+          },
+          "siteId" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "siteName" : {
+            "type" : "string"
+          },
+          "visibility" : {
+            "type" : "number"
+          },
+          "waterTemperature" : {
+            "type" : "number"
+          }
+        },
+        "required" : [ "countryCode", "date", "id", "regionCode", "siteId", "siteName" ],
+        "type" : "object"
+      },
       "GearItemResponse" : {
         "properties" : {
           "code" : {
@@ -173,6 +263,21 @@
           }
         },
         "required" : [ "number", "size", "totalElements", "totalPages" ],
+        "type" : "object"
+      },
+      "PagedModelEntryResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/EntryResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "$ref" : "#/components/schemas/PageMetadata"
+          }
+        },
+        "required" : [ "content", "page" ],
         "type" : "object"
       },
       "PagedModelQueueItemResponse" : {
@@ -547,6 +652,23 @@
         "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "ratingCount", "recommendedGear", "regionCode", "requiredGear", "reviewCount", "status" ],
         "type" : "object"
       },
+      "StatsResponse" : {
+        "properties" : {
+          "deepest" : {
+            "type" : "number"
+          },
+          "dives" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "sites" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "dives", "sites" ],
+        "type" : "object"
+      },
       "SubmissionRequest" : {
         "properties" : {
           "description" : {
@@ -627,6 +749,29 @@
           }
         },
         "required" : [ "displayName", "email", "id", "role" ],
+        "type" : "object"
+      },
+      "VisitedSiteResponse" : {
+        "properties" : {
+          "countryCode" : {
+            "type" : "string"
+          },
+          "dives" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "regionCode" : {
+            "type" : "string"
+          },
+          "siteId" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "countryCode", "dives", "name", "regionCode", "siteId" ],
         "type" : "object"
       },
       "WarningAuthorResponse" : {
@@ -993,6 +1138,98 @@
           }
         },
         "tags" : [ "country-controller" ]
+      }
+    },
+    "/api/v1/dive-log" : {
+      "post" : {
+        "operationId" : "create_2",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EntryRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntryResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "dive-log-controller" ]
+      }
+    },
+    "/api/v1/dive-log/{id}" : {
+      "delete" : {
+        "operationId" : "delete_2",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "dive-log-controller" ]
+      },
+      "put" : {
+        "operationId" : "update_3",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EntryRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "dive-log-controller" ]
       }
     },
     "/api/v1/gear-items" : {
@@ -1591,6 +1828,121 @@
           }
         },
         "tags" : [ "profile-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/dive-log" : {
+      "get" : {
+        "operationId" : "log",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        }, {
+          "description" : "Zero-based page index (0..N)",
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "The size of the page to be returned",
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedModelEntryResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "dive-log-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/dive-stats" : {
+      "get" : {
+        "operationId" : "stats",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/StatsResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "dive-log-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/visited-sites" : {
+      "get" : {
+        "operationId" : "visitedSites",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/VisitedSiteResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "dive-log-controller" ]
       }
     },
     "/api/v1/warnings/{id}" : {

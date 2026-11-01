@@ -34,6 +34,14 @@ export const server = setupServer(
       page: { size: 10, number: 0, totalElements: 0, totalPages: 0 },
     }),
   ),
+  http.get("*/api/v1/users/:id/dive-log", () =>
+    HttpResponse.json({
+      content: [],
+      page: { number: 0, size: 20, totalElements: 0, totalPages: 0 },
+    }),
+  ),
+  http.get("*/api/v1/users/:id/visited-sites", () => HttpResponse.json([])),
+  http.get("*/api/v1/users/:id/dive-stats", () => HttpResponse.json({ dives: 0, sites: 0 })),
   http.get("*/api/v1/countries", () => HttpResponse.json([])),
   http.get("*/api/v1/gear-items", () => HttpResponse.json([])),
 );

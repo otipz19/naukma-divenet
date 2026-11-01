@@ -1,0 +1,180 @@
+/* design/screens/DiveLog.html */
+.page {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.flush {
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  align-items: flex-start;
+}
+
+.logColumn {
+  display: grid;
+  flex: 999 1 30rem;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.tableBox {
+  overflow-x: auto;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.table th {
+  background: var(--surface-2);
+}
+
+.table tbody tr {
+  border-top: 1px solid var(--border);
+}
+
+.actionCell.actionCell {
+  text-align: right;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.form {
+  display: grid;
+  flex: 1 1 20rem;
+  gap: var(--space-4);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.picker,
+.picked {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.pickedRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.results {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.result {
+  display: grid;
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.result:hover {
+  background: var(--surface-2);
+}
+
+/* Profile sections */
+.section {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.statsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin: 0;
+}
+
+.statsList dd {
+  margin: 0;
+}
+
+.visited {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-3);
+}
+
+.visitedCard {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.visitedCard:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-5) var(--space-4);
+  }
+}

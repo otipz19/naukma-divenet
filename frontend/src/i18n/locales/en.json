@@ -10,7 +10,8 @@
     "skipToContent": "Skip to content",
     "nav": {
       "label": "Main",
-      "map": "Map"
+      "map": "Map",
+      "diveLog": "Dive log"
     },
     "menu": {
       "open": "Open menu",
@@ -187,7 +188,8 @@
       "community": "Community",
       "communityNone": "—",
       "writeReview": "Write a review",
-      "editReview": "Edit your review"
+      "editReview": "Edit your review",
+      "logDive": "Log a dive here"
     },
     "search": {
       "label": "Search sites",
@@ -408,6 +410,76 @@
       "save": "Save",
       "cancel": "Cancel",
       "failure": "Your profile could not be saved. Please try again."
+    }
+  },
+  "divelog": {
+    "title": "Dive log",
+    "stats": "Dives: {{dives}} · Sites: {{sites}} · Deepest: {{deepest}}",
+    "empty": "You have not logged a dive yet.",
+    "loadError": "The dive log could not be loaded. Please try again later.",
+    "loadMore": "Load more",
+    "units": {
+      "m": "m",
+      "celsius": "°C"
+    },
+    "currents": {
+      "NONE": "None",
+      "MILD": "Mild",
+      "MODERATE": "Moderate",
+      "STRONG": "Strong"
+    },
+    "table": {
+      "label": "Logged dives",
+      "date": "Date",
+      "site": "Site",
+      "maxDepth": "Max depth",
+      "water": "Water",
+      "visibility": "Visibility",
+      "actions": "Actions",
+      "edit": "Edit",
+      "editEntry": "Edit dive at {{site}}"
+    },
+    "form": {
+      "title": "Log a dive",
+      "editTitle": "Edit dive",
+      "site": "Site",
+      "siteHint": "Search the catalog, or open a site from the map and use its Log a dive here link.",
+      "changeSite": "Change",
+      "noSites": "No sites found.",
+      "date": "Date",
+      "maxDepth": "Max depth (m)",
+      "visibility": "Visibility (m)",
+      "waterTemperature": "Water temp (°C)",
+      "current": "Current",
+      "currentUnset": "Not set",
+      "buddies": "Buddies",
+      "notes": "Notes",
+      "save": "Save dive",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "confirmDelete": "Delete this dive?",
+      "confirmYes": "Yes, delete",
+      "confirmNo": "Keep it",
+      "failure": "The dive could not be saved. Please try again.",
+      "errors": {
+        "siteRequired": "Choose a site.",
+        "dateRequired": "Enter the date.",
+        "maxDepth": "Use a number from 0 to 400, with one decimal at most.",
+        "visibility": "Use a number from 0 to 200, with one decimal at most.",
+        "waterTemperature": "Use a number from -5 to 40, with one decimal at most.",
+        "buddies": "Use at most 200 characters.",
+        "notes": "Use at most 2000 characters."
+      }
+    },
+    "profile": {
+      "dives": "DIVES",
+      "sites": "SITES",
+      "deepest": "DEEPEST",
+      "hidden": "Dive history is hidden by this diver's privacy settings.",
+      "none": "No dives logged yet.",
+      "visited": "Visited sites",
+      "history": "Dive history",
+      "diveCount": "Dives: {{n}}"
     }
   }
 }

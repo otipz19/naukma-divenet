@@ -1,4 +1,4 @@
-goal: M3 (Divers) — add-diver-profile merged (PR #18); add-dive-log proposed on change/add-dive-log, awaiting user review
+goal: M3 (Divers) — add-dive-log applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -10,10 +10,12 @@ done:
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
   - add-diver-profile merged (PR #18) and archived (spec user/profile; review/site-reviews, warning/site-warnings updated)
-wip: openspec/changes/add-dive-log (planning only, committed, not pushed)
+  - add-dive-log implemented and archived (specs divelog/entries, divelog/log-page; user/profile, site/details updated)
+wip: PR from change/add-dive-log (change + archive); awaiting CI and user merge
 blocked: null
-next: after the user approves the proposal, /opsx:apply add-dive-log
+next: after the PR merges, /opsx:propose add-certificates (absorbing docs/plan-updates/add-certificates/)
 decisions:
+  - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-diver-profile design.md D1-D5 + notes (privacy flags stored, enforced by add-dive-log and add-certificates through notes; profile fields on users; avatar URL derived from the id)
   - add-site-warnings design.md D1-D7 + impl: WarningType stays in warning.domain while WarningView/WarningRequest/WarningResponse use String with @Schema(allowableValues=...) so web never imports domain (ArchUnit) and OpenAPI keeps the 4-value union
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
@@ -23,15 +25,14 @@ decisions:
   - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
   - add-dive-site-catalog design.md D1-D6; add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
-  - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
-  - No AI code review, no required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
+  - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-diver-profile/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-dive-log/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (286 Vitest; mvnw verify 27 unit, 227 integration); browser journey on the stack (WEB_PORT=18080): upload, save, reload, replace avatar, review link
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (309 Vitest; mvnw verify 27 unit, 249 integration); browser journey on the stack (WEB_PORT=18080): site page to log, search, edit, delete, hidden history as anonymous
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
   ci: PRs #1-#18 green on ubuntu-latest
   not_covered: E2E (M6)

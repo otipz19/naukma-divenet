@@ -73,7 +73,7 @@ would show the previous day west of Greenwich. The form's default is the browser
 
 ### D5: Approved sites only
 
-`SiteCatalogService` gains `requireApproved(id)`, which `DiveLogService` calls and maps to a `siteId` field error. An author's own pending site cannot be
+`SiteCatalogService` gains `findApproved(id)`, returning an `Optional`, which `DiveLogService` maps to a `siteId` field error. An author's own pending site cannot be
 logged: a site in the log appears on public pages, and that would reveal it before approval.
 
 ### D6: Front-end
@@ -104,3 +104,10 @@ No new namespace. New key groups: `divelog.*`, plus `shell.nav.diveLog` and `sit
 ## Migration Plan
 
 Forward-only migration adding one table.
+
+## Implementation notes
+
+- The statistics line reads "Dives: 1 · Sites: 1", not the mockup's "47 dives", to avoid plural forms: "1 dives" was found in the browser check, and Ukrainian needs several plurals.
+- Numbers go through `Intl.NumberFormat`, so Ukrainian shows "30,4". The form's inputs still take a decimal point.
+- Edit scrolls the form into view, because it sits below the table on a phone.
+- A diver's log has no success message: the cleared form and the new row show the result.

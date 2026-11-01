@@ -164,6 +164,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dive-log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["create_2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dive-log/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_3"];
+        post?: never;
+        delete: operations["delete_2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/gear-items": {
         parameters: {
             query?: never;
@@ -356,6 +388,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/{id}/dive-log": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["log"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/dive-stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["stats"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}/visited-sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["visitedSites"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/warnings/{id}": {
         parameters: {
             query?: never;
@@ -408,6 +488,37 @@ export interface components {
             name: string;
             regions: components["schemas"]["RegionResponse"][];
         };
+        EntryRequest: {
+            buddies?: string;
+            /** @enum {string} */
+            current?: "NONE" | "MILD" | "MODERATE" | "STRONG";
+            /** Format: date */
+            date: string;
+            maxDepth?: number;
+            notes?: string;
+            /** Format: int64 */
+            siteId: number;
+            visibility?: number;
+            waterTemperature?: number;
+        };
+        EntryResponse: {
+            buddies?: string;
+            countryCode: string;
+            /** @enum {string} */
+            current?: "NONE" | "MILD" | "MODERATE" | "STRONG";
+            /** Format: date */
+            date: string;
+            /** Format: int64 */
+            id: number;
+            maxDepth?: number;
+            notes?: string;
+            regionCode: string;
+            /** Format: int64 */
+            siteId: number;
+            siteName: string;
+            visibility?: number;
+            waterTemperature?: number;
+        };
         GearItemResponse: {
             code: string;
             name: string;
@@ -444,6 +555,10 @@ export interface components {
             totalElements: number;
             /** Format: int64 */
             totalPages: number;
+        };
+        PagedModelEntryResponse: {
+            content: components["schemas"]["EntryResponse"][];
+            page: components["schemas"]["PageMetadata"];
         };
         PagedModelQueueItemResponse: {
             content: components["schemas"]["QueueItemResponse"][];
@@ -576,6 +691,13 @@ export interface components {
             /** @enum {string} */
             status: "PENDING" | "APPROVED" | "REJECTED";
         };
+        StatsResponse: {
+            deepest?: number;
+            /** Format: int64 */
+            dives: number;
+            /** Format: int64 */
+            sites: number;
+        };
         SubmissionRequest: {
             description: string;
             /** Format: int32 */
@@ -600,6 +722,15 @@ export interface components {
             id: number;
             /** @enum {string} */
             role: "USER" | "ADMIN";
+        };
+        VisitedSiteResponse: {
+            countryCode: string;
+            /** Format: int64 */
+            dives: number;
+            name: string;
+            regionCode: string;
+            /** Format: int64 */
+            siteId: number;
         };
         WarningAuthorResponse: {
             displayName: string;
@@ -856,6 +987,76 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["CountryResponse"][];
                 };
+            };
+        };
+    };
+    create_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntryRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EntryResponse"];
+                };
+            };
+        };
+    };
+    update_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EntryRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["EntryResponse"];
+                };
+            };
+        };
+    };
+    delete_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1221,6 +1422,79 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ProfileResponse"];
+                };
+            };
+        };
+    };
+    log: {
+        parameters: {
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelEntryResponse"];
+                };
+            };
+        };
+    };
+    stats: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["StatsResponse"];
+                };
+            };
+        };
+    };
+    visitedSites: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["VisitedSiteResponse"][];
                 };
             };
         };
