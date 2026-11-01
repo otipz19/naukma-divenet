@@ -109,6 +109,10 @@ Rules:
 - Reference data (countries, regions, gear, achievement definitions) goes into migrations.
   Demo content (sites, users, posts, media) is loaded by a seeder that runs
   only under the `demo` profile.
+- Reference data has a stable string `code` as its primary key and an English `name`.
+  The UI shows the translation from the locale files, keyed by code (for example
+  `geo.regions.eg-dahab`), so Ukrainian stays out of the database. `ReferenceDataLocaleIT`
+  checks that seeded codes and locale keys match.
 - Viewport and radius queries use native SQL (`ST_MakeEnvelope`, `ST_DWithin`)
   where HQL spatial functions are awkward.
 - Name search uses `ILIKE` backed by a `pg_trgm` GIN index. There is no external search engine.
@@ -116,8 +120,8 @@ Rules:
 
 ### Data model overview
 
-`users` and `refresh_tokens` exist (`add-authentication`); the other tables are
-**(planned)**.
+`users` and `refresh_tokens` (`add-authentication`), and `countries`, `regions` and
+`gear_items` (`add-reference-data`) exist; the other tables are **(planned)**.
 
 ```mermaid
 erDiagram
