@@ -1,0 +1,59 @@
+/* design/screens/Moderation.html */
+.page {
+  display: grid;
+  gap: var(--space-5);
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.flush {
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  align-items: flex-start;
+  padding: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.facts {
+  display: grid;
+  flex: 1 1 22rem;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.place {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.actions {
+  display: grid;
+  flex: 1 1 16rem;
+  gap: var(--space-2);
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-5) var(--space-4);
+  }
+}

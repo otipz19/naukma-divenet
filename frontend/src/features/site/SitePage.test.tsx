@@ -2,6 +2,7 @@ import { screen, within } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import type { components } from "../../api/schema.gen";
+import { startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import { formatCoordinates } from "./SitePage";
@@ -21,6 +22,7 @@ const blueHole = (overrides: Partial<components["schemas"]["SiteResponse"]> = {}
   description: "A famous sinkhole.",
   requiredGear: ["torch"],
   recommendedGear: ["nitrox"],
+  status: "APPROVED" as const,
   ...overrides,
 });
 
@@ -115,4 +117,48 @@ describe("site/details: The site page handles a missing site and a failed load",
       "This site could not be loaded.",
     );
   }, 10000);
+});
+
+describe("site/details: The site page shows an unapproved site's status", () => {
+  it("shows the pending notice", async () => {
+    siteReturns(blueHole({ status: "PENDING" }));
+    renderRoute("/sites/7");
+
+    expect(await screen.findByText(/waiting for an admin/)).toBeInTheDocument();
+  });
+
+  it("shows the rejected notice with the reason", async () => {
+    siteReturns(blueHole({ status: "REJECTED", rejectionReason: "Duplicate of Canyon" }));
+    renderRoute("/sites/7");
+
+    expect(await screen.findByText("Rejected by an admin")).toBeInTheDocument();
+    expect(screen.getByText("Duplicate of Canyon")).toBeInTheDocument();
+  });
+
+  it("shows no notice for an approved site", async () => {
+    siteReturns();
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { level: 1, name: "Blue Hole" });
+    expect(screen.queryByText(/waiting for an admin/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Rejected by an admin")).not.toBeInTheDocument();
+  });
+});
+
+describe("site/details: The site page waits for the session", () => {
+  it("sends the token when the author reloads", async () => {
+    startSignedIn();
+    const tokens: (string | null)[] = [];
+    server.use(
+      http.get(siteUrl, ({ request }) => {
+        const token = request.headers.get("Authorization");
+        tokens.push(token);
+        return token ? HttpResponse.json(blueHole({ status: "PENDING" })) : problem(404);
+      }),
+    );
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Blue Hole" })).toBeInTheDocument();
+    expect(tokens).toEqual(["Bearer token-1"]);
+  });
 });

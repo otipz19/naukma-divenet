@@ -2,12 +2,12 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MapContainer, Popup, TileLayer } from "react-leaflet";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import "leaflet/dist/leaflet.css";
 import { api } from "../../api/client";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
-import { Button } from "../../components/Button/Button";
+import { Button, buttonClassName } from "../../components/Button/Button";
 import { SiteCard } from "../../components/SiteCard/SiteCard";
 import { TextField } from "../../components/TextField/TextField";
 import { SearchFilters } from "./SearchFilters";
@@ -76,6 +76,9 @@ export function MapPage() {
       <div className={styles.layout}>
         <div className={styles.side}>
           <section className={styles.controls} aria-label={t("site.search.panel")}>
+            <Link className={buttonClassName({ variant: "secondary" })} to="/sites/new">
+              {t("site.submit.link")}
+            </Link>
             <TextField
               type="search"
               label={t("site.search.label")}

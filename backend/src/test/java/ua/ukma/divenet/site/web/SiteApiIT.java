@@ -76,8 +76,8 @@ class SiteApiIT {
 
     private void insert(int difficulty, int minDepth, int maxDepth) {
         jdbc.update("""
-                INSERT INTO sites (name, region_code, location, difficulty, min_depth, max_depth, description, created_at)
-                VALUES ('Test', 'eg-dahab', ST_SetSRID(ST_MakePoint(34, 28), 4326)::geography, ?, ?, ?, 'x', now())
+                INSERT INTO sites (name, region_code, location, difficulty, min_depth, max_depth, description, created_at, status)
+                VALUES ('Test', 'eg-dahab', ST_SetSRID(ST_MakePoint(34, 28), 4326)::geography, ?, ?, ?, 'x', now(), 'APPROVED')
                 """, difficulty, minDepth, maxDepth);
     }
 

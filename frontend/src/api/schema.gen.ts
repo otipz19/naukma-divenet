@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/api/v1/admin/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["queue"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/sites/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/sites/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/login": {
         parameters: {
             query?: never;
@@ -116,6 +164,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites/markers": {
         parameters: {
             query?: never;
@@ -124,6 +188,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["markers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["mine"];
         put?: never;
         post?: never;
         delete?: never;
@@ -176,6 +256,32 @@ export interface components {
             email: string;
             password: string;
         };
+        OwnSubmissionResponse: {
+            /** Format: int64 */
+            id: number;
+            name: string;
+            rejectionReason?: string;
+            /** @enum {string} */
+            status: "PENDING" | "APPROVED" | "REJECTED";
+        };
+        PageMetadata: {
+            /** Format: int64 */
+            number: number;
+            /** Format: int64 */
+            size: number;
+            /** Format: int64 */
+            totalElements: number;
+            /** Format: int64 */
+            totalPages: number;
+        };
+        PagedModelQueueItemResponse: {
+            content: components["schemas"]["QueueItemResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
+        QueueItemResponse: {
+            authorName: string;
+            site: components["schemas"]["SiteResponse"];
+        };
         RegionResponse: {
             code: string;
             name: string;
@@ -185,6 +291,9 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+        };
+        RejectRequest: {
+            reason: string;
         };
         SiteMarkerResponse: {
             countryCode: string;
@@ -221,7 +330,27 @@ export interface components {
             name: string;
             recommendedGear: string[];
             regionCode: string;
+            rejectionReason?: string;
             requiredGear: string[];
+            /** @enum {string} */
+            status: "PENDING" | "APPROVED" | "REJECTED";
+        };
+        SubmissionRequest: {
+            description: string;
+            /** Format: int32 */
+            difficulty: number;
+            /** Format: double */
+            lat: number;
+            /** Format: double */
+            lng: number;
+            /** Format: int32 */
+            maxDepth: number;
+            /** Format: int32 */
+            minDepth: number;
+            name: string;
+            recommendedGear?: string[];
+            regionCode: string;
+            requiredGear?: string[];
         };
         UserResponse: {
             displayName: string;
@@ -240,6 +369,81 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    queue: {
+        parameters: {
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelQueueItemResponse"];
+                };
+            };
+        };
+    };
+    approve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SiteResponse"];
+                };
+            };
+        };
+    };
+    reject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SiteResponse"];
+                };
+            };
+        };
+    };
     login: {
         parameters: {
             query?: never;
@@ -390,6 +594,30 @@ export interface operations {
             };
         };
     };
+    submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SubmissionRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SiteResponse"];
+                };
+            };
+        };
+    };
     markers: {
         parameters: {
             query?: {
@@ -416,6 +644,26 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["SiteMarkerResponse"][];
+                };
+            };
+        };
+    };
+    mine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["OwnSubmissionResponse"][];
                 };
             };
         };

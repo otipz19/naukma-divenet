@@ -163,7 +163,7 @@ Each change that adds tables updates this diagram.
   Data's `PagedModel`: controllers take a `Pageable` and return `new PagedModel<>(page)`.
 - Map markers come from `GET /api/v1/sites/markers`, which is also the site search: `q`,
   `difficulty`, `gear`, `country`, `region`, `minDepth` and `maxDepth` are optional and combine.
-  It returns all matching sites as a lightweight list, without pagination; clustering
+  It returns all matching approved sites as a lightweight list, without pagination; clustering
   and the result list happen on the client.
 - The server matches English names only. To search in another language, the client looks up
   the text in the active locale's place names and sends matching codes as `qRegion` and `qCountry`.
@@ -195,6 +195,9 @@ Each change that adds tables updates this diagram.
   (with an optional `ADMIN_DISPLAY_NAME`), when both are set and no account with that
   email exists.
 - GET requests for public content are anonymous. Admin endpoints live under `/api/v1/admin/**`.
+- A site is public only once approved. Until then its page answers 404 except to its author and
+  admins, so the answer does not reveal that it exists. Coordinates are validated at the API,
+  because PostGIS coerces out-of-range `geography` values instead of refusing them.
 - Secrets (JWT key `JWT_SECRET`, DB password) come from environment variables. Only
   `.env.example` is committed. The app refuses a `JWT_SECRET` shorter than 32 bytes.
 

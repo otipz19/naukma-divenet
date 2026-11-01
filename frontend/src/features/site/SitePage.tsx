@@ -7,6 +7,7 @@ import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Badge } from "../../components/Badge/Badge";
 import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
+import { useSession } from "../auth/useSession";
 import styles from "./SitePage.module.css";
 
 type Site = components["schemas"]["SiteResponse"];
@@ -28,10 +29,13 @@ export function SitePage() {
   const { t } = useTranslation();
   const { id } = useParams();
   const validId = /^\d+$/.test(id ?? "");
+  const session = useSession();
+  const viewerId = session.status === "signedIn" ? session.user.id : undefined;
   const site = useQuery({
-    queryKey: ["sites", id],
+    queryKey: ["sites", id, viewerId],
     queryFn: () => fetchSite(Number(id)),
-    enabled: validId,
+    // Wait for the session, so an author reloading an unapproved site sends the token (design D5).
+    enabled: validId && session.status !== "loading",
   });
 
   if (!validId || (site.error instanceof ApiError && site.error.status === 404)) {
@@ -64,6 +68,12 @@ function SiteDetails({ site }: { site: Site }) {
         <Link to="/">{t("site.details.map")}</Link>
         {` / ${country} / ${region} / ${site.name}`}
       </nav>
+      {site.status === "PENDING" && <Alert tone="caution">{t("site.details.pendingNotice")}</Alert>}
+      {site.status === "REJECTED" && (
+        <Alert tone="danger" title={t("site.details.rejectedNotice")}>
+          {site.rejectionReason}
+        </Alert>
+      )}
       <div className={styles.columns}>
         <div className={styles.content}>
           <div>

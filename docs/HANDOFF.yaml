@@ -1,4 +1,4 @@
-goal: M1 (Sites and map) — add-site-search-and-filters applied, synced and archived; PR open
+goal: M1 (Sites and map) complete — add-site-submission-and-moderation applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -10,17 +10,17 @@ done:
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
   - add-reference-data merged (PR #10) and archived (specs geo, site/gear-catalog)
   - add-dive-site-catalog merged (PR #11) and archived (specs site/catalog, site/map, site/details; shared/web-app, shared/local-stack updated)
-  - add-site-search-and-filters implemented and archived (spec site/search; site/catalog updated)
-wip: PR from change/add-site-search-and-filters (change + archive); awaiting CI and user merge
+  - add-site-search-and-filters merged (PR #12) and archived (spec site/search; site/catalog updated)
+  - add-site-submission-and-moderation implemented and archived (specs site/submission, site/moderation; site/catalog, site/details updated)
+wip: PR from change/add-site-submission-and-moderation (change + archive); awaiting CI and user merge
 blocked: null
-next: after the add-site-search-and-filters PR merges, /opsx:propose add-site-submission-and-moderation
+next: after the PR merges, /opsx:propose add-media-uploads (M2)
 decisions:
+  - add-site-submission-and-moderation design.md D1-D6 + notes (unapproved sites answer 404 except to author and admins; @ParameterObject on paged endpoints)
   - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
-  - add-dive-site-catalog design.md D1-D6; add-site-submission-and-moderation must validate lat/lng (PostGIS geography coerces out-of-range values)
+  - add-dive-site-catalog design.md D1-D6
   - add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
-  - retry-stack-image-pulls design.md D1-D4 + notes: smoke test pre-pulls 6 images (incl. # syntax= frontend), 3 attempts each; CI stack had failed on a Docker Hub 502
-  - add-local-stack design.md D1-D9 + implementation notes; test approach (user, 2026-10-26): gate step validates compose config; smoke script runs the stack in a separate CI job `stack`
   - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
@@ -28,12 +28,12 @@ decisions:
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-site-search-and-filters/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-site-submission-and-moderation/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (144 Vitest tests; mvnw verify 9 unit, 79 integration); one earlier gate run had 3 integration errors with the compose stack up, cause not captured, did not recur; browser check of search and filters on the stack (WEB_PORT=18080)
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (172 Vitest tests; mvnw verify 9 unit, 104 integration); browser journey on the stack (WEB_PORT=18080), submit, reject, approve, public map
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET
-  ci: PRs #1-#11 green on ubuntu-latest
+  ci: PRs #1-#12 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI
