@@ -1,5 +1,6 @@
 package ua.ukma.divenet.post.service;
 
+import jakarta.persistence.criteria.Predicate;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -12,7 +13,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Service;
@@ -71,6 +75,11 @@ public class PostService {
             String status,
             @Nullable UUID coverId,
             @Nullable List<UUID> photoIds,
+            @Nullable String regionCode,
+            @Nullable Long siteId) {}
+
+    public record FeedFilter(
+            @Nullable String countryCode,
             @Nullable String regionCode,
             @Nullable Long siteId) {}
 
@@ -182,6 +191,33 @@ public class PostService {
     public Page<PostSummaryView> drafts(long authorId, Pageable pageable) {
         return summaries(
                 posts.findByAuthor_IdAndStatusOrderByUpdatedAtDescIdDesc(authorId, Post.Status.DRAFT, pageable));
+    }
+
+    /** Spec post/feed: a fixed order, so an index always serves it. Only supplied filters add a predicate. */
+    @Transactional(readOnly = true)
+    public Page<PostSummaryView> feed(FeedFilter filter, Pageable pageable) {
+        Pageable newestFirst = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by(Sort.Order.desc("publishedAt"), Sort.Order.desc("id")));
+        return summaries(posts.findAll(matching(filter), newestFirst));
+    }
+
+    private static Specification<Post> matching(FeedFilter filter) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("status"), Post.Status.PUBLISHED));
+            if (filter.countryCode() != null) {
+                predicates.add(cb.equal(root.get("region").get("country").get("code"), filter.countryCode()));
+            }
+            if (filter.regionCode() != null) {
+                predicates.add(cb.equal(root.get("region").get("code"), filter.regionCode()));
+            }
+            if (filter.siteId() != null) {
+                predicates.add(cb.equal(root.get("site").get("id"), filter.siteId()));
+            }
+            return cb.and(predicates.toArray(Predicate[]::new));
+        };
     }
 
     /** One line of the text, cut at a word. */

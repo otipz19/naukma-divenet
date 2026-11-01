@@ -1,10 +1,12 @@
 import type { RouteObject } from "react-router";
 import { RequireAuth } from "../auth/RequireAuth";
+import { FeedPage } from "./FeedPage";
 import { PostEditorPage } from "./PostEditorPage";
 import { PostPage } from "./PostPage";
 
 /** The post pages; src/app/router.tsx adds them to the layout route. */
 export const postRoutes: RouteObject[] = [
+  { path: "feed", element: <FeedPage /> },
   {
     path: "posts/new",
     element: (

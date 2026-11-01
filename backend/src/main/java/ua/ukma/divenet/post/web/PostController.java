@@ -22,17 +22,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ua.ukma.divenet.media.service.MediaView;
 import ua.ukma.divenet.post.service.PostService;
 import ua.ukma.divenet.post.service.PostService.AuthorView;
 import ua.ukma.divenet.post.service.PostService.Content;
+import ua.ukma.divenet.post.service.PostService.FeedFilter;
 import ua.ukma.divenet.post.service.PostService.PostSummaryView;
 import ua.ukma.divenet.post.service.PostService.PostView;
 import ua.ukma.divenet.post.service.PostService.SiteLinkView;
 
-/** Spec post/posts. */
+/** Specs post/posts and post/feed. */
 @RestController
 @RequestMapping("/api/v1")
 class PostController {
@@ -48,6 +50,16 @@ class PostController {
     @SecurityRequirement(name = "bearerAuth")
     PostResponse create(@Valid @RequestBody PostRequest request, @AuthenticationPrincipal Jwt jwt) {
         return PostResponse.of(posts.create(userId(jwt), request.toContent()));
+    }
+
+    @GetMapping("/posts")
+    PagedModel<PostSummaryResponse> feed(
+            @RequestParam(required = false) @Nullable String countryCode,
+            @RequestParam(required = false) @Nullable String regionCode,
+            @RequestParam(required = false) @Nullable Long siteId,
+            @ParameterObject Pageable pageable) {
+        return new PagedModel<>(posts.feed(new FeedFilter(countryCode, regionCode, siteId), pageable)
+                .map(PostSummaryResponse::of));
     }
 
     @GetMapping("/posts/drafts")

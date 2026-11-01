@@ -10,6 +10,7 @@ import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
 import { buttonClassName } from "../../components/Button/Button";
 import { Rating } from "../../components/Rating/Rating";
 import { useMyReview } from "../review/api";
+import { SitePosts } from "../post/SitePosts";
 import { SiteReviews } from "../review/SiteReviews";
 import { SiteWarnings } from "../warning/SiteWarnings";
 import { useSession } from "../auth/useSession";
@@ -138,6 +139,7 @@ function SiteDetails({ site }: { site: Site }) {
             <GearList title={t("site.details.recommendedGear")} codes={site.recommendedGear} />
           </div>
           <Alert tone="info">{t("shell.footer.disclaimer")}</Alert>
+          {site.status === "APPROVED" && <SitePosts siteId={site.id} />}
         </aside>
       </div>
     </>

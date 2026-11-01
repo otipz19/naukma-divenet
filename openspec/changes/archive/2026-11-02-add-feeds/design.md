@@ -34,7 +34,7 @@ The filters compose as a `Specification<Post>`, as in `SiteSearch`, so Postgres 
 
 Choosing a region with no country keeps the country unset: the region alone is enough to filter.
 
-`keepPreviousData` keeps the list in place while the next page loads.
+`keepPreviousData` keeps the list in place while the next page loads. Choosing another page scrolls to the top, because Next sits below the list.
 
 ### D5. Naming the filtered site
 

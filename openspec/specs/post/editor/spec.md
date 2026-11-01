@@ -86,3 +86,12 @@ The editor of a saved post SHALL offer Delete post, which asks for confirmation.
 
 - **WHEN** the author chooses Delete post and declines
 - **THEN** no request is sent and the form is kept
+
+### Requirement: The editor explains the site link
+
+The site field SHALL carry a translated hint saying that the link is optional and that the post appears on the site page.
+
+#### Scenario: Site hint
+
+- **WHEN** the user opens the editor
+- **THEN** the site field shows the hint in the active language

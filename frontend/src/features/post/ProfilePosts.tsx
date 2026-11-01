@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Alert } from "../../components/Alert/Alert";
-import { Badge } from "../../components/Badge/Badge";
-import { Button, buttonClassName } from "../../components/Button/Button";
+import { buttonClassName } from "../../components/Button/Button";
 import { useBlog, useDrafts } from "./api";
+import { DraftList } from "./DraftList";
 import { PostCard } from "./PostCard";
+import { PostPager } from "./PostPager";
 import styles from "./Post.module.css";
 
 /** The author's blog on a profile, and for the owner their drafts (spec user/profile). */
@@ -36,50 +37,14 @@ export function ProfilePosts({ userId, own }: { userId: number; own: boolean }) 
           </Link>
         )}
       </div>
-      {draftItems.length > 0 && (
-        <div className={styles.drafts}>
-          <h3 className={`h3 ${styles.flush}`}>{t("post.profile.drafts")}</h3>
-          <div className={styles.draftList}>
-            {draftItems.map((draft) => (
-              <Link key={draft.id} className={styles.draft} to={`/posts/${draft.id}/edit`}>
-                <span className="label">{draft.title}</span>
-                <span>
-                  <Badge tone="info">{t("post.draft")}</Badge>
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
+      <DraftList drafts={draftItems} />
       {own && blog.isSuccess && posts.length === 0 && (
         <span className={`body ${styles.muted}`}>{t("post.profile.none")}</span>
       )}
       {posts.map((post) => (
         <PostCard key={post.id} post={post} />
       ))}
-      {totalPages > 1 && (
-        <nav className={styles.pager} aria-label={t("post.profile.pagination")}>
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={page === 0}
-            onClick={() => setPage(page - 1)}
-          >
-            {t("post.profile.previous")}
-          </Button>
-          <span className={`body-sm ${styles.muted}`}>
-            {t("post.profile.page", { page: page + 1, total: totalPages })}
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            disabled={page + 1 >= totalPages}
-            onClick={() => setPage(page + 1)}
-          >
-            {t("post.profile.next")}
-          </Button>
-        </nav>
-      )}
+      <PostPager page={page} totalPages={totalPages} onChange={setPage} />
     </section>
   );
 }

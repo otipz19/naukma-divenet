@@ -315,7 +315,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["feed"];
         put?: never;
         post: operations["create_2"];
         delete?: never;
@@ -1528,6 +1528,36 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["MediaResponse"];
+                };
+            };
+        };
+    };
+    feed: {
+        parameters: {
+            query?: {
+                countryCode?: string | null;
+                regionCode?: string | null;
+                siteId?: number | null;
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelPostSummaryResponse"];
                 };
             };
         };

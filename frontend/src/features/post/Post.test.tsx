@@ -291,7 +291,7 @@ describe("post/editor: The editor links a region and a site", () => {
     const user = userEvent.setup();
 
     await screen.findByRole("option", { name: "Dahab" });
-    expect(screen.getByText("Optional. Search for an approved site.")).toBeInTheDocument();
+    expect(screen.getByText("Optional. The post appears on the site page.")).toBeInTheDocument();
     await user.type(screen.getByLabelText("Site"), "Blue");
     await user.click(await screen.findByRole("button", { name: /Blue Hole/ }));
 
