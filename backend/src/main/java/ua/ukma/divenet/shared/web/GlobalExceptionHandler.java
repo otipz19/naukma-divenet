@@ -18,11 +18,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
  * Turns every exception into an RFC 9457 problem detail. Spring's standard exceptions (404, 405,
- * 415, unreadable body) are handled by the superclass.
+ * 413, 415, unreadable body) are handled by the superclass.
  */
 @RestControllerAdvice
 class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -37,6 +38,15 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .map(e -> new FieldViolation(e.getField(), e.getDefaultMessage()))
                 .toList();
         body.setProperty("errors", errors);
+        return handleExceptionInternal(ex, body, headers, status, request);
+    }
+
+    /** A required multipart part is missing; {@code errors} names it like a missing field. */
+    @Override
+    protected @Nullable ResponseEntity<Object> handleMissingServletRequestPart(
+            MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ProblemDetail body = ex.getBody();
+        body.setProperty("errors", List.of(new FieldViolation(ex.getRequestPartName(), "This part is required.")));
         return handleExceptionInternal(ex, body, headers, status, request);
     }
 

@@ -52,6 +52,9 @@ class SecurityConfig {
                         .authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/**")
                         .permitAll()
+                        // Uploaded files and thumbnails (spec media/uploads).
+                        .requestMatchers(HttpMethod.GET, "/media/**")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .oauth2ResourceServer(

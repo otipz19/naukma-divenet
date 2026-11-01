@@ -23,13 +23,14 @@ flowchart LR
 | `frontend/` | React 19, Vite, TypeScript, pnpm | SPA. In production, nginx serves the static build and proxies `/api` and `/media` to the backend. |
 | `backend/` | Java 25, Spring Boot 4.1, Maven (wrapper) | A single deployable REST API built as a modular monolith. |
 | `db` | PostgreSQL 17 + PostGIS 3 (`postgis/postgis` image) | The only datastore. There is no separate cache or search engine. |
-| media | A local directory, mounted as a Docker volume | Accessed only through the `MediaStorage` interface (ADR-0006). |
+| media | A local directory (`MEDIA_DIR`), mounted as a Docker volume | Accessed only through the `MediaStorage` interface (ADR-0006). |
 
 `compose.yaml` at the repository root runs the full stack: `db`, `backend` and
 `web` (nginx with the SPA build). Only `web` publishes a port (`WEB_PORT`); the
 database and the back-end are reachable only inside the compose network.
-Configuration comes from `.env` (template: `.env.example`), and the database
-keeps its data in a named volume. The stack runs the `demo` profile unless
+Configuration comes from `.env` (template: `.env.example`). The database keeps its
+data in the named volume `db-data`, and the back-end keeps uploaded media in
+`media-data`, mounted at `/data/media` (`MEDIA_DIR`), so both survive a restart. The stack runs the `demo` profile unless
 `SPRING_PROFILES_ACTIVE` says otherwise.
 
 ## Repository layout
@@ -122,8 +123,8 @@ Rules:
 ### Data model overview
 
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
-`gear_items` (`add-reference-data`), and `sites` and `site_gear` (`add-dive-site-catalog`)
-exist; the other tables are **(planned)**.
+`gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
+and `media` (`add-media-uploads`) exist; the other tables are **(planned)**.
 
 ```mermaid
 erDiagram
@@ -134,6 +135,7 @@ erDiagram
   sites ||--o{ site_gear : lists
   gear_items ||--o{ site_gear : "required or recommended"
   users ||--o{ sites : submits
+  users ||--o{ media : uploads
   sites ||--o{ site_media : has
   sites ||--o{ reviews : receives
   users ||--o{ reviews : writes
@@ -147,6 +149,8 @@ erDiagram
   posts }o--o| regions : "about"
   posts ||--o{ post_media : has
   media ||--o{ site_media : ""
+  media ||--o{ review_media : ""
+  media ||--o{ post_media : ""
 ```
 
 Each change that adds tables updates this diagram.
@@ -157,7 +161,8 @@ Each change that adds tables updates this diagram.
   `/api/v1/sites/{id}/reviews`.
 - Errors use RFC 9457 `ProblemDetail` (`application/problem+json`). Validation
   errors list field errors in an `errors` property. Status codes: 400 validation,
-  401 unauthenticated, 403 forbidden, 404 not found, 409 conflict.
+  401 unauthenticated, 403 forbidden, 404 not found, 409 conflict, 413 upload too
+  large, 415 unsupported upload type.
 - Pagination uses `?page=0&size=20` (max 100). The response is
   `{ content, page: { number, size, totalElements, totalPages } }`, from Spring
   Data's `PagedModel`: controllers take a `Pageable` and return `new PagedModel<>(page)`.
@@ -209,6 +214,10 @@ Each change that adds tables updates this diagram.
   database keeps the metadata. A resized thumbnail is generated on upload.
 - Files are served from `GET /media/{id}` and `/media/{id}/thumb`. Unreferenced
   uploads older than 24 h are deleted by a scheduled job.
+- A feature that takes photos keeps their ids in its own join table (`review_media`,
+  ...) and calls `MediaService.attach` when it saves its content and `release` when it
+  removes a photo or deletes the content. Both join the caller's transaction. An upload
+  that was never attached is what the cleanup deletes.
 
 ## Front-end (ADR-0005)
 

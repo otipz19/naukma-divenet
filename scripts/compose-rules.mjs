@@ -7,6 +7,8 @@ import { join } from "node:path";
 export const SERVICES = ["db", "backend", "web"];
 export const PUBLIC_SERVICE = "web";
 export const DB_DATA_DIR = "/var/lib/postgresql/data";
+// Where the back-end keeps uploaded media (MEDIA_DIR); it must survive a restart.
+export const MEDIA_DIR = "/data/media";
 // Each service must wait for these to be healthy (start order: db -> backend -> web).
 const REQUIRED_DEPENDENCIES = { backend: "db", web: "backend" };
 
@@ -133,13 +135,18 @@ function hasHealthcheck(healthcheck) {
   return !(Array.isArray(test) && test[0] === "NONE");
 }
 
-/** @param {any} volume @param {Record<string, unknown>} named */
-function isNamedDataVolume(volume, named) {
-  if (typeof volume === "string") {
-    const [source, target] = volume.split(":");
-    return target === DB_DATA_DIR && source in named;
-  }
-  return volume.type === "volume" && volume.target === DB_DATA_DIR && volume.source in named;
+/**
+ * True when one of the service's volumes mounts a named volume at `dir`.
+ * @param {any} service @param {Record<string, unknown>} named @param {string} dir
+ */
+function hasNamedVolumeAt(service, named, dir) {
+  return (service.volumes ?? []).some((/** @type {any} */ volume) => {
+    if (typeof volume === "string") {
+      const [source, target] = volume.split(":");
+      return target === dir && source in named;
+    }
+    return volume.type === "volume" && volume.target === dir && volume.source in named;
+  });
 }
 
 /**
@@ -192,8 +199,17 @@ export function findComposeProblems(config, dockerfiles = {}) {
   }
 
   const db = services.db;
-  if (db && !(db.volumes ?? []).some((/** @type {any} */ v) => isNamedDataVolume(v, config.volumes ?? {}))) {
+  if (db && !hasNamedVolumeAt(db, config.volumes ?? {}, DB_DATA_DIR)) {
     problems.push(`db: ${DB_DATA_DIR} is not on a named volume`);
+  }
+  const backend = services.backend;
+  if (backend) {
+    const mediaDir = backend.environment?.MEDIA_DIR;
+    if (mediaDir !== MEDIA_DIR) {
+      problems.push(`backend: MEDIA_DIR must be ${MEDIA_DIR}, got ${mediaDir}`);
+    } else if (!hasNamedVolumeAt(backend, config.volumes ?? {}, MEDIA_DIR)) {
+      problems.push(`backend: ${MEDIA_DIR} is not on a named volume`);
+    }
   }
   return problems;
 }
