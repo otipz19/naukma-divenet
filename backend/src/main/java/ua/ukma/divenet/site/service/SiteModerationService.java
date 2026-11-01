@@ -1,5 +1,6 @@
 package ua.ukma.divenet.site.service;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,11 @@ import ua.ukma.divenet.site.domain.SiteStatus;
 public class SiteModerationService {
 
     private final SiteRepository sites;
+    private final ApplicationEventPublisher events;
 
-    public SiteModerationService(SiteRepository sites) {
+    public SiteModerationService(SiteRepository sites, ApplicationEventPublisher events) {
         this.sites = sites;
+        this.events = events;
     }
 
     public record QueueItemView(SiteView site, String authorName) {}
@@ -44,6 +47,9 @@ public class SiteModerationService {
     public SiteView approve(long id) {
         Site site = pending(id);
         site.approve();
+        if (site.getAuthor() != null) {
+            events.publishEvent(new SiteApproved(site.getAuthor().getId()));
+        }
         return SiteCatalogService.view(site);
     }
 

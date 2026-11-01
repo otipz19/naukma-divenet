@@ -600,5 +600,48 @@
       "by": "{{name}} · {{date}}",
       "seeAll": "Переглянути всі дописи"
     }
+  },
+  "achievement": {
+    "title": "Досягнення",
+    "earnedCount": "Здобуто: {{earned}} із {{total}}",
+    "earnedOn": "Здобуто {{date}}",
+    "progress": "{{progress}} / {{target}}",
+    "progressLabel": "Поступ до досягнення «{{name}}»",
+    "unlocked": "Нове досягнення: {{name}}",
+    "loadError": "Не вдалося завантажити досягнення. Спробуйте пізніше.",
+    "items": {
+      "first-dive": {
+        "name": "Перше занурення",
+        "description": "Запишіть своє перше занурення"
+      },
+      "ten-dives": {
+        "name": "Десять занурень",
+        "description": "Запишіть 10 занурень"
+      },
+      "ten-sites": {
+        "name": "Колекціонер місць",
+        "description": "Пірніть у 10 різних місцях"
+      },
+      "globetrotter": {
+        "name": "Мандрівник",
+        "description": "Пірніть у 5 країнах"
+      },
+      "deep-diver": {
+        "name": "Глибоководник",
+        "description": "Запишіть занурення на 40 м або глибше"
+      },
+      "first-post": {
+        "name": "Перший допис",
+        "description": "Опублікуйте свій перший допис"
+      },
+      "five-posts": {
+        "name": "Оповідач",
+        "description": "Майте 5 опублікованих дописів"
+      },
+      "first-site": {
+        "name": "Розвідник місць",
+        "description": "Отримайте схвалення запропонованого місця"
+      }
+    }
   }
 }

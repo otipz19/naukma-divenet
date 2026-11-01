@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +54,7 @@ public class PostService {
     private final RegionRepository regions;
     private final UserRepository users;
     private final Clock clock;
+    private final ApplicationEventPublisher events;
 
     public PostService(
             PostRepository posts,
@@ -60,13 +62,15 @@ public class PostService {
             SiteCatalogService catalog,
             RegionRepository regions,
             UserRepository users,
-            Clock clock) {
+            Clock clock,
+            ApplicationEventPublisher events) {
         this.posts = posts;
         this.media = media;
         this.catalog = catalog;
         this.regions = regions;
         this.users = users;
         this.clock = clock;
+        this.events = events;
     }
 
     public record Content(
@@ -135,7 +139,11 @@ public class PostService {
         attach(content.coverId() == null ? List.of() : List.of(content.coverId()), authorId, "coverId");
         attach(photoIds, authorId, "photoIds");
         Post post = new Post(users.getReferenceById(authorId), details(content, photoIds), now());
-        return view(posts.save(post));
+        PostView view = view(posts.save(post));
+        if (post.getStatus() == Post.Status.PUBLISHED) {
+            events.publishEvent(new PostPublished(authorId));
+        }
+        return view;
     }
 
     /** Uploads left out are released, new ones attached, kept ones untouched (as ReviewService.update). */
@@ -150,7 +158,11 @@ public class PostService {
         attach(photoIds.stream().filter(photo -> !current.contains(photo)).toList(), userId, "photoIds");
         List<UUID> requested = uploads(cover, photoIds);
         post = load(id);
+        boolean wasPublished = post.getStatus() == Post.Status.PUBLISHED;
         post.update(details(content, photoIds), now());
+        if (!wasPublished && post.getStatus() == Post.Status.PUBLISHED) {
+            events.publishEvent(new PostPublished(userId));
+        }
         // The links go before the uploads they point to.
         posts.flush();
         media.release(
@@ -218,6 +230,11 @@ public class PostService {
             }
             return cb.and(predicates.toArray(Predicate[]::new));
         };
+    }
+
+    @Transactional(readOnly = true)
+    public long publishedCount(long authorId) {
+        return posts.countByAuthor_IdAndStatus(authorId, Post.Status.PUBLISHED);
     }
 
     /** One line of the text, cut at a word. */

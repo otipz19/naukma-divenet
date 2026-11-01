@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface PostRepository extends JpaRepository<Post, Long>, JpaSpecificationExecutor<Post> {
 
+    long countByAuthor_IdAndStatus(long authorId, Post.Status status);
+
     @EntityGraph(attributePaths = {"author", "region.country", "site"})
     Page<Post> findByAuthor_IdAndStatusOrderByPublishedAtDescIdDesc(long authorId, Post.Status status, Pageable page);
 

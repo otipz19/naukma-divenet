@@ -44,6 +44,10 @@ public class SiteCatalogService {
     }
 
     /** For features that refer to a site and report their own error when it cannot be used. */
+    public long approvedCount(long authorId) {
+        return sites.countByAuthor_IdAndStatus(authorId, SiteStatus.APPROVED);
+    }
+
     public Optional<Site> findApproved(long id) {
         return sites.findById(id).filter(site -> site.getStatus() == SiteStatus.APPROVED);
     }

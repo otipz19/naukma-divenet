@@ -6,6 +6,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { buttonClassName } from "../../components/Button/Button";
 import { initials } from "../auth/AccountArea";
 import { useSession } from "../auth/useSession";
+import { ProfileAchievements } from "../achievement/ProfileAchievements";
 import { ProfileDives } from "../divelog/ProfileDives";
 import { ProfilePosts } from "../post/ProfilePosts";
 import { useProfile } from "./api";
@@ -64,6 +65,7 @@ export function ProfilePage() {
           showCertificates={profile.data.showCertificates}
         />
       )}
+      {session.status !== "loading" && <ProfileAchievements userId={profile.data.id} />}
       {session.status !== "loading" && (
         <ProfileDives
           userId={profile.data.id}

@@ -77,7 +77,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
-| `add-achievements` | Rule engine driven by domain events, awards, progress on profile; publishes DiveLogged and PostPublished; the dive log page shows the unlocked banner | US-10 | `add-dive-log`, `add-posts`, `add-site-submission-and-moderation` | proposed |
+| `add-achievements` | Rule engine driven by domain events, awards, progress on profile; publishes DiveLogged and PostPublished; the dive log page shows the unlocked banner | US-10 | `add-dive-log`, `add-posts`, `add-site-submission-and-moderation` | archived |
 
 ## M6 — Release readiness
 

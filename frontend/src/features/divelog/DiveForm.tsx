@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
@@ -69,10 +69,13 @@ const numberOrUndefined = (value: string) => (value === "" ? undefined : Number(
 export function DiveForm({
   entry,
   site,
+  banner,
   onDone,
 }: {
   entry: DiveEntry | null;
   site: PickedSite | null;
+  /** Shown above the actions; the page owns it, as a save remounts the form. */
+  banner?: ReactNode;
   onDone: () => void;
 }) {
   const { t } = useTranslation();
@@ -196,6 +199,7 @@ export function DiveForm({
           {t("divelog.form.failure")}
         </Alert>
       )}
+      {banner}
       {confirming && entry ? (
         <div className={styles.actions} role="group" aria-label={t("divelog.form.confirmDelete")}>
           <span className="body-sm">{t("divelog.form.confirmDelete")}</span>
