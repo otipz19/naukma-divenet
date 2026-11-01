@@ -132,6 +132,7 @@ every review write.
 ```mermaid
 erDiagram
   users ||--o{ certificates : declares
+  media |o--o{ users : "avatar of"
   users ||--o{ refresh_tokens : has
   countries ||--o{ regions : contains
   regions ||--o{ sites : contains

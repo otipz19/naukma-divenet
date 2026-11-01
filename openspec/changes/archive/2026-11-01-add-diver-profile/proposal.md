@@ -49,7 +49,7 @@ There is no departure from `docs/ARCHITECTURE.md`, so no new ADR.
 
 ## Impact
 
-- **Database:** migration `V10__add_user_profile.sql`.
+- **Database:** migration `V11__add_user_profile.sql`.
 - **Back-end:** `user.service` and `user.web`; the author of review responses gains `avatarUrl`.
 - **API:** two new endpoints and one new response field, none breaking; regenerated `api/openapi.json` and `frontend/src/api/schema.gen.ts`.
 - **Front-end:** new `features/user` and `components/Avatar`; `ReviewCard`, `WarningAlert`, `Alert`, `AccountArea`; `en` and `uk` strings.

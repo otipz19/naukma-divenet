@@ -22,7 +22,7 @@ id (`add-site-reviews` notes). `PhotoField` already takes `max`. `GET /api/v1/**
 
 ### D1: Schema on `users`
 
-`V10__add_user_profile.sql` adds to `users`:
+`V11__add_user_profile.sql` adds to `users`:
 
 ```sql
 bio varchar(500)
@@ -93,3 +93,10 @@ No new namespace. New key groups: `user.profile.*`, `user.edit.*`; new key `shel
 ## Migration Plan
 
 Forward-only migration with defaults, so existing accounts become public profiles with no bio or avatar.
+
+## Implementation notes
+
+- The migration is V11: V10 was already taken, which a directory listing hid by sorting it before V5, so check versions numerically. Renaming a migration leaves the old file in `target/classes`, which Flyway then reads; delete it there.
+- After a save, every cached query is invalidated rather than the two named in D5, because reviews have their own keys and also show the avatar.
+- The account menu's first item, and so its initial focus, is now "Your profile".
+- `fetch` of a released avatar in the browser can answer from its cache; the server answers 404.

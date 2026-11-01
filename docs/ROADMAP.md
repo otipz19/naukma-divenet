@@ -62,7 +62,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
-| `add-diver-profile` | Public profile, avatar, bio, privacy settings; review authors link to their profile, with avatar; warning authors link to their profile | US-11 | `add-authentication`, `add-media-uploads` | proposed |
+| `add-diver-profile` | Public profile, avatar, bio, privacy settings; review authors link to their profile, with avatar; warning authors link to their profile | US-11 | `add-authentication`, `add-media-uploads` | archived |
 | `add-dive-log` | Dive log entries with parameters, shown on the profile | US-09 | `add-diver-profile`, `add-dive-site-catalog` | planned |
 | `add-certificates` | Declare certificates, admin verification, badge on profile | US-C1 | `add-diver-profile` | planned |
 

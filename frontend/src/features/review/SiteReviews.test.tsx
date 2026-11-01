@@ -282,3 +282,26 @@ describe("review/site-reviews: The user manages their own review on the site pag
     expect(screen.getByText("Mira Koval")).toBeInTheDocument();
   });
 });
+
+describe("review/site-reviews: A review's author links to their profile", () => {
+  it("shows the avatar and links the name", async () => {
+    const author = { id: 21, displayName: "Oleh Kravets", avatarUrl: "/media/a1/thumb" };
+    serve(() => page([review({ author })]));
+    const { container } = renderRoute("/sites/7");
+
+    const link = await screen.findByRole("link", { name: "Oleh Kravets" });
+    expect(link).toHaveAttribute("href", "/users/21");
+    expect(container.querySelector('article img[src="/media/a1/thumb"]')).not.toBeNull();
+  });
+
+  it("shows the initials without an avatar", async () => {
+    serve(() => page([review()]));
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Oleh Kravets" })).toHaveAttribute(
+      "href",
+      "/users/21",
+    );
+    expect(screen.getByText("OK")).toBeInTheDocument();
+  });
+});

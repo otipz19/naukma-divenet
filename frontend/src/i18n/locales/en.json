@@ -31,7 +31,8 @@
       "signUp": "Sign up",
       "menu": "Account menu: {{name}}",
       "logOut": "Log out",
-      "moderation": "Moderation"
+      "moderation": "Moderation",
+      "profile": "Your profile"
     }
   },
   "auth": {
@@ -385,6 +386,28 @@
         "textTooLong": "Use at most 1000 characters.",
         "failed": "The warning could not be saved. Please try again."
       }
+    }
+  },
+  "user": {
+    "profile": {
+      "edit": "Edit profile",
+      "notFound": "Diver not found",
+      "backToMap": "Back to the map",
+      "loadError": "This profile could not be loaded. Please try again later."
+    },
+    "edit": {
+      "title": "Edit profile",
+      "avatar": "Profile photo",
+      "bio": "Bio",
+      "bioTooLong": "Use at most 500 characters.",
+      "privacy": "Privacy",
+      "privacyHint": "These apply as dive logs and certificates are added to profiles.",
+      "showDiveLog": "Show my dive log",
+      "showStatistics": "Show my statistics",
+      "showCertificates": "Show my certificates",
+      "save": "Save",
+      "cancel": "Cancel",
+      "failure": "Your profile could not be saved. Please try again."
     }
   }
 }

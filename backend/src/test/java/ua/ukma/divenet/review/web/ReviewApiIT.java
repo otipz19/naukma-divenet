@@ -473,4 +473,23 @@ class ReviewApiIT {
         mvc.perform(delete("/api/v1/reviews/" + id)).andExpect(status().isUnauthorized());
         assertThat(reviewCount()).isOne();
     }
+
+    /** Spec review/site-reviews "API field". */
+    @Test
+    void authorAvatarUrl() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        mvc.perform(get("/api/v1/sites/" + siteId + "/reviews"))
+                .andExpect(jsonPath("$.content[0].author.avatarUrl", org.hamcrest.Matchers.nullValue()));
+
+        UUID avatar = upload(author);
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/v1/users/me")
+                        .with(as(author))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"avatarId\": \"" + avatar
+                                + "\", \"showDiveLog\": true, \"showStatistics\": true, \"showCertificates\": true}"))
+                .andExpect(status().isOk());
+
+        mvc.perform(get("/api/v1/sites/" + siteId + "/reviews"))
+                .andExpect(jsonPath("$.content[0].author.avatarUrl").value("/media/" + avatar + "/thumb"));
+    }
 }

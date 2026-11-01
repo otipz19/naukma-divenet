@@ -136,6 +136,14 @@ function AccountMenu({ user }: { user: SessionUser }) {
           <p className={`label ${styles.name}`} role="presentation">
             {user.displayName}
           </p>
+          <Link
+            to={`/users/${user.id}`}
+            role="menuitem"
+            className={`label ${styles.item}`}
+            onClick={() => close(false)}
+          >
+            {t("shell.account.profile")}
+          </Link>
           {user.role === "ADMIN" && (
             <Link
               to="/admin/moderation"
@@ -168,6 +176,9 @@ function DrawerAccount({ user, onNavigate }: { user: SessionUser; onNavigate?: (
   return (
     <div className={styles.drawerLinks}>
       <p className={`label ${styles.drawerName}`}>{user.displayName}</p>
+      <Link to={`/users/${user.id}`} className={`label ${styles.link}`} onClick={onNavigate}>
+        {t("shell.account.profile")}
+      </Link>
       {user.role === "ADMIN" && (
         <Link to="/admin/moderation" className={`label ${styles.link}`} onClick={onNavigate}>
           {t("shell.account.moderation")}

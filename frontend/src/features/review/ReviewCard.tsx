@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { Avatar } from "../../components/Avatar/Avatar";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { Rating } from "../../components/Rating/Rating";
 import { initials } from "../auth/AccountArea";
@@ -33,12 +34,10 @@ export function ReviewCard({
   return (
     <article className={styles.card}>
       <div className={styles.cardHead}>
-        <span className={`label ${styles.avatar}`} aria-hidden="true">
-          {initials(name, i18n.language)}
-        </span>
+        <Avatar initials={initials(name, i18n.language)} src={review.author.avatarUrl} />
         <div className={styles.byline}>
           <span className="label">
-            {name}
+            <Link to={`/users/${review.author.id}`}>{name}</Link>
             {own && <span className={`body-sm ${styles.count}`}>{t("review.you")}</span>}
           </span>
           <span className={`body-sm ${styles.muted}`}>

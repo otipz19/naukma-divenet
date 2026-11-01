@@ -80,7 +80,8 @@ describe("warning/site-warnings: The site page shows recent warnings", () => {
     serve(() => page([warning()]));
     renderRoute("/sites/7");
 
-    expect(await screen.findByText("Hazard · 2 days ago · Mira Koval")).toBeInTheDocument();
+    expect(await screen.findByText(/Hazard · 2 days ago ·/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Mira Koval" })).toHaveAttribute("href", "/users/7");
     expect(screen.getByText("Strong current on the bow line")).toBeInTheDocument();
   });
 
@@ -89,7 +90,7 @@ describe("warning/site-warnings: The site page shows recent warnings", () => {
     renderRoute("/sites/7", { language: "uk" });
 
     const rtfUk = new Intl.RelativeTimeFormat("uk", { numeric: "auto" }).format(-2, "day");
-    expect(await screen.findByText(`Небезпека · ${rtfUk} · Mira Koval`)).toBeInTheDocument();
+    expect(await screen.findByText(new RegExp(`Небезпека · ${rtfUk} ·`))).toBeInTheDocument();
   });
 });
 

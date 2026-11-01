@@ -24,6 +24,9 @@
       },
       "AuthorResponse" : {
         "properties" : {
+          "avatarUrl" : {
+            "type" : "string"
+          },
           "displayName" : {
             "type" : "string"
           },
@@ -33,6 +36,30 @@
           }
         },
         "required" : [ "displayName", "id" ],
+        "type" : "object"
+      },
+      "AvatarResponse" : {
+        "properties" : {
+          "height" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "width" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "height", "id", "thumbnailUrl", "url", "width" ],
         "type" : "object"
       },
       "CountryResponse" : {
@@ -215,6 +242,58 @@
           }
         },
         "required" : [ "height", "id", "thumbnailUrl", "url", "width" ],
+        "type" : "object"
+      },
+      "ProfileRequest" : {
+        "properties" : {
+          "avatarId" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "bio" : {
+            "maxLength" : 500,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "showCertificates" : {
+            "type" : "boolean"
+          },
+          "showDiveLog" : {
+            "type" : "boolean"
+          },
+          "showStatistics" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "showCertificates", "showDiveLog", "showStatistics" ],
+        "type" : "object"
+      },
+      "ProfileResponse" : {
+        "properties" : {
+          "avatar" : {
+            "$ref" : "#/components/schemas/AvatarResponse"
+          },
+          "bio" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "showCertificates" : {
+            "type" : "boolean"
+          },
+          "showDiveLog" : {
+            "type" : "boolean"
+          },
+          "showStatistics" : {
+            "type" : "boolean"
+          }
+        },
+        "required" : [ "displayName", "id", "showCertificates", "showDiveLog", "showStatistics" ],
         "type" : "object"
       },
       "QueueItemResponse" : {
@@ -997,7 +1076,7 @@
         "tags" : [ "review-controller" ]
       },
       "put" : {
-        "operationId" : "update_1",
+        "operationId" : "update_2",
         "parameters" : [ {
           "in" : "path",
           "name" : "id",
@@ -1454,6 +1533,64 @@
           "bearerAuth" : [ ]
         } ],
         "tags" : [ "warning-controller" ]
+      }
+    },
+    "/api/v1/users/me" : {
+      "put" : {
+        "operationId" : "update_1",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ProfileRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProfileResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "profile-controller" ]
+      }
+    },
+    "/api/v1/users/{id}" : {
+      "get" : {
+        "operationId" : "profile",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProfileResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "profile-controller" ]
       }
     },
     "/api/v1/warnings/{id}" : {

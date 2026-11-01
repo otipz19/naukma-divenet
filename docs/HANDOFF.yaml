@@ -1,4 +1,4 @@
-goal: M3 (Divers) — add-diver-profile proposed on change/add-diver-profile, awaiting user review
+goal: M3 (Divers) — add-diver-profile applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -9,10 +9,12 @@ done:
   - add-reference-data (PR #10), add-dive-site-catalog (PR #11) merged and archived (specs geo, site/catalog, site/map, site/details, site/gear-catalog)
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
-wip: openspec/changes/add-diver-profile (planning only, committed, not pushed)
+  - add-diver-profile implemented and archived (spec user/profile; review/site-reviews, warning/site-warnings updated)
+wip: PR from change/add-diver-profile (change + archive); awaiting CI and user merge
 blocked: null
-next: after the user approves the proposal, /opsx:apply add-diver-profile
+next: after the PR merges, /opsx:propose add-dive-log (absorbing docs/plan-updates/add-dive-log/)
 decisions:
+  - add-diver-profile design.md D1-D5 + notes (privacy flags stored, enforced by add-dive-log and add-certificates through notes; profile fields on users; avatar URL derived from the id)
   - add-site-warnings design.md D1-D7 + impl: WarningType stays in warning.domain while WarningView/WarningRequest/WarningResponse use String with @Schema(allowableValues=...) so web never imports domain (ArchUnit) and OpenAPI keeps the 4-value union
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
@@ -23,15 +25,14 @@ decisions:
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
   - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
-  - Planning split: docs/adr/0007
   - No AI code review, no required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-site-warnings/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-diver-profile/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows on change/add-site-warnings (271 Vitest; mvnw verify 27 unit, 215 integration)
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (286 Vitest; mvnw verify 27 unit, 227 integration); browser journey on the stack (WEB_PORT=18080): upload, save, reload, replace avatar, review link
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
   ci: PRs #1-#17 green on ubuntu-latest
   not_covered: E2E (M6)
