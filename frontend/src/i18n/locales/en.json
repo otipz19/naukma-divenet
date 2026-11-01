@@ -534,5 +534,53 @@
       "history": "Dive history",
       "diveCount": "Dives: {{n}}"
     }
+  },
+  "post": {
+    "draft": "Draft",
+    "published": "Published",
+    "edit": "Edit",
+    "notFound": "Post not found",
+    "loadError": "The posts could not be loaded. Please try again later.",
+    "readMinutes": "{{n}} min read",
+    "image": "Image from {{title}}",
+    "profile": {
+      "title": "Posts",
+      "write": "Write a post",
+      "drafts": "Your drafts",
+      "none": "No published posts yet.",
+      "pagination": "Pages of posts",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{page}} of {{total}}"
+    },
+    "editor": {
+      "newTitle": "New post",
+      "editTitle": "Edit post",
+      "saved": "Saved.",
+      "title": "Title",
+      "cover": "Cover photo",
+      "text": "Text",
+      "textHint": "Leave a blank line between paragraphs. Images appear after the text.",
+      "images": "Images",
+      "publishing": "Publishing",
+      "region": "Region",
+      "noRegion": "No region",
+      "publish": "Publish",
+      "saveDraft": "Save draft",
+      "saveChanges": "Save changes",
+      "moveToDrafts": "Move to drafts",
+      "delete": "Delete post",
+      "confirmDelete": "Delete this post?",
+      "confirmYes": "Yes, delete",
+      "confirmNo": "Keep it",
+      "failure": "The post could not be saved. Please try again.",
+      "siteHint": "Optional. Search for an approved site."
+    },
+    "errors": {
+      "titleRequired": "Enter a title.",
+      "titleTooLong": "Use at most 200 characters.",
+      "textRequired": "A published post needs text.",
+      "textTooLong": "Use at most 20000 characters."
+    }
   }
 }

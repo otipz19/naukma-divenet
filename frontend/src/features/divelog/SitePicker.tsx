@@ -20,10 +20,13 @@ export function SitePicker({
   value,
   onChange,
   error,
+  hint,
 }: {
   value: PickedSite | null;
   onChange: (site: PickedSite | null) => void;
   error?: string;
+  /** Replaces the dive log's hint. */
+  hint?: string;
 }) {
   const { t, i18n } = useTranslation();
   const [text, setText] = useState("");
@@ -69,7 +72,7 @@ export function SitePicker({
       <TextField
         type="search"
         label={t("divelog.form.site")}
-        hint={t("divelog.form.siteHint")}
+        hint={hint ?? t("divelog.form.siteHint")}
         error={error}
         value={text}
         onChange={(event) => setText(event.target.value)}

@@ -60,8 +60,10 @@ Admins get no special access: a draft is private, and no story asks for admin re
 
 - The editor uses React Hook Form with Zod. The status comes from the clicked button, and the Zod schema depends on it (text required for Publish). `PhotoField` with `max={1}` for the cover and `max={10}` for images. `SelectField` with region options grouped by country, `SitePicker` from `features/divelog`.
 - `SitePicker` returns `{id, name}` with no region. The site's region comes from a `GET /api/v1/sites/{id}` call when a site is picked, which is one request and leaves the picker unchanged.
+- `SitePicker` gained an optional `hint`, because its default hint speaks of the dive log.
+- The region select is set again once its options load, because a select cannot show a value before its option exists.
 - A new draft replaces the URL with its editor, and the editor shows a saved message.
-- `ProfilePosts` is rendered in `ProfilePage` beside `ProfileDives`, and requests drafts only for the owner. It pages with the same Previous and Next controls as the dive history.
+- `ProfilePosts` is rendered in `ProfilePage` beside `ProfileDives`, and requests drafts only for the owner. It pages with Previous and Next, as `design/screens/Feed.html` draws.
 - `PostCard` takes a summary, so `add-feeds` can reuse it.
 - i18n namespace: `post.*` in `en` and `uk`. The Feed's navigation entry belongs to `add-feeds`, so until then the entry point is the profile.
 

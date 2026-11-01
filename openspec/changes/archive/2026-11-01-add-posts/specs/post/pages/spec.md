@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The page where anyone reads a post (US-12).
+The page where anyone reads a published post, and an author reaches its editor (US-12).
 
 ## ADDED Requirements
 
