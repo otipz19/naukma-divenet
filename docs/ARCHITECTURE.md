@@ -125,7 +125,7 @@ Rules:
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
 `media` (`add-media-uploads`), `reviews` and `review_media` (`add-site-reviews`), and
-`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), and `certificates` (`add-certificates`) exist; the other tables are **(planned)**. A site's rating
+`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), `certificates` (`add-certificates`), and `posts` and `post_media` (`add-posts`) exist; the other tables are **(planned)**. A site's rating
 aggregates are columns of `sites`, kept by the `review` feature in the same transaction as
 every review write.
 
@@ -153,6 +153,7 @@ erDiagram
   posts }o--o| sites : "about"
   posts }o--o| regions : "about"
   posts ||--o{ post_media : has
+  posts }o--o| media : cover
   media ||--o{ site_media : ""
   media ||--o{ review_media : ""
   media ||--o{ post_media : ""
@@ -212,6 +213,7 @@ Each change that adds tables updates this diagram.
   profile's settings hide them, and buddies and notes go only to the owner, because they can name other people.
 - A diver's certificates answer 403 to everyone but the owner and admins when the profile hides them. A certificate's
   number, photo and rejection reason, and rejected certificates, go only to the owner and admins.
+- A draft post answers 404 to everyone but its author, admins included.
 - A site is public only once approved. Until then its page answers 404 except to its author and
   admins, so the answer does not reveal that it exists. Coordinates are validated at the API,
   because PostGIS coerces out-of-range `geography` values instead of refusing them.

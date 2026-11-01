@@ -7,6 +7,7 @@ import { buttonClassName } from "../../components/Button/Button";
 import { initials } from "../auth/AccountArea";
 import { useSession } from "../auth/useSession";
 import { ProfileDives } from "../divelog/ProfileDives";
+import { ProfilePosts } from "../post/ProfilePosts";
 import { useProfile } from "./api";
 import { ProfileCertificates } from "./ProfileCertificates";
 import styles from "./ProfilePage.module.css";
@@ -71,6 +72,7 @@ export function ProfilePage() {
           showStatistics={profile.data.showStatistics}
         />
       )}
+      {session.status !== "loading" && <ProfilePosts userId={profile.data.id} own={own} />}
     </div>
   );
 }

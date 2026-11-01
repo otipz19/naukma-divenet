@@ -1,6 +1,7 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
 import { authRoutes } from "../features/auth/routes";
 import { diveLogRoutes } from "../features/divelog/routes";
+import { postRoutes } from "../features/post/routes";
 import { reviewRoutes } from "../features/review/routes";
 import { siteRoutes } from "../features/site/routes";
 import { userRoutes } from "../features/user/routes";
@@ -18,6 +19,7 @@ export const routes: RouteObject[] = [
       ...reviewRoutes,
       ...warningRoutes,
       ...userRoutes,
+      ...postRoutes,
       ...diveLogRoutes,
       ...authRoutes,
       { path: "*", element: <NotFoundPage /> },
