@@ -22,6 +22,8 @@ const blueHole = (overrides: Partial<components["schemas"]["SiteResponse"]> = {}
   description: "A famous sinkhole.",
   requiredGear: ["torch"],
   recommendedGear: ["nitrox"],
+  ratingCount: 0,
+  reviewCount: 0,
   status: "APPROVED" as const,
   ...overrides,
 });
@@ -160,5 +162,87 @@ describe("site/details: The site page waits for the session", () => {
 
     expect(await screen.findByRole("heading", { level: 1, name: "Blue Hole" })).toBeInTheDocument();
     expect(tokens).toEqual(["Bearer token-1"]);
+  });
+});
+
+const mineUrl = `${window.location.origin}/api/v1/sites/7/reviews/mine`;
+
+describe("site/details: The facts card shows the community view", () => {
+  it("shows the rating and the community difficulty of a rated site", async () => {
+    siteReturns(blueHole({ averageRating: 4.9, ratingCount: 342, communityDifficulty: 3.6 }));
+    renderRoute("/sites/7");
+
+    const facts = await screen.findByRole("group", { name: "Site facts" });
+    expect(
+      within(facts).getByRole("img", { name: "Rated 4.9 out of 5, 342 ratings" }),
+    ).toBeInTheDocument();
+    const community = within(facts).getByText("Community").parentElement!;
+    expect(within(community).getByText("Advanced")).toBeInTheDocument();
+  });
+
+  it("shows the no-ratings text and a dash for a site without reviews", async () => {
+    siteReturns(blueHole({ ratingCount: 0, reviewCount: 0 }));
+    renderRoute("/sites/7");
+
+    const facts = await screen.findByRole("group", { name: "Site facts" });
+    expect(within(facts).getByText("No ratings yet")).toBeInTheDocument();
+    const community = within(facts).getByText("Community").parentElement!;
+    expect(within(community).getByText("—")).toBeInTheDocument();
+  });
+});
+
+describe("site/details: The site page offers to write or edit a review", () => {
+  it("offers an anonymous visitor to write a review", async () => {
+    siteReturns();
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Write a review" })).toHaveAttribute(
+      "href",
+      "/sites/7/review",
+    );
+  });
+
+  it("offers a signed-in user without a review to write one", async () => {
+    startSignedIn();
+    siteReturns();
+    server.use(http.get(mineUrl, () => problem(404)));
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Write a review" })).toHaveAttribute(
+      "href",
+      "/sites/7/review",
+    );
+  });
+
+  it("offers a user with a review to edit it", async () => {
+    startSignedIn();
+    siteReturns();
+    server.use(
+      http.get(mineUrl, () =>
+        HttpResponse.json({
+          id: 3,
+          siteId: 7,
+          author: { id: 7, displayName: "Mira Koval" },
+          rating: 4,
+          photos: [],
+          createdAt: "2026-05-12T10:00:00Z",
+          updatedAt: "2026-05-12T10:00:00Z",
+        }),
+      ),
+    );
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Edit your review" })).toHaveAttribute(
+      "href",
+      "/sites/7/review",
+    );
+  });
+
+  it("shows no review link on a pending site", async () => {
+    siteReturns(blueHole({ status: "PENDING" }));
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { level: 1, name: "Blue Hole" });
+    expect(screen.queryByRole("link", { name: "Write a review" })).not.toBeInTheDocument();
   });
 });

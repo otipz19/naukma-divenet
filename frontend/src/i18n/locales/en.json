@@ -182,7 +182,11 @@
       "backToMap": "Back to the map",
       "loadError": "This site could not be loaded. Please try again later.",
       "pendingNotice": "This site is waiting for an admin to review it. Only you and admins can see it.",
-      "rejectedNotice": "Rejected by an admin"
+      "rejectedNotice": "Rejected by an admin",
+      "community": "Community",
+      "communityNone": "—",
+      "writeReview": "Write a review",
+      "editReview": "Edit your review"
     },
     "search": {
       "label": "Search sites",
@@ -202,7 +206,13 @@
       "found": "Sites found: {{n}}",
       "nothingFound": "Nothing found. Try another search or fewer filters.",
       "showList": "Show list",
-      "hideList": "Hide list"
+      "hideList": "Hide list",
+      "minRating": "Min rating",
+      "anyRating": "Any rating",
+      "minRatingOption": "{{value}} stars and up",
+      "sort": "Sort by",
+      "sortRating": "Highest rated",
+      "sortName": "Name (A–Z)"
     },
     "status": {
       "PENDING": "Pending",
@@ -280,6 +290,56 @@
       "skipped_few": "{{count}} files were skipped: the photo limit is reached.",
       "skipped_many": "{{count}} files were skipped: the photo limit is reached.",
       "skipped_other": "{{count}} files were skipped: the photo limit is reached."
+    }
+  },
+  "rating": {
+    "label": "Rated {{value}} out of 5",
+    "labelWithCount_one": "Rated {{value}} out of 5, {{count}} rating",
+    "labelWithCount_few": "Rated {{value}} out of 5, {{count}} ratings",
+    "labelWithCount_many": "Rated {{value}} out of 5, {{count}} ratings",
+    "labelWithCount_other": "Rated {{value}} out of 5, {{count}} ratings",
+    "none": "No ratings yet",
+    "input": "Your rating",
+    "star_one": "{{count}} star",
+    "star_few": "{{count}} stars",
+    "star_many": "{{count}} stars",
+    "star_other": "{{count}} stars",
+    "noRating": "No rating",
+    "outOf": "{{value}} / 5"
+  },
+  "review": {
+    "title": "Reviews",
+    "sort": "Sort reviews",
+    "sortNewest": "Newest first",
+    "sortRating": "Highest rated",
+    "empty": "No reviews yet. Be the first to write one.",
+    "loadMore": "Load more reviews",
+    "loadError": "The reviews could not be loaded. Please try again later.",
+    "you": "(you)",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Delete your review?",
+    "confirmYes": "Yes, delete",
+    "cancel": "Cancel",
+    "deleteFailed": "The review could not be deleted. Please try again.",
+    "photo": "Photo {{position}} by {{name}}",
+    "form": {
+      "titleNew": "Write a review",
+      "titleEdit": "Edit your review",
+      "back": "Back to {{name}}",
+      "intro": "{{name}} · {{place}}. Give a rating, write a review, or both.",
+      "difficulty": "How difficult was it for you?",
+      "text": "Review",
+      "textHint": "What should other divers know? Conditions, entry, highlights. Up to 4000 characters.",
+      "cancel": "Cancel",
+      "publish": "Publish review",
+      "save": "Save review",
+      "saving": "Saving…",
+      "errors": {
+        "ratingOrText": "Give a rating or write a review.",
+        "textTooLong": "Use at most 4000 characters.",
+        "failed": "The review could not be saved. Please try again."
+      }
     }
   }
 }

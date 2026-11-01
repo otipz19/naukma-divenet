@@ -4,7 +4,14 @@ import {
   type DifficultyWord,
 } from "../../components/Badge/DifficultyBadge";
 
-/** The search and filters as the URL holds them (design D4). */
+/** The minimum ratings the map offers (add-site-reviews design D7). */
+export const MIN_RATINGS = ["3", "4", "4.5"] as const;
+
+export const SORTS = ["rating", "name"] as const;
+
+export type SiteSort = (typeof SORTS)[number];
+
+/** The search, filters and sort as the URL holds them (design D4). */
 export interface SiteSearch {
   q: string;
   difficulties: DifficultyWord[];
@@ -13,6 +20,9 @@ export interface SiteSearch {
   region: string;
   minDepth: string;
   maxDepth: string;
+  /** "" for any rating. */
+  minRating: string;
+  sort: SiteSort;
 }
 
 const isDifficulty = (value: string): value is DifficultyWord =>
@@ -20,7 +30,10 @@ const isDifficulty = (value: string): value is DifficultyWord =>
 
 const wholeNumber = (value: string | null) => (value && /^\d+$/.test(value) ? value : "");
 
-/** Reads the URL; a hand-edited unknown difficulty or non-numeric depth is ignored, so it cannot cause a 400. */
+const oneOf = <T extends string>(values: readonly T[], value: string | null): T | undefined =>
+  values.find((candidate) => candidate === value);
+
+/** Reads the URL; a hand-edited unknown value is ignored, so it cannot cause a 400. */
 export function parseSearch(params: URLSearchParams): SiteSearch {
   return {
     q: params.get("q") ?? "",
@@ -30,6 +43,8 @@ export function parseSearch(params: URLSearchParams): SiteSearch {
     region: params.get("region") ?? "",
     minDepth: wholeNumber(params.get("minDepth")),
     maxDepth: wholeNumber(params.get("maxDepth")),
+    minRating: oneOf(MIN_RATINGS, params.get("minRating")) ?? "",
+    sort: oneOf(SORTS, params.get("sort")) ?? "rating",
   };
 }
 
@@ -38,9 +53,11 @@ export function toSearchParams(search: SiteSearch): URLSearchParams {
   if (search.q) params.set("q", search.q);
   for (const word of search.difficulties) params.append("difficulty", word);
   for (const code of search.gear) params.append("gear", code);
-  for (const key of ["country", "region", "minDepth", "maxDepth"] as const) {
+  for (const key of ["country", "region", "minDepth", "maxDepth", "minRating"] as const) {
     if (search[key]) params.set(key, search[key]);
   }
+  // Rating order is the default, so only the name order shows in the URL.
+  if (search.sort !== "rating") params.set("sort", search.sort);
   return params;
 }
 
@@ -49,7 +66,9 @@ export function activeFilters(search: SiteSearch): number {
   return (
     search.difficulties.length +
     search.gear.length +
-    [search.country, search.region, search.minDepth, search.maxDepth].filter(Boolean).length
+    [search.country, search.region, search.minDepth, search.maxDepth, search.minRating].filter(
+      Boolean,
+    ).length
   );
 }
 
@@ -62,7 +81,7 @@ export function matchingCodes(text: string, names: Record<string, string>): stri
     .map(([code]) => code);
 }
 
-/** The markers request's query parameters; `names` holds the active language's place names. */
+/** The markers request's query parameters; `names` holds the active language's place names. `sort` is always sent. */
 export function toMarkerQuery(
   search: SiteSearch,
   names: { regions: Record<string, string>; countries: Record<string, string> },
@@ -80,5 +99,7 @@ export function toMarkerQuery(
     region: text(search.region),
     minDepth: number(search.minDepth),
     maxDepth: number(search.maxDepth),
+    minRating: number(search.minRating),
+    sort: search.sort,
   };
 }

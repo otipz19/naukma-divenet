@@ -1,5 +1,6 @@
 package ua.ukma.divenet.site.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 
@@ -10,4 +11,6 @@ public record SiteView(
         List<String> requiredGear,
         List<String> recommendedGear,
         String status,
-        @Nullable String rejectionReason) {}
+        @Nullable String rejectionReason,
+        int reviewCount,
+        @Nullable BigDecimal communityDifficulty) {}

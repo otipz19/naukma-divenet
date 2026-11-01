@@ -7,6 +7,10 @@ import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Badge } from "../../components/Badge/Badge";
 import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
+import { buttonClassName } from "../../components/Button/Button";
+import { Rating } from "../../components/Rating/Rating";
+import { useMyReview } from "../review/api";
+import { SiteReviews } from "../review/SiteReviews";
 import { useSession } from "../auth/useSession";
 import styles from "./SitePage.module.css";
 
@@ -76,19 +80,24 @@ function SiteDetails({ site }: { site: Site }) {
       )}
       <div className={styles.columns}>
         <div className={styles.content}>
-          <div>
-            <h1 className={`h1 ${styles.name}`}>{site.name}</h1>
-            <span className={`data ${styles.muted}`}>
-              {`${formatCoordinates(site.lat, site.lng)} · ${country}, ${region}`}
-            </span>
+          <div className={styles.head}>
+            <div className={styles.title}>
+              <h1 className={`h1 ${styles.name}`}>{site.name}</h1>
+              <span className={`data ${styles.muted}`}>
+                {`${formatCoordinates(site.lat, site.lng)} · ${country}, ${region}`}
+              </span>
+            </div>
+            {site.status === "APPROVED" && <ReviewLink siteId={site.id} />}
           </div>
           <section className={styles.about}>
             <h2 className={`h2 ${styles.name}`}>{t("site.details.about")}</h2>
             <p className={`body ${styles.description}`}>{site.description}</p>
           </section>
+          {site.status === "APPROVED" && <SiteReviews siteId={site.id} />}
         </div>
         <aside className={styles.aside}>
           <div className={styles.card} aria-label={t("site.details.facts")} role="group">
+            <Rating value={site.averageRating} count={site.ratingCount} />
             <dl className={styles.facts}>
               <div>
                 <dt className={`caption ${styles.muted}`}>{t("site.details.depth")}</dt>
@@ -102,6 +111,16 @@ function SiteDetails({ site }: { site: Site }) {
                   <DifficultyBadge difficulty={site.difficulty} />
                 </dd>
               </div>
+              <div>
+                <dt className={`caption ${styles.muted}`}>{t("site.details.community")}</dt>
+                <dd className={styles.fact}>
+                  {site.communityDifficulty == null ? (
+                    t("site.details.communityNone")
+                  ) : (
+                    <DifficultyBadge difficulty={Math.round(site.communityDifficulty)} />
+                  )}
+                </dd>
+              </div>
             </dl>
             <GearList title={t("site.details.requiredGear")} codes={site.requiredGear} />
             <GearList title={t("site.details.recommendedGear")} codes={site.recommendedGear} />
@@ -110,6 +129,17 @@ function SiteDetails({ site }: { site: Site }) {
         </aside>
       </div>
     </>
+  );
+}
+
+/** "Write a review", or "Edit your review" once the signed-in user has one (spec site/details). */
+function ReviewLink({ siteId }: { siteId: number }) {
+  const { t } = useTranslation();
+  const mine = useMyReview(siteId);
+  return (
+    <Link className={buttonClassName({ variant: "primary" })} to={`/sites/${siteId}/review`}>
+      {t(mine.data ? "site.details.editReview" : "site.details.writeReview")}
+    </Link>
   );
 }
 

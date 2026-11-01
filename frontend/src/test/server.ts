@@ -21,6 +21,13 @@ export const server = setupServer(
   ),
   http.get(ANY_ORIGIN_MARKERS, () => HttpResponse.json([])),
   http.get("*/api/v1/sites/mine", () => HttpResponse.json([])),
+  // An approved site's page lists its reviews; by default it has none.
+  http.get("*/api/v1/sites/:siteId/reviews", () =>
+    HttpResponse.json({
+      content: [],
+      page: { size: 10, number: 0, totalElements: 0, totalPages: 0 },
+    }),
+  ),
   http.get("*/api/v1/countries", () => HttpResponse.json([])),
   http.get("*/api/v1/gear-items", () => HttpResponse.json([])),
 );

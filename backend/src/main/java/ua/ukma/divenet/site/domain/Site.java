@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -79,6 +80,20 @@ public class Site {
     @Column(name = "rejection_reason", length = 500)
     private @Nullable String rejectionReason;
 
+    /** Null when no review has a rating; kept by the review feature (add-site-reviews design D2). */
+    @Column(name = "rating_average", precision = 2, scale = 1)
+    private @Nullable BigDecimal ratingAverage;
+
+    @Column(name = "rating_count", nullable = false)
+    private int ratingCount;
+
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount;
+
+    /** Null when no review rates the difficulty. */
+    @Column(name = "community_difficulty", precision = 2, scale = 1)
+    private @Nullable BigDecimal communityDifficulty;
+
     protected Site() {}
 
     /** An approved site with no author, as the demo seed creates. */
@@ -130,6 +145,33 @@ public class Site {
     public void reject(String reason) {
         status = SiteStatus.REJECTED;
         rejectionReason = reason;
+    }
+
+    public void setReviewAggregates(
+            @Nullable BigDecimal ratingAverage,
+            int ratingCount,
+            int reviewCount,
+            @Nullable BigDecimal communityDifficulty) {
+        this.ratingAverage = ratingAverage;
+        this.ratingCount = ratingCount;
+        this.reviewCount = reviewCount;
+        this.communityDifficulty = communityDifficulty;
+    }
+
+    public @Nullable BigDecimal getRatingAverage() {
+        return ratingAverage;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public int getReviewCount() {
+        return reviewCount;
+    }
+
+    public @Nullable BigDecimal getCommunityDifficulty() {
+        return communityDifficulty;
     }
 
     public SiteStatus getStatus() {

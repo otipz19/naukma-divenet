@@ -1,0 +1,114 @@
+/* The Reviews section of design/screens/Site.html. */
+.section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flush {
+  margin: 0;
+}
+
+.count {
+  margin-left: var(--space-2);
+  color: var(--ink-muted);
+}
+
+.head .sort {
+  width: auto;
+}
+
+.card {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.cardHead {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* dn-avatar: 32px, initials. */
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--space-6);
+  height: var(--space-6);
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+.byline {
+  display: grid;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.actions {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.text {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.photo {
+  display: block;
+  width: calc(var(--space-8) + var(--space-6));
+  height: var(--space-8);
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.more {
+  justify-self: start;
+}

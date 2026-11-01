@@ -1,5 +1,8 @@
 package ua.ukma.divenet.site.service;
 
+import java.math.BigDecimal;
+import org.jspecify.annotations.Nullable;
+
 public record SiteMarkerView(
         long id,
         String name,
@@ -9,4 +12,6 @@ public record SiteMarkerView(
         String regionCode,
         int difficulty,
         int minDepth,
-        int maxDepth) {}
+        int maxDepth,
+        @Nullable BigDecimal averageRating,
+        int ratingCount) {}

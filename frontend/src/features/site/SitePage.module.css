@@ -25,6 +25,19 @@
   min-width: 0;
 }
 
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  display: grid;
+  gap: var(--space-1);
+}
+
 .name {
   margin: 0;
 }

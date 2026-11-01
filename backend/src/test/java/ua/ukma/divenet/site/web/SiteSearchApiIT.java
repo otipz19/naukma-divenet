@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,8 @@ import ua.ukma.divenet.site.domain.GearRequirement;
 import ua.ukma.divenet.site.domain.Site;
 import ua.ukma.divenet.site.domain.SiteGear;
 import ua.ukma.divenet.site.domain.SiteRepository;
+import ua.ukma.divenet.site.service.ReviewAggregates;
+import ua.ukma.divenet.site.service.SiteCatalogService;
 
 /** Spec site/search, server scenarios, and site/catalog "Markers are ordered by name". */
 @SpringBootTest
@@ -44,18 +47,31 @@ class SiteSearchApiIT {
     @Autowired
     JdbcTemplate jdbc;
 
-    private void site(String name, String region, int difficulty, int min, int max, Set<SiteGear> gear) {
-        sites.save(new Site(
-                name,
-                regions.getReferenceById(region),
-                10,
-                20,
-                difficulty,
-                min,
-                max,
-                "x",
-                new HashSet<>(gear),
-                Instant.parse("2026-01-01T00:00:00Z")));
+    @Autowired
+    SiteCatalogService catalog;
+
+    private long site(String name, String region, int difficulty, int min, int max, Set<SiteGear> gear) {
+        return sites.save(new Site(
+                        name,
+                        regions.getReferenceById(region),
+                        10,
+                        20,
+                        difficulty,
+                        min,
+                        max,
+                        "x",
+                        new HashSet<>(gear),
+                        Instant.parse("2026-01-01T00:00:00Z")))
+                .getId();
+    }
+
+    private void rate(String name, String average) {
+        long id = sites.findAll().stream()
+                .filter(site -> site.getName().equals(name))
+                .findFirst()
+                .orElseThrow()
+                .getId();
+        catalog.updateReviewAggregates(id, new ReviewAggregates(new BigDecimal(average), 1, 1, null));
     }
 
     private static SiteGear required(String code) {
@@ -161,6 +177,46 @@ class SiteSearchApiIT {
     @Test
     void textAndFilterTogether() throws Exception {
         assertThat(names("q=dahab&difficulty=1")).containsExactly("Lighthouse");
+    }
+
+    @Test
+    void minimumRating() throws Exception {
+        rate("Blue Hole", "4.5");
+        rate("Canyon", "3.9");
+
+        assertThat(names("minRating=4")).containsExactly("Blue Hole");
+        assertThat(names("minRating=3.9&country=HR")).containsExactly("Canyon");
+    }
+
+    @Test
+    void invalidMinimumRating() throws Exception {
+        mvc.perform(get("/api/v1/sites/markers?minRating=6"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"));
+        mvc.perform(get("/api/v1/sites/markers?minRating=0.5")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void highestRatedFirst() throws Exception {
+        jdbc.update("DELETE FROM sites");
+        site("Canyon", "hr-istria", 1, 0, 10, Set.of());
+        site("Blue Hole", "eg-dahab", 1, 0, 10, Set.of());
+        site("Arch", "eg-dahab", 1, 0, 10, Set.of());
+        site("Bells", "eg-dahab", 1, 0, 10, Set.of());
+        rate("Canyon", "4.8");
+        rate("Blue Hole", "4.8");
+        rate("Arch", "3.0");
+
+        assertThat(names("sort=rating")).containsExactly("Blue Hole", "Canyon", "Arch", "Bells");
+        assertThat(names("sort=RATING")).containsExactly("Blue Hole", "Canyon", "Arch", "Bells");
+        assertThat(names("sort=name")).containsExactly("Arch", "Bells", "Blue Hole", "Canyon");
+    }
+
+    @Test
+    void unknownSort() throws Exception {
+        mvc.perform(get("/api/v1/sites/markers?sort=depth"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"));
     }
 
     @Test

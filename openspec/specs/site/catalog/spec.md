@@ -9,9 +9,10 @@ seed that keeps a demonstration from starting empty.
 
 ### Requirement: Clients read all sites as map markers
 `GET /api/v1/sites/markers` SHALL return every approved site matching its optional filters as an
-unpaged array, ordered by name, without authentication. With no filters it SHALL return
-every approved site. Each marker SHALL have `id`, `name`, `lat`, `lng`, `countryCode`,
-`regionCode`, `difficulty`, `minDepth` and `maxDepth`.
+unpaged array, ordered by name unless `sort=rating` is given, without authentication. With no
+filters it SHALL return every approved site. Each marker SHALL have `id`, `name`, `lat`, `lng`,
+`countryCode`, `regionCode`, `difficulty`, `minDepth`, `maxDepth`, `ratingCount` and, when the
+site has ratings, `averageRating`.
 
 #### Scenario: Anonymous client reads the markers
 - **GIVEN** a site named "Blue Hole" at latitude 28.5722 and longitude 34.5375 in the region `eg-dahab`
@@ -29,11 +30,18 @@ every approved site. Each marker SHALL have `id`, `name`, `lat`, `lng`, `country
 - **WHEN** a client requests `GET /api/v1/sites/markers`, even as their author or an admin
 - **THEN** neither is returned
 
+#### Scenario: Markers carry the rating
+- **GIVEN** a site with two reviews rated 4 and 5, and a site without reviews
+- **WHEN** a client requests `GET /api/v1/sites/markers`
+- **THEN** the first site's marker has `averageRating` 4.5 and `ratingCount` 2
+- **AND** the second has no `averageRating` and `ratingCount` 0
+
 ### Requirement: Clients read one site's details
 `GET /api/v1/sites/{id}` SHALL return the marker fields of the site plus `description`,
-`requiredGear`, `recommendedGear`, `status` and `rejectionReason`, without authentication. The gear
-fields SHALL be arrays of gear codes, sorted by code. An unapproved site SHALL be returned only
-to its author and to admins; for anyone else the answer SHALL be the same as for an unknown site.
+`requiredGear`, `recommendedGear`, `status`, `rejectionReason`, `reviewCount` and
+`communityDifficulty`, without authentication. The gear fields SHALL be arrays of gear codes,
+sorted by code. An unapproved site SHALL be returned only to its author and to admins; for anyone
+else the answer SHALL be the same as for an unknown site.
 
 #### Scenario: Anonymous client reads a site
 - **GIVEN** a site that requires `torch` and `smb`, and recommends `nitrox`
@@ -54,6 +62,11 @@ to its author and to admins; for anyone else the answer SHALL be the same as for
 - **GIVEN** a pending site
 - **WHEN** its author or an admin requests it
 - **THEN** the response is 200 with status `PENDING`
+
+#### Scenario: Site details carry the review aggregates
+- **GIVEN** a site with one review rated 4 with difficulty 3
+- **WHEN** a client requests that site
+- **THEN** the response has `averageRating` 4.0, `ratingCount` 1, `reviewCount` 1 and `communityDifficulty` 3.0
 
 ### Requirement: Stored sites keep their values valid
 The database SHALL refuse a site whose declared difficulty is outside 1 to 5, or whose

@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.query.criteria.HibernateCriteriaBuilder;
@@ -29,14 +30,20 @@ final class SiteSearch {
             // Fetched for the marker fields, so the list stays one query.
             Fetch<Site, Region> regionFetch = root.fetch("region");
             regionFetch.fetch("country");
-            query.orderBy(cb.asc(root.get("name")));
+            HibernateCriteriaBuilder hcb = (HibernateCriteriaBuilder) cb;
+            if (filter.sort() == MarkerSort.RATING) {
+                // Unrated sites last; ties by name (add-site-reviews design D4).
+                query.orderBy(hcb.desc(root.get("ratingAverage"), false), cb.asc(root.get("name")));
+            } else {
+                query.orderBy(cb.asc(root.get("name")));
+            }
 
             Path<Region> region = root.get("region");
             Path<Country> country = region.get("country");
             List<Predicate> predicates = new ArrayList<>();
             predicates.add(cb.equal(root.get("status"), SiteStatus.APPROVED));
             if (filter.q() != null) {
-                predicates.add(textMatch(filter, root, region, country, (HibernateCriteriaBuilder) cb));
+                predicates.add(textMatch(filter, root, region, country, hcb));
             }
             if (!filter.difficulties().isEmpty()) {
                 predicates.add(root.get("difficulty").in(filter.difficulties()));
@@ -61,6 +68,10 @@ final class SiteSearch {
             }
             if (filter.maxDepth() != null) {
                 predicates.add(cb.le(root.<Integer>get("minDepth"), filter.maxDepth()));
+            }
+            if (filter.minRating() != null) {
+                // An unrated site has a null average, which never compares true.
+                predicates.add(cb.ge(root.<BigDecimal>get("ratingAverage"), filter.minRating()));
             }
             return cb.and(predicates.toArray(Predicate[]::new));
         };

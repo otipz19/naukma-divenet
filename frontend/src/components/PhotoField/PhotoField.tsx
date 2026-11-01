@@ -6,6 +6,12 @@ import { MAX_UPLOAD_BYTES, UPLOAD_TYPES, uploadMedia, type UploadedMedia } from 
 import { Button } from "../Button/Button";
 import styles from "./PhotoField.module.css";
 
+/** A photo in the value: a new upload, or one that already belongs to the content being edited. */
+export type PhotoFieldItem = Pick<
+  UploadedMedia,
+  "id" | "url" | "thumbnailUrl" | "width" | "height"
+>;
+
 /** One picked file that has not joined the value yet: uploading, or done and waiting its turn. */
 interface Slot {
   key: number;
@@ -14,8 +20,8 @@ interface Slot {
 }
 
 type PhotoFieldProps = {
-  value: UploadedMedia[];
-  onChange: (value: UploadedMedia[]) => void;
+  value: PhotoFieldItem[];
+  onChange: (value: PhotoFieldItem[]) => void;
   /** The most photos the form takes. */
   max: number;
   /** Translated label; "Photos" by default. */
@@ -42,7 +48,7 @@ export function PhotoField({ value, onChange, max, label }: PhotoFieldProps) {
 
   const room = Math.max(0, max - value.length - slots.length);
 
-  function update(nextValue: UploadedMedia[], nextSlots: Slot[]) {
+  function update(nextValue: PhotoFieldItem[], nextSlots: Slot[]) {
     const changed = nextValue !== latest.current.value;
     latest.current = { ...latest.current, value: nextValue, slots: nextSlots };
     setSlots(nextSlots);

@@ -180,6 +180,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/reviews/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update"];
+        post?: never;
+        delete: operations["delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/sites": {
         parameters: {
             query?: never;
@@ -219,7 +235,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["mine"];
+        get: operations["mine_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -244,6 +260,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/{siteId}/reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list"];
+        put?: never;
+        post: operations["create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{siteId}/reviews/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["mine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -258,6 +306,11 @@ export interface components {
             /** @enum {string} */
             tokenType: "Bearer";
             user: components["schemas"]["UserResponse"];
+        };
+        AuthorResponse: {
+            displayName: string;
+            /** Format: int64 */
+            id: number;
         };
         CountryResponse: {
             code: string;
@@ -305,6 +358,20 @@ export interface components {
             content: components["schemas"]["QueueItemResponse"][];
             page: components["schemas"]["PageMetadata"];
         };
+        PagedModelReviewResponse: {
+            content: components["schemas"]["ReviewResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
+        PhotoResponse: {
+            /** Format: int32 */
+            height: number;
+            /** Format: uuid */
+            id: string;
+            thumbnailUrl: string;
+            url: string;
+            /** Format: int32 */
+            width: number;
+        };
         QueueItemResponse: {
             authorName: string;
             site: components["schemas"]["SiteResponse"];
@@ -322,7 +389,33 @@ export interface components {
         RejectRequest: {
             reason: string;
         };
+        ReviewRequest: {
+            /** Format: int32 */
+            difficulty?: number;
+            photoIds?: string[];
+            /** Format: int32 */
+            rating?: number;
+            text?: string;
+        };
+        ReviewResponse: {
+            author: components["schemas"]["AuthorResponse"];
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: int32 */
+            difficulty?: number;
+            /** Format: int64 */
+            id: number;
+            photos: components["schemas"]["PhotoResponse"][];
+            /** Format: int32 */
+            rating?: number;
+            /** Format: int64 */
+            siteId: number;
+            text?: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
         SiteMarkerResponse: {
+            averageRating?: number;
             countryCode: string;
             /** Format: int32 */
             difficulty: number;
@@ -337,9 +430,13 @@ export interface components {
             /** Format: int32 */
             minDepth: number;
             name: string;
+            /** Format: int32 */
+            ratingCount: number;
             regionCode: string;
         };
         SiteResponse: {
+            averageRating?: number;
+            communityDifficulty?: number;
             countryCode: string;
             description: string;
             /** Format: int32 */
@@ -355,10 +452,14 @@ export interface components {
             /** Format: int32 */
             minDepth: number;
             name: string;
+            /** Format: int32 */
+            ratingCount: number;
             recommendedGear: string[];
             regionCode: string;
             rejectionReason?: string;
             requiredGear: string[];
+            /** Format: int32 */
+            reviewCount: number;
             /** @enum {string} */
             status: "PENDING" | "APPROVED" | "REJECTED";
         };
@@ -648,6 +749,52 @@ export interface operations {
             };
         };
     };
+    update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReviewResponse"];
+                };
+            };
+        };
+    };
+    delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     submit: {
         parameters: {
             query?: never;
@@ -684,6 +831,8 @@ export interface operations {
                 region?: string | null;
                 minDepth?: number | null;
                 maxDepth?: number | null;
+                minRating?: number | null;
+                sort?: "name" | "rating";
             };
             header?: never;
             path?: never;
@@ -702,7 +851,7 @@ export interface operations {
             };
         };
     };
-    mine: {
+    mine_1: {
         parameters: {
             query?: never;
             header?: never;
@@ -740,6 +889,80 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["SiteResponse"];
+                };
+            };
+        };
+    };
+    list: {
+        parameters: {
+            query?: {
+                sort?: "newest" | "rating";
+                page?: number;
+                size?: number;
+            };
+            header?: never;
+            path: {
+                siteId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelReviewResponse"];
+                };
+            };
+        };
+    };
+    create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                siteId: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReviewResponse"];
+                };
+            };
+        };
+    };
+    mine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                siteId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ReviewResponse"];
                 };
             };
         };

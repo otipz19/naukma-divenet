@@ -1,5 +1,6 @@
 package ua.ukma.divenet.site.web;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import ua.ukma.divenet.site.service.MarkerSort;
 import ua.ukma.divenet.site.service.SiteCatalogService;
 import ua.ukma.divenet.site.service.SiteCatalogService.OwnSubmissionView;
 import ua.ukma.divenet.site.service.SiteCatalogService.Submission;
@@ -53,7 +56,15 @@ class SiteController {
             @RequestParam(required = false) @Nullable String country,
             @RequestParam(required = false) @Nullable String region,
             @RequestParam(required = false) @Nullable Integer minDepth,
-            @RequestParam(required = false) @Nullable Integer maxDepth) {
+            @RequestParam(required = false) @Nullable Integer maxDepth,
+            @RequestParam(required = false) @Nullable @DecimalMin("1") @DecimalMax("5") BigDecimal minRating,
+            @Parameter(
+                            schema =
+                                    @Schema(
+                                            allowableValues = {"name", "rating"},
+                                            defaultValue = "name"))
+                    @RequestParam(defaultValue = "name")
+                    MarkerSort sort) {
         SiteFilter filter = new SiteFilter(
                 q == null || q.isBlank() ? null : q.strip(),
                 orEmpty(qRegion),
@@ -63,7 +74,9 @@ class SiteController {
                 country,
                 region,
                 minDepth,
-                maxDepth);
+                maxDepth,
+                minRating,
+                sort);
         return catalog.markers(filter).stream().map(SiteMarkerResponse::of).toList();
     }
 
@@ -112,7 +125,8 @@ class SiteController {
                 "regionCode",
                 "difficulty",
                 "minDepth",
-                "maxDepth"
+                "maxDepth",
+                "ratingCount"
             })
     record SiteMarkerResponse(
             long id,
@@ -123,7 +137,9 @@ class SiteController {
             String regionCode,
             int difficulty,
             int minDepth,
-            int maxDepth) {
+            int maxDepth,
+            @Nullable BigDecimal averageRating,
+            int ratingCount) {
 
         static SiteMarkerResponse of(SiteMarkerView m) {
             return new SiteMarkerResponse(
@@ -135,7 +151,9 @@ class SiteController {
                     m.regionCode(),
                     m.difficulty(),
                     m.minDepth(),
-                    m.maxDepth());
+                    m.maxDepth(),
+                    m.averageRating(),
+                    m.ratingCount());
         }
     }
 
@@ -150,6 +168,8 @@ class SiteController {
                 "difficulty",
                 "minDepth",
                 "maxDepth",
+                "ratingCount",
+                "reviewCount",
                 "description",
                 "requiredGear",
                 "recommendedGear",
@@ -165,6 +185,10 @@ class SiteController {
             int difficulty,
             int minDepth,
             int maxDepth,
+            @Nullable BigDecimal averageRating,
+            int ratingCount,
+            int reviewCount,
+            @Nullable BigDecimal communityDifficulty,
             String description,
             @NotNull List<String> requiredGear,
             @NotNull List<String> recommendedGear,
@@ -186,6 +210,10 @@ class SiteController {
                     m.difficulty(),
                     m.minDepth(),
                     m.maxDepth(),
+                    m.averageRating(),
+                    m.ratingCount(),
+                    site.reviewCount(),
+                    site.communityDifficulty(),
                     site.description(),
                     site.requiredGear(),
                     site.recommendedGear(),
