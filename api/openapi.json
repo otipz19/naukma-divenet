@@ -100,6 +100,99 @@
         "required" : [ "displayName", "email", "password" ],
         "type" : "object"
       },
+      "SiteMarkerResponse" : {
+        "properties" : {
+          "countryCode" : {
+            "type" : "string"
+          },
+          "difficulty" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "lat" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "lng" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "maxDepth" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "minDepth" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "regionCode" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "countryCode", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "regionCode" ],
+        "type" : "object"
+      },
+      "SiteResponse" : {
+        "properties" : {
+          "countryCode" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          },
+          "difficulty" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "lat" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "lng" : {
+            "format" : "double",
+            "type" : "number"
+          },
+          "maxDepth" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "minDepth" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "recommendedGear" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "regionCode" : {
+            "type" : "string"
+          },
+          "requiredGear" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        },
+        "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "recommendedGear", "regionCode", "requiredGear" ],
+        "type" : "object"
+      },
       "UserResponse" : {
         "properties" : {
           "displayName" : {
@@ -297,6 +390,54 @@
           }
         },
         "tags" : [ "gear-item-controller" ]
+      }
+    },
+    "/api/v1/sites/markers" : {
+      "get" : {
+        "operationId" : "markers",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/SiteMarkerResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "site-controller" ]
+      }
+    },
+    "/api/v1/sites/{id}" : {
+      "get" : {
+        "operationId" : "site",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SiteResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "site-controller" ]
       }
     }
   },

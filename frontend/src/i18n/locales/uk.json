@@ -2,9 +2,6 @@
   "app": {
     "name": "DiveNet"
   },
-  "home": {
-    "placeholder": "Мапа місць для занурень незабаром з’явиться."
-  },
   "notFound": {
     "title": "Сторінку не знайдено",
     "backHome": "Повернутися на головну"
@@ -156,5 +153,33 @@
     "torch": "Ліхтар",
     "twin-set": "Спарка балонів",
     "wetsuit": "Мокрий гідрокостюм"
+  },
+  "site": {
+    "map": {
+      "title": "Мапа місць для занурень",
+      "region": "Мапа місць для занурень",
+      "loadError": "Не вдалося завантажити місця для занурень. Спробуйте пізніше.",
+      "attribution": "&copy; учасники <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
+    },
+    "difficulty": {
+      "beginner": "Початковий",
+      "intermediate": "Середній",
+      "advanced": "Просунутий",
+      "technical": "Технічний"
+    },
+    "depthRange": "{{min}}–{{max}} м",
+    "details": {
+      "breadcrumb": "Навігаційний ланцюжок",
+      "map": "Мапа",
+      "facts": "Дані про місце",
+      "depth": "Глибина",
+      "difficulty": "Складність",
+      "requiredGear": "Обов’язкове спорядження",
+      "recommendedGear": "Рекомендоване спорядження",
+      "about": "Про це місце",
+      "notFound": "Місце не знайдено",
+      "backToMap": "Назад до мапи",
+      "loadError": "Не вдалося завантажити це місце. Спробуйте пізніше."
+    }
   }
 }

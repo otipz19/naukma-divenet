@@ -116,6 +116,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sites/markers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["markers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sites/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["site"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -153,6 +185,43 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+        };
+        SiteMarkerResponse: {
+            countryCode: string;
+            /** Format: int32 */
+            difficulty: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: double */
+            lat: number;
+            /** Format: double */
+            lng: number;
+            /** Format: int32 */
+            maxDepth: number;
+            /** Format: int32 */
+            minDepth: number;
+            name: string;
+            regionCode: string;
+        };
+        SiteResponse: {
+            countryCode: string;
+            description: string;
+            /** Format: int32 */
+            difficulty: number;
+            /** Format: int64 */
+            id: number;
+            /** Format: double */
+            lat: number;
+            /** Format: double */
+            lng: number;
+            /** Format: int32 */
+            maxDepth: number;
+            /** Format: int32 */
+            minDepth: number;
+            name: string;
+            recommendedGear: string[];
+            regionCode: string;
+            requiredGear: string[];
         };
         UserResponse: {
             displayName: string;
@@ -317,6 +386,48 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["GearItemResponse"][];
+                };
+            };
+        };
+    };
+    markers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SiteMarkerResponse"][];
+                };
+            };
+        };
+    };
+    site: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["SiteResponse"];
                 };
             };
         };

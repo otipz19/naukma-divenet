@@ -11,6 +11,19 @@ export const DB_DATA_DIR = "/var/lib/postgresql/data";
 const REQUIRED_DEPENDENCIES = { backend: "db", web: "backend" };
 
 /**
+ * The back-end's profile with the variable unset and with it set to `prod` (spec shared/local-stack).
+ * @param {unknown} unset
+ * @param {unknown} set
+ * @returns {string[]}
+ */
+export function findProfileProblems(unset, set) {
+  const problems = [];
+  if (unset !== "demo") problems.push(`backend: SPRING_PROFILES_ACTIVE must default to demo, got ${unset}`);
+  if (set !== "prod") problems.push(`backend: SPRING_PROFILES_ACTIVE must follow the env, got ${set}`);
+  return problems;
+}
+
+/**
  * Host ports a service publishes, from either the short ("8080:80") or the long form.
  * @param {any} service a service from the rendered configuration
  * @returns {string[]}

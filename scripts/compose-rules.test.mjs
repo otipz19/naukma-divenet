@@ -1,7 +1,7 @@
 // Tests for scripts/compose-rules.mjs (spec shared/local-stack). Run: node --test "scripts/**/*.test.mjs"
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { baseImages, externalImages, findComposeProblems, isPinned, publishedPorts } from "./compose-rules.mjs";
+import { baseImages, externalImages, findComposeProblems, findProfileProblems, isPinned, publishedPorts } from "./compose-rules.mjs";
 
 const healthcheck = { test: ["CMD", "true"], interval: "10s" };
 const BACKEND_DOCKERFILE = "FROM eclipse-temurin:25-jdk AS build\nRUN true\nFROM eclipse-temurin:25-jre\n";
@@ -179,5 +179,19 @@ describe("externalImages", () => {
   it("lists an image shared by two services once", () => {
     const config = { services: { a: { image: "redis:8.2" }, b: { image: "redis:8.2" }, c: { build: {} } } };
     assert.deepEqual(externalImages(config, { c: "FROM redis:8.2\n" }), ["redis:8.2"]);
+  });
+});
+
+describe("findProfileProblems", () => {
+  it("accepts the demo default and an override", () => {
+    assert.deepEqual(findProfileProblems("demo", "prod"), []);
+  });
+
+  it("reports a missing default", () => {
+    assert.match(findProfileProblems(undefined, "prod")[0], /default to demo/);
+  });
+
+  it("reports an ignored override", () => {
+    assert.match(findProfileProblems("demo", "demo")[0], /follow the env/);
   });
 });

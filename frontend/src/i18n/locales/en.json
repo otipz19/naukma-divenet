@@ -2,9 +2,6 @@
   "app": {
     "name": "DiveNet"
   },
-  "home": {
-    "placeholder": "The dive-site map is coming soon."
-  },
   "notFound": {
     "title": "Page not found",
     "backHome": "Back to the home page"
@@ -156,5 +153,33 @@
     "torch": "Torch",
     "twin-set": "Twin set",
     "wetsuit": "Wetsuit"
+  },
+  "site": {
+    "map": {
+      "title": "Dive-site map",
+      "region": "Map of dive sites",
+      "loadError": "The dive sites could not be loaded. Please try again later.",
+      "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "technical": "Technical"
+    },
+    "depthRange": "{{min}}–{{max}} m",
+    "details": {
+      "breadcrumb": "Breadcrumb",
+      "map": "Map",
+      "facts": "Site facts",
+      "depth": "Depth",
+      "difficulty": "Difficulty",
+      "requiredGear": "Required gear",
+      "recommendedGear": "Recommended gear",
+      "about": "About this site",
+      "notFound": "Site not found",
+      "backToMap": "Back to the map",
+      "loadError": "This site could not be loaded. Please try again later."
+    }
   }
 }

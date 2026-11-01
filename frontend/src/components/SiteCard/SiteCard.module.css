@@ -1,0 +1,30 @@
+/* design/system/components/bundle.css: dn-site-card. Doubled selectors beat Leaflet's popup link colour. */
+.card.card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.card.card:hover {
+  background: var(--surface-2);
+}
+
+.title {
+  margin: 0;
+}
+
+.place {
+  color: var(--ink-muted);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+}

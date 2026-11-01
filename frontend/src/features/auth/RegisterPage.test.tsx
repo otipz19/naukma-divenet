@@ -98,7 +98,9 @@ describe("auth: The web app has a sign-up page", () => {
 
     await fillIn();
 
-    expect(await screen.findByText("The dive-site map is coming soon.")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Dive-site map" }),
+    ).toBeInTheDocument();
     expect(
       within(screen.getByRole("banner")).getByRole("button", { name: /Mira Koval/ }),
     ).toBeInTheDocument();

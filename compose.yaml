@@ -31,6 +31,8 @@ services:
       # Optional: both set creates the first admin at startup.
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      # The demo profile seeds dive sites into an empty database.
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-demo}
     depends_on:
       db:
         condition: service_healthy

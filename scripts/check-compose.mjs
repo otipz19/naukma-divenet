@@ -8,12 +8,12 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { PUBLIC_SERVICE, findComposeProblems, publishedPorts, readDockerfiles } from "./compose-rules.mjs";
+import { PUBLIC_SERVICE, findComposeProblems, findProfileProblems, publishedPorts, readDockerfiles } from "./compose-rules.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const ENV_EXAMPLE = join(ROOT, ".env.example");
 // Variables the stack reads; the caller's own values must not hide a problem.
-const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_)/i;
+const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_|SPRING_PROFILES_ACTIVE$)/i;
 // Compose must refuse to render without these rather than fall back to a built-in value.
 const REQUIRED_VARIABLES = ["POSTGRES_PASSWORD", "JWT_SECRET"];
 const AUTH_VARIABLES = ["JWT_SECRET", "ADMIN_EMAIL", "ADMIN_PASSWORD"];
@@ -66,6 +66,15 @@ function main() {
   for (const variable of AUTH_VARIABLES) {
     if (!(variable in backendEnv)) problems.push(`backend: environment has no ${variable}`);
   }
+
+  // Scenarios "Variable not set" and "Variable set".
+  const overridden = renderConfig(ENV_EXAMPLE, { SPRING_PROFILES_ACTIVE: "prod" });
+  problems.push(
+    ...findProfileProblems(
+      backendEnv.SPRING_PROFILES_ACTIVE,
+      overridden.status === 0 ? JSON.parse(overridden.stdout).services.backend?.environment?.SPRING_PROFILES_ACTIVE : undefined,
+    ),
+  );
 
   // Scenario "Web port is configurable".
   const custom = renderConfig(ENV_EXAMPLE, { WEB_PORT: "9090" });

@@ -8,7 +8,9 @@ describe("shared/i18n: The UI supports English and Ukrainian", () => {
   it("shows the uk text when the active locale is uk", () => {
     renderRoute("/", { language: "uk" });
 
-    expect(screen.getByText("Мапа місць для занурень незабаром з’явиться.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Мапа місць для занурень" }),
+    ).toBeInTheDocument();
   });
 
   it("falls back to en for a key missing from uk", () => {

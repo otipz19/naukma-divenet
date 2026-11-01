@@ -3,16 +3,6 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { renderRoute } from "../test/render";
 
-describe("shared/web-app: The app serves a placeholder home page", () => {
-  it("renders the product name and the placeholder notice inside the main landmark at /", () => {
-    renderRoute("/");
-
-    const main = screen.getByRole("main");
-    expect(within(main).getByRole("heading", { level: 1, name: "DiveNet" })).toBeInTheDocument();
-    expect(within(main).getByText("The dive-site map is coming soon.")).toBeInTheDocument();
-  });
-});
-
 describe("shared/web-app: Unknown paths show a not-found page", () => {
   it("shows the not-found message and a link home", () => {
     renderRoute("/no-such-page");
@@ -29,7 +19,7 @@ describe("shared/web-app: Unknown paths show a not-found page", () => {
 
     await userEvent.click(screen.getByRole("link", { name: "Back to the home page" }));
 
-    expect(screen.getByRole("heading", { level: 1, name: "DiveNet" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Dive-site map" })).toBeInTheDocument();
   });
 });
 
@@ -41,7 +31,7 @@ describe("shared/app-shell: Every page renders inside the app shell", () => {
     expect(screen.getAllByRole("main")).toHaveLength(1);
     expect(screen.getAllByRole("contentinfo")).toHaveLength(1);
     expect(
-      within(screen.getByRole("main")).getByRole("heading", { name: "DiveNet" }),
+      within(screen.getByRole("main")).getByRole("heading", { name: "Dive-site map" }),
     ).toBeVisible();
   });
 

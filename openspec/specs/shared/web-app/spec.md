@@ -6,16 +6,6 @@ browser, maps URLs to pages and gives all pages one shared server-state cache.
 
 ## Requirements
 
-### Requirement: The app serves a placeholder home page
-Until the map page exists, the root path `/` SHALL render a placeholder page
-inside the app shell that shows the product name as the page's top-level heading
-and a short notice, both taken from the active locale.
-
-#### Scenario: Home page renders
-- **WHEN** the app is opened at `/`
-- **THEN** the main landmark shows a top-level heading with the product name "DiveNet"
-- **AND** it shows the placeholder notice text of the active locale
-
 ### Requirement: Unknown paths show a not-found page
 Any path that no route matches SHALL render a not-found page with a translated
 message and a link back to `/`. The page SHALL NOT be blank and SHALL NOT throw.
