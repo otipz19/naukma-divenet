@@ -18,6 +18,7 @@ const site = (overrides: Partial<SiteMarker>): SiteMarker => ({
   difficulty: 1,
   minDepth: 3,
   maxDepth: 18,
+  ratingCount: 0,
   ...overrides,
 });
 
@@ -172,7 +173,7 @@ describe("site/search: The map page searches and filters", () => {
 
   it("clears everything", async () => {
     const urls = recordMarkers();
-    renderRoute("/?q=reef&difficulty=beginner");
+    renderRoute("/?q=reef&difficulty=beginner&minRating=4");
     expect(await screen.findByLabelText("Search sites")).toHaveValue("reef");
 
     await userEvent.click(screen.getByRole("button", { name: "Clear all" }));
@@ -182,7 +183,28 @@ describe("site/search: The map page searches and filters", () => {
       "aria-pressed",
       "false",
     );
-    await waitFor(() => expect(lastUrl(urls).search).toBe(""));
+    expect(screen.getByLabelText("Min rating")).toHaveValue("");
+    await waitFor(() => expect(lastUrl(urls).search).toBe("?sort=rating"));
+  });
+
+  it("applies a minimum rating and counts it", async () => {
+    const urls = recordMarkers();
+    renderRoute("/");
+
+    await userEvent.selectOptions(await screen.findByLabelText("Min rating"), "4 stars and up");
+
+    await waitFor(() => expect(lastUrl(urls).searchParams.get("minRating")).toBe("4"));
+    expect(screen.getByRole("button", { name: "Filters · 1" })).toBeInTheDocument();
+  });
+
+  it("sorts by rating unless the user chooses the name order", async () => {
+    const urls = recordMarkers();
+    renderRoute("/");
+    await waitFor(() => expect(lastUrl(urls).searchParams.get("sort")).toBe("rating"));
+
+    await userEvent.selectOptions(screen.getByLabelText("Sort by"), "Name (A–Z)");
+
+    await waitFor(() => expect(lastUrl(urls).searchParams.get("sort")).toBe("name"));
   });
 
   it("sends typed text after the pause, with codes of the active language", async () => {
@@ -247,6 +269,27 @@ describe("site/search: The URL holds the search and filters", () => {
     await waitFor(() => expect(lastUrl(urls).searchParams.get("q")).toBe("reef"));
     expect(lastUrl(urls).searchParams.getAll("difficulty")).toEqual(["1"]);
     expect(lastUrl(urls).searchParams.getAll("gear")).toEqual(["torch"]);
+  });
+});
+
+describe("site/search: The URL holds the rating filter and the sort", () => {
+  it("restores a URL with rating and sort", async () => {
+    const urls = recordMarkers();
+    renderRoute("/?minRating=4.5&sort=name");
+
+    expect(await screen.findByLabelText("Min rating")).toHaveDisplayValue("4.5 stars and up");
+    expect(screen.getByLabelText("Sort by")).toHaveDisplayValue("Name (A–Z)");
+    await waitFor(() => expect(lastUrl(urls).searchParams.get("minRating")).toBe("4.5"));
+    expect(lastUrl(urls).searchParams.get("sort")).toBe("name");
+  });
+
+  it("ignores a hand-edited rating and sort", async () => {
+    const urls = recordMarkers();
+    renderRoute("/?minRating=lots&sort=depth");
+
+    await waitFor(() => expect(urls.length).toBeGreaterThan(0));
+    expect(lastUrl(urls).searchParams.has("minRating")).toBe(false);
+    expect(lastUrl(urls).searchParams.get("sort")).toBe("rating");
   });
 });
 

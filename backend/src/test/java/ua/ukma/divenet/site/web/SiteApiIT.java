@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +27,8 @@ import ua.ukma.divenet.site.domain.GearRequirement;
 import ua.ukma.divenet.site.domain.Site;
 import ua.ukma.divenet.site.domain.SiteGear;
 import ua.ukma.divenet.site.domain.SiteRepository;
+import ua.ukma.divenet.site.service.ReviewAggregates;
+import ua.ukma.divenet.site.service.SiteCatalogService;
 import ua.ukma.divenet.site.service.SiteDemoSeeder;
 
 /** Spec site/catalog: the read endpoints, stored-value rules and "No demo profile". */
@@ -50,6 +53,9 @@ class SiteApiIT {
 
     @Autowired
     ObjectProvider<SiteDemoSeeder> seeder;
+
+    @Autowired
+    SiteCatalogService catalog;
 
     @AfterEach
     void removeSites() {
@@ -109,6 +115,57 @@ class SiteApiIT {
                 .andExpect(jsonPath("$.description").value("A deep sinkhole."))
                 .andExpect(jsonPath("$.requiredGear", contains("smb", "torch")))
                 .andExpect(jsonPath("$.recommendedGear", contains("nitrox")));
+    }
+
+    @Test
+    void markersCarryTheRating() throws Exception {
+        long rated = blueHole();
+        long unrated = sites.save(new Site(
+                        "Canyon",
+                        regions.getReferenceById("eg-dahab"),
+                        28,
+                        34,
+                        2,
+                        5,
+                        20,
+                        "x",
+                        Set.of(),
+                        Instant.parse("2026-01-01T00:00:00Z")))
+                .getId();
+        catalog.updateReviewAggregates(rated, new ReviewAggregates(new BigDecimal("4.5"), 2, 2, null));
+
+        mvc.perform(get(SITES + "/markers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(rated))
+                .andExpect(jsonPath("$[0].averageRating").value(4.5))
+                .andExpect(jsonPath("$[0].ratingCount").value(2))
+                .andExpect(jsonPath("$[1].id").value(unrated))
+                .andExpect(jsonPath("$[1].averageRating").doesNotExist())
+                .andExpect(jsonPath("$[1].ratingCount").value(0));
+    }
+
+    @Test
+    void siteDetailsCarryTheReviewAggregates() throws Exception {
+        long id = blueHole();
+        catalog.updateReviewAggregates(id, new ReviewAggregates(new BigDecimal("4.0"), 1, 1, new BigDecimal("3.0")));
+
+        mvc.perform(get(SITES + "/" + id))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageRating").value(4.0))
+                .andExpect(jsonPath("$.ratingCount").value(1))
+                .andExpect(jsonPath("$.reviewCount").value(1))
+                .andExpect(jsonPath("$.communityDifficulty").value(3.0));
+    }
+
+    @Test
+    void siteWithoutReviews() throws Exception {
+        long id = blueHole();
+
+        mvc.perform(get(SITES + "/" + id))
+                .andExpect(jsonPath("$.averageRating").doesNotExist())
+                .andExpect(jsonPath("$.ratingCount").value(0))
+                .andExpect(jsonPath("$.reviewCount").value(0))
+                .andExpect(jsonPath("$.communityDifficulty").doesNotExist());
     }
 
     @Test

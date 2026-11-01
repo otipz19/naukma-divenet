@@ -114,6 +114,19 @@ public class MediaService {
                 .toList();
     }
 
+    /** The uploads in the order of {@code ids}, for features that show their media; unknown ids are left out. */
+    @Transactional(readOnly = true)
+    public List<MediaView> views(Collection<UUID> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        List<Media> rows = media.findAllById(new LinkedHashSet<>(ids));
+        return ids.stream()
+                .flatMap(id -> rows.stream().filter(m -> m.getId().equals(id)).findFirst().stream())
+                .map(MediaView::of)
+                .toList();
+    }
+
     /** Deletes the uploads' records, and their files once the caller's transaction commits. */
     @Transactional
     public void release(Collection<UUID> ids) {

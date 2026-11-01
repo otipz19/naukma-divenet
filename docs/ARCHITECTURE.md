@@ -124,7 +124,9 @@ Rules:
 
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
-and `media` (`add-media-uploads`) exist; the other tables are **(planned)**.
+`media` (`add-media-uploads`), and `reviews` and `review_media` (`add-site-reviews`) exist; the
+other tables are **(planned)**. A site's rating aggregates are columns of `sites`, kept by the
+`review` feature in the same transaction as every review write.
 
 ```mermaid
 erDiagram
@@ -165,9 +167,12 @@ Each change that adds tables updates this diagram.
   large, 415 unsupported upload type.
 - Pagination uses `?page=0&size=20` (max 100). The response is
   `{ content, page: { number, size, totalElements, totalPages } }`, from Spring
-  Data's `PagedModel`: controllers take a `Pageable` and return `new PagedModel<>(page)`.
+  Data's `PagedModel`: controllers take a `Pageable` and return `new PagedModel<>(page)`. An
+  endpoint whose `sort` names one of a fixed set of orders (`sort=newest|rating` on a site's
+  reviews) takes `page` and `size` as plain parameters with the same defaults and limits instead.
 - Map markers come from `GET /api/v1/sites/markers`, which is also the site search: `q`,
-  `difficulty`, `gear`, `country`, `region`, `minDepth` and `maxDepth` are optional and combine.
+  `difficulty`, `gear`, `country`, `region`, `minDepth`, `maxDepth` and `minRating` are optional
+  and combine; `sort` is `name` (the default) or `rating`.
   It returns all matching approved sites as a lightweight list, without pagination; clustering
   and the result list happen on the client.
 - The server matches English names only. To search in another language, the client looks up

@@ -76,6 +76,30 @@ public class SiteCatalogService {
         return view(site);
     }
 
+    /**
+     * For the review feature: the approved site, locked until the caller's transaction ends, so the
+     * review writes of one site run one at a time (add-site-reviews design D2).
+     */
+    @Transactional
+    public Site lockForReview(long id) {
+        Site site = sites.findByIdForUpdate(id).orElseThrow(SiteNotFoundException::new);
+        if (site.getStatus() != SiteStatus.APPROVED) {
+            throw new SiteNotFoundException();
+        }
+        return site;
+    }
+
+    /** Stores the aggregates the review feature computed; joins the caller's transaction. */
+    @Transactional
+    public void updateReviewAggregates(long id, ReviewAggregates aggregates) {
+        Site site = sites.findById(id).orElseThrow(SiteNotFoundException::new);
+        site.setReviewAggregates(
+                aggregates.averageRating(),
+                aggregates.ratingCount(),
+                aggregates.reviewCount(),
+                aggregates.communityDifficulty());
+    }
+
     @Transactional
     public SiteView submit(Submission submission, long authorId) {
         List<FieldViolation> violations = violations(submission);
@@ -143,7 +167,9 @@ public class SiteCatalogService {
                 gearCodes(site, GearRequirement.REQUIRED),
                 gearCodes(site, GearRequirement.RECOMMENDED),
                 site.getStatus().name(),
-                site.getRejectionReason());
+                site.getRejectionReason(),
+                site.getReviewCount(),
+                site.getCommunityDifficulty());
     }
 
     private static SiteMarkerView marker(Site site) {
@@ -156,7 +182,9 @@ public class SiteCatalogService {
                 site.getRegion().getCode(),
                 site.getDifficulty(),
                 site.getMinDepth(),
-                site.getMaxDepth());
+                site.getMaxDepth(),
+                site.getRatingAverage(),
+                site.getRatingCount());
     }
 
     private static List<String> gearCodes(Site site, GearRequirement requirement) {

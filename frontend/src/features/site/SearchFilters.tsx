@@ -6,7 +6,7 @@ import { Button } from "../../components/Button/Button";
 import { Chip } from "../../components/Chip/Chip";
 import { SelectField } from "../../components/SelectField/SelectField";
 import { TextField } from "../../components/TextField/TextField";
-import type { SiteSearch } from "./siteSearch";
+import { MIN_RATINGS, SORTS, type SiteSearch, type SiteSort } from "./siteSearch";
 import styles from "./MapPage.module.css";
 
 const toggled = <T,>(values: T[], value: T) =>
@@ -104,6 +104,31 @@ export function SearchFilters({
           {byName(regions, (r) => t(`geo.regions.${r.code}`)).map(({ item, name }) => (
             <option key={item.code} value={item.code}>
               {name}
+            </option>
+          ))}
+        </SelectField>
+      </div>
+      <div className={styles.pair}>
+        <SelectField
+          label={t("site.search.minRating")}
+          value={search.minRating}
+          onChange={(event) => onChange({ ...search, minRating: event.target.value })}
+        >
+          <option value="">{t("site.search.anyRating")}</option>
+          {MIN_RATINGS.map((value) => (
+            <option key={value} value={value}>
+              {t("site.search.minRatingOption", { value })}
+            </option>
+          ))}
+        </SelectField>
+        <SelectField
+          label={t("site.search.sort")}
+          value={search.sort}
+          onChange={(event) => onChange({ ...search, sort: event.target.value as SiteSort })}
+        >
+          {SORTS.map((sort) => (
+            <option key={sort} value={sort}>
+              {t(sort === "rating" ? "site.search.sortRating" : "site.search.sortName")}
             </option>
           ))}
         </SelectField>

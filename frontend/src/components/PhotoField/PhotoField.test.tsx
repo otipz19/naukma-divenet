@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 import type { UploadedMedia } from "../../api/media";
 import { createI18n } from "../../i18n";
 import { server } from "../../test/server";
-import { PhotoField } from "./PhotoField";
+import { PhotoField, type PhotoFieldItem } from "./PhotoField";
 
 const mediaUrl = () => `${window.location.origin}/api/v1/media`;
 
@@ -32,9 +32,9 @@ function renderField({
   max = 5,
   language = "en",
 }: { initial?: UploadedMedia[]; max?: number; language?: string } = {}) {
-  const values: UploadedMedia[][] = [];
+  const values: PhotoFieldItem[][] = [];
   function Harness() {
-    const [value, setValue] = useState(initial);
+    const [value, setValue] = useState<PhotoFieldItem[]>(initial);
     return (
       <PhotoField
         value={value}

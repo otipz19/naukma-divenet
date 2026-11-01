@@ -22,6 +22,19 @@
         "required" : [ "accessToken", "expiresIn", "tokenType", "user" ],
         "type" : "object"
       },
+      "AuthorResponse" : {
+        "properties" : {
+          "displayName" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "displayName", "id" ],
+        "type" : "object"
+      },
       "CountryResponse" : {
         "properties" : {
           "code" : {
@@ -150,6 +163,45 @@
         "required" : [ "content", "page" ],
         "type" : "object"
       },
+      "PagedModelReviewResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ReviewResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "$ref" : "#/components/schemas/PageMetadata"
+          }
+        },
+        "required" : [ "content", "page" ],
+        "type" : "object"
+      },
+      "PhotoResponse" : {
+        "properties" : {
+          "height" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "width" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "height", "id", "thumbnailUrl", "url", "width" ],
+        "type" : "object"
+      },
       "QueueItemResponse" : {
         "properties" : {
           "authorName" : {
@@ -207,8 +259,84 @@
         "required" : [ "reason" ],
         "type" : "object"
       },
+      "ReviewRequest" : {
+        "properties" : {
+          "difficulty" : {
+            "format" : "int32",
+            "maximum" : 5,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "photoIds" : {
+            "items" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "maxItems" : 6,
+            "minItems" : 0,
+            "type" : "array"
+          },
+          "rating" : {
+            "format" : "int32",
+            "maximum" : 5,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "text" : {
+            "maxLength" : 4000,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "ReviewResponse" : {
+        "properties" : {
+          "author" : {
+            "$ref" : "#/components/schemas/AuthorResponse"
+          },
+          "createdAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "difficulty" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "photos" : {
+            "items" : {
+              "$ref" : "#/components/schemas/PhotoResponse"
+            },
+            "type" : "array"
+          },
+          "rating" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "siteId" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "text" : {
+            "type" : "string"
+          },
+          "updatedAt" : {
+            "format" : "date-time",
+            "type" : "string"
+          }
+        },
+        "required" : [ "author", "createdAt", "id", "photos", "siteId", "updatedAt" ],
+        "type" : "object"
+      },
       "SiteMarkerResponse" : {
         "properties" : {
+          "averageRating" : {
+            "type" : "number"
+          },
           "countryCode" : {
             "type" : "string"
           },
@@ -239,15 +367,25 @@
           "name" : {
             "type" : "string"
           },
+          "ratingCount" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
           "regionCode" : {
             "type" : "string"
           }
         },
-        "required" : [ "countryCode", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "regionCode" ],
+        "required" : [ "countryCode", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "ratingCount", "regionCode" ],
         "type" : "object"
       },
       "SiteResponse" : {
         "properties" : {
+          "averageRating" : {
+            "type" : "number"
+          },
+          "communityDifficulty" : {
+            "type" : "number"
+          },
           "countryCode" : {
             "type" : "string"
           },
@@ -281,6 +419,10 @@
           "name" : {
             "type" : "string"
           },
+          "ratingCount" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
           "recommendedGear" : {
             "items" : {
               "type" : "string"
@@ -299,12 +441,16 @@
             },
             "type" : "array"
           },
+          "reviewCount" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
           "status" : {
             "enum" : [ "PENDING", "APPROVED", "REJECTED" ],
             "type" : "string"
           }
         },
-        "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "recommendedGear", "regionCode", "requiredGear", "status" ],
+        "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "ratingCount", "recommendedGear", "regionCode", "requiredGear", "reviewCount", "status" ],
         "type" : "object"
       },
       "SubmissionRequest" : {
@@ -728,6 +874,67 @@
         "tags" : [ "media-controller" ]
       }
     },
+    "/api/v1/reviews/{id}" : {
+      "delete" : {
+        "operationId" : "delete",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "review-controller" ]
+      },
+      "put" : {
+        "operationId" : "update",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReviewResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "review-controller" ]
+      }
+    },
     "/api/v1/sites" : {
       "post" : {
         "operationId" : "submit",
@@ -840,6 +1047,24 @@
             "format" : "int32",
             "type" : [ "integer", "null" ]
           }
+        }, {
+          "in" : "query",
+          "name" : "minRating",
+          "required" : false,
+          "schema" : {
+            "maximum" : 5.0,
+            "minimum" : 1.0,
+            "type" : [ "number", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "default" : "name",
+            "enum" : [ "name", "rating" ],
+            "type" : "string"
+          }
         } ],
         "responses" : {
           "200" : {
@@ -861,7 +1086,7 @@
     },
     "/api/v1/sites/mine" : {
       "get" : {
-        "operationId" : "mine",
+        "operationId" : "mine_1",
         "responses" : {
           "200" : {
             "content" : {
@@ -908,6 +1133,131 @@
           }
         },
         "tags" : [ "site-controller" ]
+      }
+    },
+    "/api/v1/sites/{siteId}/reviews" : {
+      "get" : {
+        "operationId" : "list",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "siteId",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "default" : "newest",
+            "enum" : [ "newest", "rating" ],
+            "type" : "string"
+          }
+        }, {
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "format" : "int32",
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        }, {
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "format" : "int32",
+            "maximum" : 100,
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedModelReviewResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "review-controller" ]
+      },
+      "post" : {
+        "operationId" : "create",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "siteId",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReviewResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "review-controller" ]
+      }
+    },
+    "/api/v1/sites/{siteId}/reviews/mine" : {
+      "get" : {
+        "operationId" : "mine",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "siteId",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReviewResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "review-controller" ]
       }
     }
   },

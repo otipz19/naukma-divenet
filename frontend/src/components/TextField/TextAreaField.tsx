@@ -4,15 +4,17 @@ import styles from "./TextField.module.css";
 type TextAreaFieldProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   /** Translated label. */
   label: string;
-  /** Translated error; marks the field invalid. */
+  hint?: string;
+  /** Translated error; replaces the hint and marks the field invalid. */
   error?: string;
   ref?: Ref<HTMLTextAreaElement>;
 };
 
 /** TextField for longer text. */
-export function TextAreaField({ label, error, ref, ...textarea }: TextAreaFieldProps) {
+export function TextAreaField({ label, hint, error, ref, ...textarea }: TextAreaFieldProps) {
   const id = useId();
   const noteId = `${id}-note`;
+  const note = error ?? hint;
   return (
     <div className={styles.field}>
       <label className={`label ${styles.label}`} htmlFor={id}>
@@ -24,12 +26,12 @@ export function TextAreaField({ label, error, ref, ...textarea }: TextAreaFieldP
         rows={5}
         className={`body ${styles.input}`}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? noteId : undefined}
+        aria-describedby={note ? noteId : undefined}
         {...textarea}
       />
-      {error && (
-        <span id={noteId} className={`body-sm ${styles.error}`}>
-          {error}
+      {note && (
+        <span id={noteId} className={`body-sm ${error ? styles.error : styles.hint}`}>
+          {note}
         </span>
       )}
     </div>
