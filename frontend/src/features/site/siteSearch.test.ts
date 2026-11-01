@@ -1,0 +1,66 @@
+import { describe, expect, it } from "vitest";
+import {
+  activeFilters,
+  matchingCodes,
+  parseSearch,
+  toMarkerQuery,
+  toSearchParams,
+} from "./siteSearch";
+
+const names = {
+  regions: { "eg-dahab": "Дахаб", "hr-istria": "Істрія" },
+  countries: { EG: "Єгипет", HR: "Хорватія" },
+};
+
+describe("site/search: URL state", () => {
+  it("round-trips the search and filters", () => {
+    const query = "q=reef&difficulty=beginner&gear=torch&country=EG&region=eg-dahab&minDepth=5";
+
+    expect(toSearchParams(parseSearch(new URLSearchParams(query))).toString()).toBe(query);
+  });
+
+  it("ignores an unknown difficulty and a non-numeric depth", () => {
+    const search = parseSearch(new URLSearchParams("difficulty=hard&minDepth=abc&maxDepth=-1"));
+
+    expect(search.difficulties).toEqual([]);
+    expect(search.minDepth).toBe("");
+    expect(search.maxDepth).toBe("");
+  });
+
+  it("counts active filters without the text search", () => {
+    const search = parseSearch(
+      new URLSearchParams("q=reef&difficulty=beginner&gear=a&gear=b&country=EG"),
+    );
+
+    expect(activeFilters(search)).toBe(4);
+  });
+});
+
+describe("site/search: The map page searches and filters", () => {
+  it("sends both levels for Intermediate", () => {
+    const search = parseSearch(new URLSearchParams("difficulty=intermediate"));
+
+    expect(toMarkerQuery(search, names).difficulty).toEqual([2, 3]);
+  });
+
+  it("leaves out empty parameters", () => {
+    const query = toMarkerQuery(parseSearch(new URLSearchParams()), names);
+
+    expect(Object.values(query).every((value) => value === undefined)).toBe(true);
+  });
+});
+
+describe("site/search: Search works with names in the active language", () => {
+  it("sends the codes of matching names", () => {
+    const query = toMarkerQuery(parseSearch(new URLSearchParams("q=дахаб")), names);
+
+    expect(query.q).toBe("дахаб");
+    expect(query.qRegion).toEqual(["eg-dahab"]);
+    expect(query.qCountry).toBeUndefined();
+  });
+
+  it("matches a part of a name, ignoring case", () => {
+    expect(matchingCodes("ХОРВ", names.countries)).toEqual(["HR"]);
+    expect(matchingCodes("  ", names.countries)).toEqual([]);
+  });
+});

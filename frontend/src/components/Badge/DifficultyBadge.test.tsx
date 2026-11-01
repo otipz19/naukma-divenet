@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { difficultyWord } from "./DifficultyBadge";
+import { difficultyWord, levelsOf } from "./DifficultyBadge";
 
 describe("site/map: Difficulty is shown as a word", () => {
   it("maps each level to a word", () => {
@@ -10,5 +10,10 @@ describe("site/map: Difficulty is shown as a word", () => {
       "advanced",
       "technical",
     ]);
+  });
+
+  it("reverses the mapping", () => {
+    expect(levelsOf("intermediate")).toEqual([2, 3]);
+    expect(levelsOf("technical")).toEqual([5]);
   });
 });

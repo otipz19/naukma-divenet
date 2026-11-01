@@ -18,8 +18,8 @@ public class SiteCatalogService {
     }
 
     @Transactional(readOnly = true)
-    public List<SiteMarkerView> markers() {
-        return sites.findAllWithRegion().stream()
+    public List<SiteMarkerView> markers(SiteFilter filter) {
+        return sites.findAll(SiteSearch.matching(filter)).stream()
                 .map(SiteCatalogService::marker)
                 .toList();
     }
