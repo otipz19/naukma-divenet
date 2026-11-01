@@ -395,6 +395,85 @@
     "/api/v1/sites/markers" : {
       "get" : {
         "operationId" : "markers",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "q",
+          "required" : false,
+          "schema" : {
+            "type" : [ "string", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "qRegion",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : [ "array", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "qCountry",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : [ "array", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "difficulty",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "format" : "int32",
+              "type" : "integer"
+            },
+            "type" : [ "array", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "gear",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : [ "array", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "country",
+          "required" : false,
+          "schema" : {
+            "type" : [ "string", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "region",
+          "required" : false,
+          "schema" : {
+            "type" : [ "string", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "minDepth",
+          "required" : false,
+          "schema" : {
+            "format" : "int32",
+            "type" : [ "integer", "null" ]
+          }
+        }, {
+          "in" : "query",
+          "name" : "maxDepth",
+          "required" : false,
+          "schema" : {
+            "format" : "int32",
+            "type" : [ "integer", "null" ]
+          }
+        } ],
         "responses" : {
           "200" : {
             "content" : {

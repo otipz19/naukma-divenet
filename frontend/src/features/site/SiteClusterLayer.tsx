@@ -31,7 +31,7 @@ export function SiteClusterLayer({
   onSelect,
 }: {
   sites: SiteMarker[];
-  onSelect: (site: SiteMarker) => void;
+  onSelect: (id: number) => void;
 }) {
   const map = useMap();
 
@@ -46,7 +46,7 @@ export function SiteClusterLayer({
         title: site.name,
         alt: site.name,
       });
-      marker.on("click", () => onSelect(site));
+      marker.on("click", () => onSelect(site.id));
       layer.addLayer(marker);
     }
     map.addLayer(layer);

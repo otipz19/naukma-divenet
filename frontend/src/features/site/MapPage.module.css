@@ -21,14 +21,141 @@
   padding: var(--space-6) var(--space-4);
 }
 
+/* A side panel of controls over results beside the map; below 1100px, a sheet over the map. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
+  height: 90vh;
+}
+
+/* Scrolls as one, as in Map.html. */
+.side {
+  overflow-y: auto;
+  background: var(--surface-1);
+  border-right: 1px solid var(--border);
+}
+
+.controls {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+
+.filters {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+}
+
+.filtersHead,
+.resultsHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.flush {
+  margin: 0;
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.results {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: 0 var(--space-4) var(--space-4);
+  background: var(--surface-1);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
+}
+
+.filtersToggle,
+.listToggle {
+  display: none;
+}
+
 /* isolation keeps Leaflet's high z-indexes below the header and the drawer. */
 .mapSection {
   isolation: isolate;
 }
 
 .map {
-  height: 75vh;
+  height: 100%;
   background: var(--info-soft);
+}
+
+@media (max-width: 1099px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 70vh;
+    grid-template-areas:
+      "controls"
+      "map";
+    height: auto;
+  }
+
+  /* Its children join the layout's grid, so the results can lie over the map. */
+  .side {
+    display: contents;
+  }
+
+  .controls {
+    grid-area: controls;
+    background: var(--surface-1);
+  }
+
+  .mapSection {
+    grid-area: map;
+  }
+
+  .results {
+    grid-area: map;
+    z-index: 1;
+    align-self: end;
+    max-height: 60%;
+    padding-top: var(--space-3);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    box-shadow: var(--shadow-2);
+  }
+
+  .list {
+    overflow-y: auto;
+  }
+
+  .filtersToggle,
+  .listToggle {
+    display: block;
+  }
+
+  .closedOnNarrow {
+    display: none;
+  }
 }
 
 .pin {

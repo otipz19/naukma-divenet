@@ -14,6 +14,11 @@
   background: var(--surface-2);
 }
 
+.selected.selected {
+  background: var(--accent-soft);
+  outline: 2px solid var(--accent);
+}
+
 .title {
   margin: 0;
 }

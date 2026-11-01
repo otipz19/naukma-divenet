@@ -1,4 +1,4 @@
-goal: M1 (Sites and map) — add-dive-site-catalog applied, synced and archived; PR open
+goal: M1 (Sites and map) — add-site-search-and-filters applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -9,11 +9,13 @@ done:
   - add-local-stack + retry-stack-image-pulls merged (PR #8) and archived (spec shared/local-stack)
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
   - add-reference-data merged (PR #10) and archived (specs geo, site/gear-catalog)
-  - add-dive-site-catalog implemented and archived (specs site/catalog, site/map, site/details; shared/web-app, shared/local-stack updated)
-wip: PR from change/add-dive-site-catalog (change + archive); awaiting CI and user merge
+  - add-dive-site-catalog merged (PR #11) and archived (specs site/catalog, site/map, site/details; shared/web-app, shared/local-stack updated)
+  - add-site-search-and-filters implemented and archived (spec site/search; site/catalog updated)
+wip: PR from change/add-site-search-and-filters (change + archive); awaiting CI and user merge
 blocked: null
-next: after the add-dive-site-catalog PR merges, /opsx:propose add-site-search-and-filters
+next: after the add-site-search-and-filters PR merges, /opsx:propose add-site-submission-and-moderation
 decisions:
+  - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
   - add-dive-site-catalog design.md D1-D6; add-site-submission-and-moderation must validate lat/lng (PostGIS geography coerces out-of-range values)
   - add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
@@ -26,13 +28,12 @@ decisions:
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-  - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-dive-site-catalog/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-site-search-and-filters/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME) — full gate (125 Vitest tests; mvnw verify 9 unit, 67 integration); smoke:stack passed; browser check of map and site page on the compose stack (WEB_PORT=18080; 8080 taken locally)
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (144 Vitest tests; mvnw verify 9 unit, 79 integration); one earlier gate run had 3 integration errors with the compose stack up, cause not captured, did not recur; browser check of search and filters on the stack (WEB_PORT=18080)
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET
-  ci: PRs #1-#10 green on ubuntu-latest
+  ci: PRs #1-#11 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI

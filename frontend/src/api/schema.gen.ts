@@ -392,7 +392,17 @@ export interface operations {
     };
     markers: {
         parameters: {
-            query?: never;
+            query?: {
+                q?: string | null;
+                qRegion?: string[] | null;
+                qCountry?: string[] | null;
+                difficulty?: number[] | null;
+                gear?: string[] | null;
+                country?: string | null;
+                region?: string | null;
+                minDepth?: number | null;
+                maxDepth?: number | null;
+            };
             header?: never;
             path?: never;
             cookie?: never;

@@ -180,6 +180,26 @@
       "notFound": "Site not found",
       "backToMap": "Back to the map",
       "loadError": "This site could not be loaded. Please try again later."
+    },
+    "search": {
+      "label": "Search sites",
+      "panel": "Search and filters",
+      "results": "Results",
+      "filters": "Filters",
+      "filtersCount": "Filters · {{n}}",
+      "clearAll": "Clear all",
+      "difficulty": "Difficulty",
+      "gear": "Required gear",
+      "country": "Country",
+      "region": "Region",
+      "allCountries": "All countries",
+      "allRegions": "All regions",
+      "minDepth": "Min depth (m)",
+      "maxDepth": "Max depth (m)",
+      "found": "Sites found: {{n}}",
+      "nothingFound": "Nothing found. Try another search or fewer filters.",
+      "showList": "Show list",
+      "hideList": "Hide list"
     }
   }
 }
