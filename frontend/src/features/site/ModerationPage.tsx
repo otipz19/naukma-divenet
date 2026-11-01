@@ -1,32 +1,99 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
+import { Badge } from "../../components/Badge/Badge";
 import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
 import { Button } from "../../components/Button/Button";
 import { TextField } from "../../components/TextField/TextField";
+import { CertificateQueue, useCertificateQueue } from "../user/CertificateQueue";
 import { formatCoordinates } from "./SitePage";
 import styles from "./ModerationPage.module.css";
 
 type QueueItem = components["schemas"]["QueueItemResponse"];
 
-/** The moderation page at `/admin/moderation` (spec site/moderation). */
-export function ModerationPage() {
-  const { t } = useTranslation();
-  const queue = useQuery({
+const TABS = ["sites", "certificates"] as const;
+type Tab = (typeof TABS)[number];
+
+function useSiteQueue() {
+  return useQuery({
     queryKey: ["sites", "admin-queue"],
     queryFn: async () => (await api.GET("/api/v1/admin/sites")).data,
   });
-  const [failure, setFailure] = useState<"conflict" | "generic">();
-  const items = queue.data?.content ?? [];
+}
+
+/** The moderation page at `/admin/moderation`: a tab for each queue (spec site/moderation). */
+export function ModerationPage() {
+  const { t } = useTranslation();
+  const [params, setParams] = useSearchParams();
+  const active: Tab = params.get("tab") === "certificates" ? "certificates" : "sites";
+  const counts: Record<Tab, number | undefined> = {
+    sites: useSiteQueue().data?.page.totalElements,
+    certificates: useCertificateQueue().data?.page.totalElements,
+  };
+  const tabs = useRef<Partial<Record<Tab, HTMLButtonElement | null>>>({});
+
+  const select = (tab: Tab) => setParams(tab === "sites" ? {} : { tab }, { replace: true });
+  const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    const other: Tab = active === "sites" ? "certificates" : "sites";
+    select(other);
+    tabs.current[other]?.focus();
+  };
 
   return (
     <div className={styles.page}>
       <h1 className={`h1 ${styles.flush}`}>{t("site.moderation.title")}</h1>
+      <div
+        className={styles.tabs}
+        role="tablist"
+        aria-label={t("site.moderation.tabs.label")}
+        onKeyDown={onKeyDown}
+      >
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            ref={(element) => {
+              tabs.current[tab] = element;
+            }}
+            type="button"
+            role="tab"
+            id={`moderation-tab-${tab}`}
+            aria-selected={tab === active}
+            aria-controls="moderation-panel"
+            tabIndex={tab === active ? 0 : -1}
+            className={`label ${styles.tab}`}
+            onClick={() => select(tab)}
+          >
+            {t(`site.moderation.tabs.${tab}`)}
+            {counts[tab] !== undefined && <Badge>{counts[tab]}</Badge>}
+          </button>
+        ))}
+      </div>
+      <section
+        id="moderation-panel"
+        className={styles.panel}
+        role="tabpanel"
+        aria-labelledby={`moderation-tab-${active}`}
+      >
+        {active === "sites" ? <SiteQueue /> : <CertificateQueue />}
+      </section>
+    </div>
+  );
+}
+
+function SiteQueue() {
+  const { t } = useTranslation();
+  const queue = useSiteQueue();
+  const [failure, setFailure] = useState<"conflict" | "generic">();
+  const items = queue.data?.content ?? [];
+
+  return (
+    <>
       {failure && (
         <Alert tone="danger" live>
           {t(failure === "conflict" ? "site.moderation.conflict" : "site.moderation.failure")}
@@ -37,18 +104,13 @@ export function ModerationPage() {
           {t("site.moderation.loadError")}
         </Alert>
       )}
-      {queue.isSuccess && (
-        <p className={`label ${styles.flush}`}>
-          {t("site.moderation.pending", { n: queue.data?.page.totalElements ?? 0 })}
-        </p>
-      )}
       {queue.isSuccess && items.length === 0 && (
         <p className={`body ${styles.flush}`}>{t("site.moderation.empty")}</p>
       )}
       {items.map((item) => (
         <QueueCard key={item.site.id} item={item} onFailure={setFailure} />
       ))}
-    </div>
+    </>
   );
 }
 

@@ -112,7 +112,10 @@ class ReviewController {
 
     @Schema(requiredProperties = {"id", "displayName"})
     record AuthorResponse(
-            long id, String displayName, @Nullable String avatarUrl) {}
+            long id,
+            String displayName,
+            @Nullable String avatarUrl,
+            @Nullable String verifiedCertificate) {}
 
     @Schema(requiredProperties = {"id", "url", "thumbnailUrl", "width", "height"})
     record PhotoResponse(UUID id, String url, String thumbnailUrl, int width, int height) {
@@ -139,7 +142,11 @@ class ReviewController {
             return new ReviewResponse(
                     review.id(),
                     review.siteId(),
-                    new AuthorResponse(review.authorId(), review.authorName(), review.authorAvatarUrl()),
+                    new AuthorResponse(
+                            review.authorId(),
+                            review.authorName(),
+                            review.authorAvatarUrl(),
+                            review.authorVerifiedCertificate()),
                     review.rating(),
                     review.difficulty(),
                     review.text(),

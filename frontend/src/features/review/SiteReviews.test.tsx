@@ -305,3 +305,25 @@ describe("review/site-reviews: A review's author links to their profile", () => 
     expect(screen.getByText("OK")).toBeInTheDocument();
   });
 });
+
+describe("review/site-reviews: A review's author shows a verified badge", () => {
+  it("shows the badge", async () => {
+    const author = {
+      id: 21,
+      displayName: "Oleh Kravets",
+      verifiedCertificate: "PADI Advanced Open Water",
+    };
+    serve(() => page([review({ author })]));
+    renderRoute("/sites/7");
+
+    expect(await screen.findByText("Verified PADI Advanced Open Water")).toBeInTheDocument();
+  });
+
+  it("shows no badge for an unverified author", async () => {
+    serve(() => page([review()]));
+    renderRoute("/sites/7");
+
+    await screen.findByRole("link", { name: "Oleh Kravets" });
+    expect(screen.queryByText(/^Verified/)).not.toBeInTheDocument();
+  });
+});

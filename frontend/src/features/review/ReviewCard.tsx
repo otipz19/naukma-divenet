@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Avatar } from "../../components/Avatar/Avatar";
+import { Badge } from "../../components/Badge/Badge";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { Rating } from "../../components/Rating/Rating";
 import { initials } from "../auth/AccountArea";
@@ -43,6 +44,13 @@ export function ReviewCard({
           <span className={`body-sm ${styles.muted}`}>
             {formatReviewDate(review.createdAt, i18n.language)}
           </span>
+          {review.author.verifiedCertificate && (
+            <span>
+              <Badge tone="success">
+                {t("review.verifiedBadge", { certificate: review.author.verifiedCertificate })}
+              </Badge>
+            </span>
+          )}
         </div>
         <span className={styles.spacer} />
         {review.rating != null && <Rating value={review.rating} />}

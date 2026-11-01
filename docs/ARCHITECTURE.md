@@ -125,7 +125,7 @@ Rules:
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
 `media` (`add-media-uploads`), `reviews` and `review_media` (`add-site-reviews`), and
-`warnings` (`add-site-warnings`), and `dive_log_entries` (`add-dive-log`) exist; the other tables are **(planned)**. A site's rating
+`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), and `certificates` (`add-certificates`) exist; the other tables are **(planned)**. A site's rating
 aggregates are columns of `sites`, kept by the `review` feature in the same transaction as
 every review write.
 
@@ -210,6 +210,8 @@ Each change that adds tables updates this diagram.
 - GET requests for public content are anonymous. Admin endpoints live under `/api/v1/admin/**`.
 - A diver's dive log, visited sites and statistics answer 403 to everyone but the owner when the
   profile's settings hide them, and buddies and notes go only to the owner, because they can name other people.
+- A diver's certificates answer 403 to everyone but the owner and admins when the profile hides them. A certificate's
+  number, photo and rejection reason, and rejected certificates, go only to the owner and admins.
 - A site is public only once approved. Until then its page answers 404 except to its author and
   admins, so the answer does not reveal that it exists. Coordinates are validated at the API,
   because PostGIS coerces out-of-range `geography` values instead of refusing them.

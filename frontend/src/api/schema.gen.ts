@@ -4,6 +4,54 @@
  */
 
 export interface paths {
+    "/api/v1/admin/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["queue_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/certificates/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["reject_1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/certificates/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["verify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/sites": {
         parameters: {
             query?: never;
@@ -143,6 +191,38 @@ export interface paths {
         put?: never;
         post: operations["register"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["declare"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_4"];
+        post?: never;
+        delete: operations["delete_3"];
         options?: never;
         head?: never;
         patch?: never;
@@ -388,6 +468,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/{id}/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["list_2"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/users/{id}/dive-log": {
         parameters: {
             query?: never;
@@ -472,6 +568,7 @@ export interface components {
             displayName: string;
             /** Format: int64 */
             id: number;
+            verifiedCertificate?: string;
         };
         AvatarResponse: {
             /** Format: int32 */
@@ -482,6 +579,42 @@ export interface components {
             url: string;
             /** Format: int32 */
             width: number;
+        };
+        CertificatePhotoResponse: {
+            /** Format: int32 */
+            height: number;
+            /** Format: uuid */
+            id: string;
+            thumbnailUrl: string;
+            url: string;
+            /** Format: int32 */
+            width: number;
+        };
+        CertificateQueueItemResponse: {
+            certificate: components["schemas"]["CertificateResponse"];
+            /** Format: int64 */
+            holderId: number;
+            holderName: string;
+        };
+        CertificateRequest: {
+            /** @enum {string} */
+            agency: "PADI" | "SSI" | "CMAS" | "OTHER";
+            level: string;
+            number: string;
+            /** Format: uuid */
+            photoId?: string;
+        };
+        CertificateResponse: {
+            /** @enum {string} */
+            agency: "PADI" | "SSI" | "CMAS" | "OTHER";
+            /** Format: int64 */
+            id: number;
+            level: string;
+            number?: string;
+            photo?: components["schemas"]["CertificatePhotoResponse"];
+            rejectionReason?: string;
+            /** @enum {string} */
+            status: "PENDING" | "VERIFIED" | "REJECTED";
         };
         CountryResponse: {
             code: string;
@@ -556,6 +689,10 @@ export interface components {
             /** Format: int64 */
             totalPages: number;
         };
+        PagedModelCertificateQueueItemResponse: {
+            content: components["schemas"]["CertificateQueueItemResponse"][];
+            page: components["schemas"]["PageMetadata"];
+        };
         PagedModelEntryResponse: {
             content: components["schemas"]["EntryResponse"][];
             page: components["schemas"]["PageMetadata"];
@@ -613,6 +750,9 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+        };
+        RejectCertificateRequest: {
+            reason: string;
         };
         RejectRequest: {
             reason: string;
@@ -765,6 +905,81 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    queue_1: {
+        parameters: {
+            query?: {
+                /** @description Zero-based page index (0..N) */
+                page?: number;
+                /** @description The size of the page to be returned */
+                size?: number;
+                /** @description Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported. */
+                sort?: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["PagedModelCertificateQueueItemResponse"];
+                };
+            };
+        };
+    };
+    reject_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectCertificateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CertificateResponse"];
+                };
+            };
+        };
+    };
+    verify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CertificateResponse"];
+                };
+            };
+        };
+    };
     queue: {
         parameters: {
             query?: {
@@ -967,6 +1182,76 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["AuthResponse"];
                 };
+            };
+        };
+    };
+    declare: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificateRequest"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CertificateResponse"];
+                };
+            };
+        };
+    };
+    update_4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CertificateResponse"];
+                };
+            };
+        };
+    };
+    delete_3: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -1422,6 +1707,28 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["ProfileResponse"];
+                };
+            };
+        };
+    };
+    list_2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["CertificateResponse"][];
                 };
             };
         };

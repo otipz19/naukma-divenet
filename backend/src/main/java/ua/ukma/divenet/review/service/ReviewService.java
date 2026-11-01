@@ -29,6 +29,7 @@ import ua.ukma.divenet.site.service.ReviewAggregates;
 import ua.ukma.divenet.site.service.SiteCatalogService;
 import ua.ukma.divenet.site.service.SiteCatalogService.Viewer;
 import ua.ukma.divenet.user.domain.UserRepository;
+import ua.ukma.divenet.user.service.CertificateService;
 
 /**
  * Specs review/reviews and review/ratings. Every write locks the site first, so the writes of one site
@@ -46,6 +47,7 @@ public class ReviewService {
     private final SiteCatalogService catalog;
     private final MediaService media;
     private final UserRepository users;
+    private final CertificateService certificates;
     private final Clock clock;
 
     public ReviewService(
@@ -53,11 +55,13 @@ public class ReviewService {
             SiteCatalogService catalog,
             MediaService media,
             UserRepository users,
+            CertificateService certificates,
             Clock clock) {
         this.reviews = reviews;
         this.catalog = catalog;
         this.media = media;
         this.users = users;
+        this.certificates = certificates;
         this.clock = clock;
     }
 
@@ -78,7 +82,11 @@ public class ReviewService {
                 : reviews.findNewest(siteId, pageable);
         Map<UUID, MediaView> photos = photos(
                 found.stream().flatMap(review -> review.getPhotoIds().stream()).toList());
-        return found.map(review -> view(review, photos));
+        Map<Long, String> badges = certificates.verifiedBadges(found.stream()
+                .map(review -> review.getAuthor().getId())
+                .distinct()
+                .toList());
+        return found.map(review -> view(review, photos, badges));
     }
 
     @Transactional(readOnly = true)
@@ -181,14 +189,17 @@ public class ReviewService {
     }
 
     private ReviewView view(Review review) {
-        return view(review, photos(review.getPhotoIds()));
+        return view(
+                review,
+                photos(review.getPhotoIds()),
+                certificates.verifiedBadges(List.of(review.getAuthor().getId())));
     }
 
     private Map<UUID, MediaView> photos(List<UUID> ids) {
         return media.views(ids).stream().collect(Collectors.toMap(MediaView::id, Function.identity()));
     }
 
-    private static ReviewView view(Review review, Map<UUID, MediaView> photos) {
+    private static ReviewView view(Review review, Map<UUID, MediaView> photos, Map<Long, String> badges) {
         return new ReviewView(
                 review.getId(),
                 review.getSite().getId(),
@@ -197,6 +208,7 @@ public class ReviewService {
                 review.getAuthor().getAvatarId() == null
                         ? null
                         : MediaView.thumbnailUrlOf(review.getAuthor().getAvatarId()),
+                badges.get(review.getAuthor().getId()),
                 review.getRating(),
                 review.getDifficulty(),
                 review.getText(),

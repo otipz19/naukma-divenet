@@ -12,6 +12,7 @@ public record ReviewView(
         long authorId,
         String authorName,
         @Nullable String authorAvatarUrl,
+        @Nullable String authorVerifiedCertificate,
         @Nullable Integer rating,
         @Nullable Integer difficulty,
         @Nullable String text,
