@@ -1,0 +1,102 @@
+/* design/screens/SubmitSite.html */
+.page {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  align-items: flex-start;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-6);
+}
+
+.form {
+  display: grid;
+  flex: 999 1 30rem;
+  gap: var(--space-5);
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.head {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.flush,
+.muted {
+  margin: 0;
+}
+
+.muted {
+  color: var(--ink-muted);
+}
+
+.group {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* isolation keeps Leaflet's high z-indexes below the header and the drawer. */
+.mapBox {
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.map {
+  height: 40vh;
+  background: var(--info-soft);
+  cursor: crosshair;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.aside {
+  display: grid;
+  flex: 1 1 18rem;
+  gap: var(--space-3);
+}
+
+.card {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+@media (max-width: 767px) {
+  .page {
+    padding: var(--space-5) var(--space-4);
+  }
+}

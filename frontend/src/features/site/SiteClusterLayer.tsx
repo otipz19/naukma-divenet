@@ -9,7 +9,7 @@ const PIN_SIZE = 24;
 const CLUSTER_SIZE = 40;
 
 /** Div icons: Leaflet's default image icons break under Vite, and these take token colours. */
-const pinIcon = L.divIcon({
+export const pinIcon = L.divIcon({
   // Leaflet positions the icon with `transform`, so only an inner element may rotate.
   className: "",
   html: `<span class="${styles.pin}"></span>`,

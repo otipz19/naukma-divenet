@@ -30,7 +30,8 @@
       "logIn": "Log in",
       "signUp": "Sign up",
       "menu": "Account menu: {{name}}",
-      "logOut": "Log out"
+      "logOut": "Log out",
+      "moderation": "Moderation"
     }
   },
   "auth": {
@@ -179,7 +180,9 @@
       "about": "About this site",
       "notFound": "Site not found",
       "backToMap": "Back to the map",
-      "loadError": "This site could not be loaded. Please try again later."
+      "loadError": "This site could not be loaded. Please try again later.",
+      "pendingNotice": "This site is waiting for an admin to review it. Only you and admins can see it.",
+      "rejectedNotice": "Rejected by an admin"
     },
     "search": {
       "label": "Search sites",
@@ -200,6 +203,59 @@
       "nothingFound": "Nothing found. Try another search or fewer filters.",
       "showList": "Show list",
       "hideList": "Hide list"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "REJECTED": "Rejected"
+    },
+    "submit": {
+      "link": "Submit a site",
+      "title": "Submit a dive site",
+      "hint": "Only you can see it until an admin approves it.",
+      "name": "Site name",
+      "location": "Location",
+      "mapLabel": "Location map",
+      "mapHint": "Click the map to place the site.",
+      "lat": "Latitude",
+      "lng": "Longitude",
+      "choose": "Choose…",
+      "description": "Description",
+      "send": "Submit for review",
+      "success": "Your site has been sent for review.",
+      "failure": "The site could not be sent. Please try again.",
+      "yours": "Your submissions",
+      "none": "You have not submitted a site yet.",
+      "errors": {
+        "nameRequired": "Enter the site's name.",
+        "nameTooLong": "Use at most 120 characters.",
+        "locationRequired": "Click the map or enter a value.",
+        "latInvalid": "Use a latitude from -90 to 90.",
+        "lngInvalid": "Use a longitude from -180 to 180.",
+        "countryRequired": "Choose a country.",
+        "regionRequired": "Choose a region.",
+        "depthRequired": "Enter a depth.",
+        "depthInvalid": "Use a whole number from 0 to 400.",
+        "depthOrder": "Must not be above the maximum depth.",
+        "difficultyRequired": "Choose a difficulty.",
+        "descriptionRequired": "Write a short description.",
+        "descriptionTooLong": "Use at most 5000 characters.",
+        "rejected": "The server refused this value."
+      }
+    },
+    "moderation": {
+      "title": "Moderation",
+      "pending": "Sites waiting: {{n}}",
+      "empty": "Nothing is waiting for review.",
+      "submittedBy": "Submitted by {{name}}",
+      "openMap": "Open on OpenStreetMap",
+      "reason": "Rejection reason",
+      "reasonRequired": "Enter a reason to reject.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "conflict": "This site has already been moderated.",
+      "failure": "That did not work. Please try again.",
+      "loadError": "The queue could not be loaded. Please try again later."
     }
   }
 }

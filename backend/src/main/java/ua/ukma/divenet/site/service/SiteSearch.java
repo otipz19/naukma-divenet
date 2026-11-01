@@ -15,6 +15,7 @@ import ua.ukma.divenet.geo.domain.Country;
 import ua.ukma.divenet.geo.domain.Region;
 import ua.ukma.divenet.site.domain.GearRequirement;
 import ua.ukma.divenet.site.domain.Site;
+import ua.ukma.divenet.site.domain.SiteStatus;
 
 /** Turns a {@link SiteFilter} into a query; only supplied filters add a predicate (design D2). */
 final class SiteSearch {
@@ -33,6 +34,7 @@ final class SiteSearch {
             Path<Region> region = root.get("region");
             Path<Country> country = region.get("country");
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(cb.equal(root.get("status"), SiteStatus.APPROVED));
             if (filter.q() != null) {
                 predicates.add(textMatch(filter, root, region, country, (HibernateCriteriaBuilder) cb));
             }

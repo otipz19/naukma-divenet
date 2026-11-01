@@ -66,6 +66,75 @@
         "required" : [ "email", "password" ],
         "type" : "object"
       },
+      "OwnSubmissionResponse" : {
+        "properties" : {
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "rejectionReason" : {
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "PENDING", "APPROVED", "REJECTED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "id", "name", "status" ],
+        "type" : "object"
+      },
+      "PageMetadata" : {
+        "properties" : {
+          "number" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "size" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "totalElements" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "totalPages" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "number", "size", "totalElements", "totalPages" ],
+        "type" : "object"
+      },
+      "PagedModelQueueItemResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/QueueItemResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "$ref" : "#/components/schemas/PageMetadata"
+          }
+        },
+        "required" : [ "content", "page" ],
+        "type" : "object"
+      },
+      "QueueItemResponse" : {
+        "properties" : {
+          "authorName" : {
+            "type" : "string"
+          },
+          "site" : {
+            "$ref" : "#/components/schemas/SiteResponse"
+          }
+        },
+        "required" : [ "authorName", "site" ],
+        "type" : "object"
+      },
       "RegionResponse" : {
         "properties" : {
           "code" : {
@@ -98,6 +167,17 @@
           }
         },
         "required" : [ "displayName", "email", "password" ],
+        "type" : "object"
+      },
+      "RejectRequest" : {
+        "properties" : {
+          "reason" : {
+            "maxLength" : 500,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "required" : [ "reason" ],
         "type" : "object"
       },
       "SiteMarkerResponse" : {
@@ -183,6 +263,75 @@
           "regionCode" : {
             "type" : "string"
           },
+          "rejectionReason" : {
+            "type" : "string"
+          },
+          "requiredGear" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "status" : {
+            "enum" : [ "PENDING", "APPROVED", "REJECTED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "recommendedGear", "regionCode", "requiredGear", "status" ],
+        "type" : "object"
+      },
+      "SubmissionRequest" : {
+        "properties" : {
+          "description" : {
+            "maxLength" : 5000,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "difficulty" : {
+            "format" : "int32",
+            "maximum" : 5,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "lat" : {
+            "format" : "double",
+            "maximum" : 90,
+            "minimum" : -90,
+            "type" : "number"
+          },
+          "lng" : {
+            "format" : "double",
+            "maximum" : 180,
+            "minimum" : -180,
+            "type" : "number"
+          },
+          "maxDepth" : {
+            "format" : "int32",
+            "maximum" : 400,
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "minDepth" : {
+            "format" : "int32",
+            "maximum" : 400,
+            "minimum" : 0,
+            "type" : "integer"
+          },
+          "name" : {
+            "maxLength" : 120,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "recommendedGear" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          },
+          "regionCode" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
           "requiredGear" : {
             "items" : {
               "type" : "string"
@@ -190,7 +339,7 @@
             "type" : "array"
           }
         },
-        "required" : [ "countryCode", "description", "difficulty", "id", "lat", "lng", "maxDepth", "minDepth", "name", "recommendedGear", "regionCode", "requiredGear" ],
+        "required" : [ "description", "difficulty", "lat", "lng", "maxDepth", "minDepth", "name", "regionCode" ],
         "type" : "object"
       },
       "UserResponse" : {
@@ -228,6 +377,129 @@
   },
   "openapi" : "3.1.0",
   "paths" : {
+    "/api/v1/admin/sites" : {
+      "get" : {
+        "operationId" : "queue",
+        "parameters" : [ {
+          "description" : "Zero-based page index (0..N)",
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "The size of the page to be returned",
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedModelQueueItemResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "site-moderation-controller" ]
+      }
+    },
+    "/api/v1/admin/sites/{id}/approve" : {
+      "post" : {
+        "operationId" : "approve",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SiteResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "site-moderation-controller" ]
+      }
+    },
+    "/api/v1/admin/sites/{id}/reject" : {
+      "post" : {
+        "operationId" : "reject",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RejectRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SiteResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "site-moderation-controller" ]
+      }
+    },
     "/api/v1/auth/login" : {
       "post" : {
         "operationId" : "login",
@@ -392,6 +664,37 @@
         "tags" : [ "gear-item-controller" ]
       }
     },
+    "/api/v1/sites" : {
+      "post" : {
+        "operationId" : "submit",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SubmissionRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/SiteResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "site-controller" ]
+      }
+    },
     "/api/v1/sites/markers" : {
       "get" : {
         "operationId" : "markers",
@@ -489,6 +792,30 @@
             "description" : "OK"
           }
         },
+        "tags" : [ "site-controller" ]
+      }
+    },
+    "/api/v1/sites/mine" : {
+      "get" : {
+        "operationId" : "mine",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/OwnSubmissionResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
         "tags" : [ "site-controller" ]
       }
     },

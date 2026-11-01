@@ -93,7 +93,6 @@ function AccountMenu({ user }: { user: SessionUser }) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
-  const firstItem = useRef<HTMLButtonElement>(null);
   const menuId = useId();
 
   const close = useCallback((restoreFocus: boolean) => {
@@ -103,7 +102,7 @@ function AccountMenu({ user }: { user: SessionUser }) {
 
   useEffect(() => {
     if (!open) return;
-    firstItem.current?.focus();
+    root.current?.querySelector<HTMLElement>("[role=menuitem]")?.focus();
     const closeOutside = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) close(false);
     };
@@ -137,8 +136,17 @@ function AccountMenu({ user }: { user: SessionUser }) {
           <p className={`label ${styles.name}`} role="presentation">
             {user.displayName}
           </p>
+          {user.role === "ADMIN" && (
+            <Link
+              to="/admin/moderation"
+              role="menuitem"
+              className={`label ${styles.item}`}
+              onClick={() => close(false)}
+            >
+              {t("shell.account.moderation")}
+            </Link>
+          )}
           <button
-            ref={firstItem}
             type="button"
             role="menuitem"
             className={`label ${styles.item}`}
@@ -160,6 +168,11 @@ function DrawerAccount({ user, onNavigate }: { user: SessionUser; onNavigate?: (
   return (
     <div className={styles.drawerLinks}>
       <p className={`label ${styles.drawerName}`}>{user.displayName}</p>
+      {user.role === "ADMIN" && (
+        <Link to="/admin/moderation" className={`label ${styles.link}`} onClick={onNavigate}>
+          {t("shell.account.moderation")}
+        </Link>
+      )}
       <button
         type="button"
         className={`label ${styles.link}`}

@@ -45,7 +45,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `add-reference-data` | Countries, regions and gear catalog (migrations + read endpoints) | US-05, US-15 (data) | `bootstrap-backend` | archived |
 | `add-dive-site-catalog` | Site entity with PostGIS location, site page, markers endpoint, map page with clustering, `demo`-profile seeder with ~50 real sites | US-01, US-02 | `add-reference-data`, `bootstrap-frontend` | archived |
 | `add-site-search-and-filters` | Name/region search plus combinable filters (minimum rating moves to `add-site-reviews`), reflected on the map and in a result list | US-05, US-06 | `add-dive-site-catalog` | archived |
-| `add-site-submission-and-moderation` | Submit a site, admin queue with approve/reject, author sees status | US-07, US-08 | `add-dive-site-catalog`, `add-authentication` | planned |
+| `add-site-submission-and-moderation` | Submit a site, admin queue with approve/reject, author sees status | US-07, US-08 | `add-dive-site-catalog`, `add-authentication` | archived |
 
 ## M2 — Reviews, media, safety
 
