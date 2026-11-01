@@ -56,7 +56,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | --- | --- | --- | --- | --- |
 | `add-media-uploads` | Upload endpoint, `MediaStorage` on local disk, thumbnails, orphan cleanup, front-end upload component | — | `add-authentication` | archived |
 | `add-site-reviews` | Reviews with rating, difficulty rating and photos; aggregates on the site; edit/delete own review; minimum-rating filter and sorting by rating on the map | US-03, US-04, US-05 (rating) | `add-dive-site-catalog`, `add-media-uploads` | archived |
-| `add-site-warnings` | Post, list and hide warnings on a site | US-S1 | `add-dive-site-catalog`, `add-authentication` | planned |
+| `add-site-warnings` | Post, list and hide warnings on a site | US-S1 | `add-dive-site-catalog`, `add-authentication` | proposed |
 
 ## M3 — Divers
 

@@ -1,4 +1,4 @@
-goal: M2 (Reviews, media, safety); add-site-reviews archived, PR open on change/add-site-reviews
+goal: M2 (Reviews, media, safety); add-site-warnings proposed on change/add-site-warnings, awaiting user review
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -8,12 +8,12 @@ done:
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
   - add-reference-data (PR #10), add-dive-site-catalog (PR #11) merged and archived (specs geo, site/catalog, site/map, site/details, site/gear-catalog)
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
-  - add-media-uploads merged (PR #14) and archived (specs media/uploads, media/photo-field); plan-update notes (ADR-0010) merged (PR #15)
-  - add-site-reviews applied, synced and archived (specs review/*, shared/rating; site/catalog, site/details, site/search updated)
-wip: add-site-reviews PR open; awaiting CI and user merge
+  - add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16) merged and archived (specs media/*, review/*, shared/rating)
+wip: add-site-warnings proposed and committed (openspec/changes/add-site-warnings; notes for add-diver-profile, apply-ui-design); not pushed
 blocked: null
-next: after the add-site-reviews PR merges, /opsx:propose add-site-warnings (M2; absorb docs/plan-updates/add-site-warnings/ if any)
+next: after the user approves the proposal, /opsx:apply add-site-warnings
 decisions:
+  - add-site-warnings design.md D1-D7 (soft hide via hidden_at; type is a validated string in requests; authors edit and delete own; hide on the site page only, no Moderation tab)
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
   - add-media-uploads design.md D1-D8; test setup gives jsdom Node's File/FormData (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
@@ -28,7 +28,7 @@ decisions:
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-site-reviews/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/add-site-warnings/]
 checks:
   gate: pnpm check
   last: pass 2026-11-01 on Windows on change/add-site-reviews (235 Vitest; mvnw verify 27 unit, 187 integration)
