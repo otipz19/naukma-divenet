@@ -1,7 +1,7 @@
 // Smoke test of the running compose stack (CI job `stack`; spec shared/local-stack).
 // Builds and starts the stack as the compose project `divenet-smoke` on WEB_PORT 18080, so it
-// never touches a developer's own stack, checks it over HTTP, restarts it, and always removes
-// its containers, network and volume. Before building, it pulls every image the stack uses
+// never touches a developer's own stack, checks it over HTTP (including a 10 MiB upload through
+// the web server), restarts it, and always removes its containers, network and volumes. Before building, it pulls every image the stack uses
 // (service images, Dockerfile `# syntax=` frontends and base images), trying each up to 3 times, so a transient
 // registry error does not fail the run. Needs Docker; takes a few minutes.
 // Usage: node scripts/smoke-stack.mjs   (or `pnpm smoke:stack`; exits 1 when a check fails)
@@ -20,12 +20,17 @@ const WAIT = ["--wait", "--wait-timeout", "300"];
 const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_)/i;
 // Waits before the 2nd and 3rd pull attempt: a registry error such as a 502 is often over by then.
 export const PULL_WAITS_MS = [10_000, 30_000];
+// The upload limit (spec media/uploads): 10 MB, as Spring counts it.
+export const UPLOAD_LIMIT_BYTES = 10 * 1024 * 1024;
+// A valid 16x12 JPEG; padded after its end-of-image marker, which decoders stop at.
+const SMALL_JPEG = "/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAMABADASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDmaKKK9k+ZP//Z";
 
 /**
  * @typedef {{ status: number | null, stdout: string, stderr: string }} RunResult
  * @typedef {(args: string[]) => RunResult} Run runs `docker compose <args>` for the smoke project
  * @typedef {{ status: number, contentType: string, body: string }} HttpResult
- * @typedef {(path: string) => Promise<HttpResult>} Http sends GET <path> to the web port
+ * @typedef {{ method?: string, headers?: Record<string, string>, body?: string | Uint8Array }} HttpInit
+ * @typedef {(path: string, init?: HttpInit) => Promise<HttpResult>} Http sends a request (GET by default) to the web port
  * @typedef {(image: string) => RunResult} Pull runs `docker pull -q <image>`
  * @typedef {{ images?: string[], pull?: Pull, sleep?: (ms: number) => Promise<void> }} PullOptions
  */
@@ -64,6 +69,81 @@ function parsePs(/** @type {string} */ text) {
 function migrationHistory(run, database) {
   const sql = "SELECT installed_rank, installed_on FROM flyway_schema_history ORDER BY installed_rank";
   return mustRun(run, ["exec", "-T", "db", "psql", "-U", database.user, "-d", database.db, "-At", "-c", sql]).trim();
+}
+
+/**
+ * A valid JPEG of exactly `size` bytes (at least the small JPEG's own size).
+ * @param {number} size
+ * @returns {Uint8Array}
+ */
+export function paddedJpeg(size) {
+  const image = Buffer.from(SMALL_JPEG, "base64");
+  if (size < image.length) throw new Error(`a JPEG needs at least ${image.length} bytes`);
+  const padded = new Uint8Array(size);
+  padded.set(image);
+  return padded;
+}
+
+/**
+ * A multipart/form-data body with one file part.
+ * @param {string} field
+ * @param {string} filename
+ * @param {string} type
+ * @param {Uint8Array} bytes
+ * @returns {{ contentType: string, body: Uint8Array }}
+ */
+export function multipartFile(field, filename, type, bytes) {
+  const boundary = "divenet-smoke-boundary";
+  const head = Buffer.from(
+    `--${boundary}\r\nContent-Disposition: form-data; name="${field}"; filename="${filename}"\r\n` +
+      `Content-Type: ${type}\r\n\r\n`,
+  );
+  const tail = Buffer.from(`\r\n--${boundary}--\r\n`);
+  return { contentType: `multipart/form-data; boundary=${boundary}`, body: Buffer.concat([head, bytes, tail]) };
+}
+
+/**
+ * Registers a new user, logs in and uploads a JPEG of exactly the size limit through the web port.
+ * @param {Http} http
+ * @returns {Promise<{ url: string, thumbnailUrl: string }>}
+ */
+async function uploadAtTheLimit(http) {
+  const credentials = { email: `smoke-${Date.now()}@example.com`, password: "smoke-test-password" };
+  const json = { "Content-Type": "application/json" };
+  const register = await http("/api/v1/auth/register", {
+    method: "POST",
+    headers: json,
+    body: JSON.stringify({ ...credentials, displayName: "Smoke Test" }),
+  });
+  check(register.status === 201, `POST /api/v1/auth/register returned ${register.status}`);
+  const login = await http("/api/v1/auth/login", { method: "POST", headers: json, body: JSON.stringify(credentials) });
+  check(login.status === 200, `POST /api/v1/auth/login returned ${login.status}`);
+  const { accessToken } = JSON.parse(login.body);
+
+  const form = multipartFile("file", "smoke.jpg", "image/jpeg", paddedJpeg(UPLOAD_LIMIT_BYTES));
+  const upload = await http("/api/v1/media", {
+    method: "POST",
+    headers: { "Content-Type": form.contentType, Authorization: `Bearer ${accessToken}` },
+    body: form.body,
+  });
+  check(upload.status === 201, `POST /api/v1/media with ${UPLOAD_LIMIT_BYTES} bytes returned ${upload.status}`);
+  const { url, thumbnailUrl } = JSON.parse(upload.body);
+  return { url, thumbnailUrl };
+}
+
+/**
+ * @param {Http} http
+ * @param {{ url: string, thumbnailUrl: string }} media
+ */
+async function checkMediaServed(http, media) {
+  for (const [path, type] of [
+    [media.url, "image/jpeg"],
+    [media.thumbnailUrl, "image/jpeg"],
+  ]) {
+    const response = await http(path);
+    check(response.status === 200, `GET ${path} returned ${response.status}`);
+    check(response.contentType.startsWith(type), `GET ${path} content type is ${response.contentType}`);
+  }
 }
 
 /**
@@ -144,6 +224,17 @@ export async function runSmoke(run, http, database, log = console.log, options =
     check(JSON.parse(api.body).instance === "/api/v1/does-not-exist", "API problem has the wrong instance");
     log("ok  /api is proxied to the back-end");
 
+    // Media error comes from the back-end
+    const media = await http("/media/00000000-0000-0000-0000-000000000000");
+    check(media.status === 404, `GET /media/00000000-0000-0000-0000-000000000000 returned ${media.status}`);
+    check(media.contentType.includes("application/problem+json"), `media content type is ${media.contentType}`);
+    log("ok  /media is proxied to the back-end");
+
+    // Upload at the size limit passes the web server
+    const uploaded = await uploadAtTheLimit(http);
+    await checkMediaServed(http, uploaded);
+    log(`ok  a ${UPLOAD_LIMIT_BYTES}-byte upload passes the web server and is served`);
+
     // Restart keeps the migration history
     const before = migrationHistory(run, database);
     check(before !== "", "the migration history is empty");
@@ -152,6 +243,10 @@ export async function runSmoke(run, http, database, log = console.log, options =
     const after = migrationHistory(run, database);
     check(after === before, `the migration history changed across a restart:\n${before}\n---\n${after}`);
     log("ok  the migration history survives a restart");
+
+    // Restart keeps an upload
+    await checkMediaServed(http, uploaded);
+    log("ok  the upload and its thumbnail survive a restart");
   } catch (error) {
     failed = true;
     log(`FAILED: ${error instanceof Error ? error.message : String(error)}`);
@@ -202,8 +297,19 @@ async function main() {
   const config = JSON.parse(mustRun(run, ["config", "--format", "json"]));
   const images = externalImages(config, readDockerfiles(config));
   /** @type {Http} */
-  const http = async (path) => {
-    const response = await fetch(`http://localhost:${WEB_PORT}${path}`);
+  const http = async (path, init = {}) => {
+    const url = `http://localhost:${WEB_PORT}${path}`;
+    let response;
+    try {
+      response = await fetch(url, init);
+    } catch {
+      // A keep-alive connection from before the restart is dead by now: one try on a new one.
+      try {
+        response = await fetch(url, init);
+      } catch (error) {
+        throw new Error(`${init.method ?? "GET"} ${path} failed: ${error instanceof Error ? String(error.cause ?? error) : error}`);
+      }
+    }
     return { status: response.status, contentType: response.headers.get("content-type") ?? "", body: await response.text() };
   };
   process.exit(await runSmoke(run, http, readDatabase(), console.log, { images, pull }));

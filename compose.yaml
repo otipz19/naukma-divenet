@@ -33,6 +33,10 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       # The demo profile seeds dive sites into an empty database.
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-demo}
+      # Uploaded media (ADR-0006), on the named volume below so it survives a restart.
+      MEDIA_DIR: /data/media
+    volumes:
+      - media-data:/data/media
     depends_on:
       db:
         condition: service_healthy
@@ -62,3 +66,4 @@ services:
 
 volumes:
   db-data:
+  media-data:

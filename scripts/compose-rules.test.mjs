@@ -20,7 +20,9 @@ function rendered() {
       backend: {
         build: { context: "/repo/backend", dockerfile: "Dockerfile" },
         depends_on: { db: { condition: "service_healthy", required: true } },
+        environment: { MEDIA_DIR: "/data/media" },
         healthcheck,
+        volumes: [{ type: "volume", source: "media-data", target: "/data/media", volume: {} }],
       },
       web: {
         build: { context: "/repo", dockerfile: "frontend/Dockerfile" },
@@ -29,7 +31,7 @@ function rendered() {
         ports: [{ mode: "ingress", target: 80, published: "8080", protocol: "tcp" }],
       },
     },
-    volumes: { "db-data": { name: "divenet_db-data" } },
+    volumes: { "db-data": { name: "divenet_db-data" }, "media-data": { name: "divenet_media-data" } },
   };
 }
 
@@ -93,6 +95,28 @@ describe("findComposeProblems", () => {
     ];
     assert.deepEqual(findComposeProblems(config, dockerfiles), [
       "db: /var/lib/postgresql/data is not on a named volume",
+    ]);
+  });
+
+  it("requires the media directory on a named volume (Media directory is on a named volume)", () => {
+    const unmounted = rendered();
+    delete (/** @type {any} */ (unmounted.services.backend).volumes);
+    assert.deepEqual(findComposeProblems(unmounted, dockerfiles), ["backend: /data/media is not on a named volume"]);
+
+    const bind = rendered();
+    /** @type {any} */ (bind.services.backend).volumes = ["/repo/media:/data/media"];
+    assert.deepEqual(findComposeProblems(bind, dockerfiles), ["backend: /data/media is not on a named volume"]);
+
+    const shortForm = rendered();
+    /** @type {any} */ (shortForm.services.backend).volumes = ["media-data:/data/media"];
+    assert.deepEqual(findComposeProblems(shortForm, dockerfiles), []);
+  });
+
+  it("requires MEDIA_DIR to point at the mounted media directory", () => {
+    const config = rendered();
+    delete (/** @type {any} */ (config.services.backend).environment);
+    assert.deepEqual(findComposeProblems(config, dockerfiles), [
+      "backend: MEDIA_DIR must be /data/media, got undefined",
     ]);
   });
 

@@ -181,5 +181,29 @@
       "backToMap": "Back to the map",
       "loadError": "This site could not be loaded. Please try again later."
     }
+  },
+  "media": {
+    "photoField": {
+      "label": "Photos",
+      "add": "Add photo",
+      "hint": "JPEG, PNG or WebP up to 10 MB each.",
+      "hintLimit_one": "You can add at most {{count}} photo.",
+      "hintLimit_few": "You can add at most {{count}} photos.",
+      "hintLimit_many": "You can add at most {{count}} photos.",
+      "hintLimit_other": "You can add at most {{count}} photos.",
+      "alt": "Photo {{position}}",
+      "remove": "Remove photo {{position}}",
+      "uploading": "Uploading photo",
+      "errors": {
+        "tooLarge": "{{name}} is larger than 10 MB.",
+        "wrongType": "{{name}} is not a JPEG, PNG or WebP image.",
+        "unreadable": "{{name}} could not be read as an image.",
+        "failed": "{{name}} could not be uploaded. Try again."
+      },
+      "skipped_one": "{{count}} file was skipped: the photo limit is reached.",
+      "skipped_few": "{{count}} files were skipped: the photo limit is reached.",
+      "skipped_many": "{{count}} files were skipped: the photo limit is reached.",
+      "skipped_other": "{{count}} files were skipped: the photo limit is reached."
+    }
   }
 }

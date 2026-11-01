@@ -66,6 +66,33 @@
         "required" : [ "email", "password" ],
         "type" : "object"
       },
+      "MediaResponse" : {
+        "properties" : {
+          "contentType" : {
+            "type" : "string"
+          },
+          "height" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "width" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "contentType", "height", "id", "thumbnailUrl", "url", "width" ],
+        "type" : "object"
+      },
       "RegionResponse" : {
         "properties" : {
           "code" : {
@@ -390,6 +417,43 @@
           }
         },
         "tags" : [ "gear-item-controller" ]
+      }
+    },
+    "/api/v1/media" : {
+      "post" : {
+        "operationId" : "upload",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "properties" : {
+                  "file" : {
+                    "format" : "binary",
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "file" ],
+                "type" : "object"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "media-controller" ]
       }
     },
     "/api/v1/sites/markers" : {

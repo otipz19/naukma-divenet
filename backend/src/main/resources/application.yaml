@@ -14,6 +14,11 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+  servlet:
+    multipart:
+      # One image of up to 10 MB per upload (spec media/uploads); the request adds multipart framing.
+      max-file-size: 10MB
+      max-request-size: 11MB
   data:
     web:
       pageable:
@@ -22,6 +27,9 @@ spring:
         serialization-mode: via-dto
 
 server:
+  tomcat:
+    # Read the rest of a too-large upload, so the client gets the 413 body, not a reset connection.
+    max-swallow-size: 12MB
   error:
     include-message: never
     include-stacktrace: never
@@ -49,6 +57,10 @@ divenet:
       email: ${ADMIN_EMAIL:}
       password: ${ADMIN_PASSWORD:}
       display-name: ${ADMIN_DISPLAY_NAME:Admin}
+  media:
+    # Uploaded files (ADR-0006); compose mounts a named volume here (design D8).
+    dir: ${MEDIA_DIR:media-data}
+    cleanup-interval: PT1H
 
 springdoc:
   paths-to-match: /api/v1/**
