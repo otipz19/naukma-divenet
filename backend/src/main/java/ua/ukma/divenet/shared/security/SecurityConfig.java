@@ -48,7 +48,7 @@ class SecurityConfig {
                         .permitAll()
                         .requestMatchers("/api/v1/admin/**")
                         .hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me")
+                        .requestMatchers(HttpMethod.GET, "/api/v1/auth/me", "/api/v1/sites/mine")
                         .authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/**")
                         .permitAll()

@@ -4,6 +4,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,11 +18,13 @@ import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.jspecify.annotations.Nullable;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 import ua.ukma.divenet.geo.domain.Region;
+import ua.ukma.divenet.user.domain.User;
 
 /** A dive site. The API exposes its location as plain {@code lat} and {@code lng}. */
 @Entity
@@ -63,8 +67,21 @@ public class Site {
     @CollectionTable(name = "site_gear", joinColumns = @JoinColumn(name = "site_id"))
     private Set<SiteGear> gear = new HashSet<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 16)
+    private SiteStatus status = SiteStatus.APPROVED;
+
+    /** Null for seeded sites. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private @Nullable User author;
+
+    @Column(name = "rejection_reason", length = 500)
+    private @Nullable String rejectionReason;
+
     protected Site() {}
 
+    /** An approved site with no author, as the demo seed creates. */
     public Site(
             String name,
             Region region,
@@ -85,6 +102,46 @@ public class Site {
         this.description = description;
         this.gear = new HashSet<>(gear);
         this.createdAt = createdAt;
+    }
+
+    /** A user's submission, hidden until an admin approves it. */
+    public static Site submission(
+            String name,
+            Region region,
+            double lat,
+            double lng,
+            int difficulty,
+            int minDepth,
+            int maxDepth,
+            String description,
+            Set<SiteGear> gear,
+            User author,
+            Instant createdAt) {
+        Site site = new Site(name, region, lat, lng, difficulty, minDepth, maxDepth, description, gear, createdAt);
+        site.status = SiteStatus.PENDING;
+        site.author = author;
+        return site;
+    }
+
+    public void approve() {
+        status = SiteStatus.APPROVED;
+    }
+
+    public void reject(String reason) {
+        status = SiteStatus.REJECTED;
+        rejectionReason = reason;
+    }
+
+    public SiteStatus getStatus() {
+        return status;
+    }
+
+    public @Nullable User getAuthor() {
+        return author;
+    }
+
+    public @Nullable String getRejectionReason() {
+        return rejectionReason;
     }
 
     public Long getId() {

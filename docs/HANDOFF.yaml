@@ -1,4 +1,4 @@
-goal: M2 (Reviews, media, safety) — add-media-uploads applied, synced and archived; PR open
+goal: M2 (Reviews, media, safety) — add-media-uploads applied, synced and archived; PR #14 open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -8,18 +8,18 @@ done:
   - Workflow rules (archive before PR, one applied change at a time) merged (PR #7)
   - add-local-stack + retry-stack-image-pulls merged (PR #8) and archived (spec shared/local-stack)
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
-  - add-reference-data (PR #10) and add-dive-site-catalog (PR #11) merged and archived (specs geo, site/*; shared/web-app, shared/local-stack updated)
-  - add-media-uploads implemented and archived (specs media/uploads, media/photo-field; shared/local-stack updated)
-wip: PR from change/add-media-uploads (change + archive); awaiting CI and user merge
+  - add-reference-data (PR #10), add-dive-site-catalog (PR #11) merged and archived (specs geo, site/catalog, site/map, site/details, site/gear-catalog)
+  - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
+  - add-media-uploads implemented and archived (specs media/uploads, media/photo-field; shared/local-stack updated); migration renumbered V8 after merging master
+wip: PR #14 from change/add-media-uploads (change + archive, master merged in); awaiting CI and user merge
 blocked: null
-next: after the add-media-uploads PR merges, /opsx:propose add-site-reviews (or the remaining M1 items: search-and-filters, submission-and-moderation)
+next: after PR #14 merges, /opsx:propose add-site-reviews (M2; uses MediaService.attach/release and PhotoField)
 decisions:
-  - add-media-uploads design.md D1-D8; test setup puts Node File/FormData in the jsdom env (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
-  - add-dive-site-catalog design.md D1-D6; add-site-submission-and-moderation must validate lat/lng (PostGIS geography coerces out-of-range values)
-  - add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
+  - add-media-uploads design.md D1-D8; test setup gives jsdom Node's File/FormData (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
+  - add-site-submission-and-moderation design.md D1-D6 + notes (unapproved sites answer 404 except to author and admins; @ParameterObject on paged endpoints)
+  - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
+  - add-dive-site-catalog design.md D1-D6; add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
-  - retry-stack-image-pulls design.md D1-D4 + notes: smoke test pre-pulls 6 images (incl. # syntax= frontend), 3 attempts each; CI stack had failed on a Docker Hub 502
-  - add-local-stack design.md D1-D9 + implementation notes; test approach (user, 2026-10-26): gate step validates compose config; smoke script runs the stack in a separate CI job `stack`
   - add-app-shell design.md D1-D8 + implementation notes (tokens-only CSS gate, theme follows system, drawer is role=dialog)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - Planning split: docs/adr/0007
@@ -27,13 +27,12 @@ decisions:
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-  - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
 refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-media-uploads/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 26) — clean gate (142 Vitest; mvnw verify 27 unit, 100 integration); smoke:stack passed incl. 10 MiB upload + restart; PhotoField browser-checked (en/uk, light/dark, desktop/phone)
-  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: removing the media-data mount fails it, naming backend
-  ci: PRs #1-#10 green on ubuntu-latest
+  last: pass 2026-11-01 on Windows after merging master (189 Vitest; mvnw verify 27 unit, 137 integration); before the merge: smoke:stack incl. 10 MiB upload + restart, PhotoField browser check (en/uk, light/dark, desktop/phone)
+  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend
+  ci: PRs #1-#12 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI

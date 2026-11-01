@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import ua.ukma.divenet.TestcontainersConfiguration;
 import ua.ukma.divenet.site.domain.SiteRepository;
+import ua.ukma.divenet.site.domain.SiteStatus;
 
 /** Spec site/catalog "The demo profile seeds real sites". This context has its own database. */
 @SpringBootTest
@@ -35,6 +36,12 @@ class SiteDemoSeederIT {
                     SELECT 1 FROM sites s JOIN regions r ON r.code = s.region_code WHERE r.country_code = c.code)
                 """, Integer.class);
         assertThat(countriesWithoutSites).isZero();
+    }
+
+    @Test
+    void seededSitesAreApproved() {
+        assertThat(sites.findAll())
+                .allSatisfy(site -> assertThat(site.getStatus()).isEqualTo(SiteStatus.APPROVED));
     }
 
     @Test
