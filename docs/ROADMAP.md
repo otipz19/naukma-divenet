@@ -70,7 +70,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
-| `add-posts` | Create/edit/delete posts with images, draft/published, author blog, site/region links | US-12 | `add-diver-profile`, `add-reference-data` | planned |
+| `add-posts` | Create/edit/delete posts with images, draft/published, author blog, site/region links | US-12 | `add-diver-profile`, `add-reference-data` | proposed |
 | `add-feeds` | Global feed, region/country filter, site feed on the site page | US-13, US-15, US-16 | `add-posts` | planned |
 
 ## M5 — Gamification
