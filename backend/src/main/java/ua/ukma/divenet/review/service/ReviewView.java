@@ -11,6 +11,7 @@ public record ReviewView(
         long siteId,
         long authorId,
         String authorName,
+        @Nullable String authorAvatarUrl,
         @Nullable Integer rating,
         @Nullable Integer difficulty,
         @Nullable String text,

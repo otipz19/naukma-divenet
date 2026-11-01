@@ -204,7 +204,7 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put: operations["update_1"];
+        put: operations["update_2"];
         post?: never;
         delete: operations["delete_1"];
         options?: never;
@@ -324,6 +324,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["update_1"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/users/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["profile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/warnings/{id}": {
         parameters: {
             query?: never;
@@ -356,9 +388,20 @@ export interface components {
             user: components["schemas"]["UserResponse"];
         };
         AuthorResponse: {
+            avatarUrl?: string;
             displayName: string;
             /** Format: int64 */
             id: number;
+        };
+        AvatarResponse: {
+            /** Format: int32 */
+            height: number;
+            /** Format: uuid */
+            id: string;
+            thumbnailUrl: string;
+            url: string;
+            /** Format: int32 */
+            width: number;
         };
         CountryResponse: {
             code: string;
@@ -423,6 +466,24 @@ export interface components {
             url: string;
             /** Format: int32 */
             width: number;
+        };
+        ProfileRequest: {
+            /** Format: uuid */
+            avatarId?: string;
+            bio?: string;
+            showCertificates: boolean;
+            showDiveLog: boolean;
+            showStatistics: boolean;
+        };
+        ProfileResponse: {
+            avatar?: components["schemas"]["AvatarResponse"];
+            bio?: string;
+            displayName: string;
+            /** Format: int64 */
+            id: number;
+            showCertificates: boolean;
+            showDiveLog: boolean;
+            showStatistics: boolean;
         };
         QueueItemResponse: {
             authorName: string;
@@ -845,7 +906,7 @@ export interface operations {
             };
         };
     };
-    update_1: {
+    update_2: {
         parameters: {
             query?: never;
             header?: never;
@@ -1114,6 +1175,52 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["WarningResponse"];
+                };
+            };
+        };
+    };
+    update_1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProfileResponse"];
+                };
+            };
+        };
+    };
+    profile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["ProfileResponse"];
                 };
             };
         };

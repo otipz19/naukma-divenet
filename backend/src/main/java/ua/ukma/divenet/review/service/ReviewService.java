@@ -194,6 +194,9 @@ public class ReviewService {
                 review.getSite().getId(),
                 review.getAuthor().getId(),
                 review.getAuthor().getDisplayName(),
+                review.getAuthor().getAvatarId() == null
+                        ? null
+                        : MediaView.thumbnailUrlOf(review.getAuthor().getAvatarId()),
                 review.getRating(),
                 review.getDifficulty(),
                 review.getText(),

@@ -40,7 +40,7 @@ describe("shared/app-shell: The header shows the account area", () => {
     expect(button).toHaveAttribute("aria-expanded", "true");
     const menu = screen.getByRole("menu");
     expect(menu).toHaveTextContent("Mira Koval");
-    expect(within(menu).getByRole("menuitem", { name: "Log out" })).toHaveFocus();
+    expect(within(menu).getByRole("menuitem", { name: "Your profile" })).toHaveFocus();
 
     await user.keyboard("{Escape}");
 

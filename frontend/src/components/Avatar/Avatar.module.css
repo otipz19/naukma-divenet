@@ -1,0 +1,23 @@
+/* design/system/components/bundle.css: dn-avatar. Type comes from type classes. */
+.avatar {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  object-fit: cover;
+}
+
+.md {
+  width: var(--space-6);
+  height: var(--space-6);
+  font-weight: 600;
+}
+
+/* 96px, as in design/screens/Profile.html. */
+.lg {
+  width: calc(var(--space-8) + var(--space-6));
+  height: calc(var(--space-8) + var(--space-6));
+  font-weight: 700;
+}

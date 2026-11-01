@@ -42,18 +42,6 @@
 }
 
 /* dn-avatar: 32px, initials. */
-.avatar {
-  display: inline-grid;
-  flex: none;
-  place-items: center;
-  width: var(--space-6);
-  height: var(--space-6);
-  border-radius: var(--radius-full);
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  font-weight: 600;
-}
-
 .byline {
   display: grid;
 }

@@ -132,3 +132,10 @@ then hide the warning and refresh the section. Other users SHALL see no Hide but
 #### Scenario: Not an admin
 - **WHEN** a signed-in user who is not an admin opens the page
 - **THEN** no warning has a Hide button
+
+### Requirement: A warning's author links to their profile
+The author's name in a warning's title SHALL link to `/users/{id}`.
+
+#### Scenario: Warning shown
+- **WHEN** a warning by a user is shown on the site page
+- **THEN** the title has a link with the author's name whose target is that user's profile

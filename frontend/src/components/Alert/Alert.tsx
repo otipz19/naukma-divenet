@@ -18,7 +18,7 @@ export function Alert({
   children,
 }: {
   tone: AlertTone;
-  title?: string;
+  title?: ReactNode;
   live?: boolean;
   actions?: ReactNode;
   children: ReactNode;

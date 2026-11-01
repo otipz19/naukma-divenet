@@ -36,7 +36,12 @@ export function WarningAlert({
   const [confirming, setConfirming] = useState<"delete" | "hide" | null>(null);
   const typeLabel = t(`warning.types.${warning.type}`);
   const timeLabel = formatRelativeDate(warning.createdAt, i18n.language);
-  const title = `${typeLabel} · ${timeLabel} · ${warning.author.displayName}`;
+  const title = (
+    <>
+      {`${typeLabel} · ${timeLabel} · `}
+      <Link to={`/users/${warning.author.id}`}>{warning.author.displayName}</Link>
+    </>
+  );
 
   const actions =
     confirming === "delete" ? (

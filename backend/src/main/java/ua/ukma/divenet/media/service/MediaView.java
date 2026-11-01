@@ -15,6 +15,11 @@ public record MediaView(UUID id, String contentType, int width, int height) {
     }
 
     public String thumbnailUrl() {
-        return url() + "/thumb";
+        return thumbnailUrlOf(id);
+    }
+
+    /** Derived from the id alone, so a list of authors needs no query for their avatars. */
+    public static String thumbnailUrlOf(UUID id) {
+        return "/media/" + id + "/thumb";
     }
 }
