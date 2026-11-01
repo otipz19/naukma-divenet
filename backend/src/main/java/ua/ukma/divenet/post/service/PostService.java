@@ -162,7 +162,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostView read(long id, @Nullable Long viewerId) {
         Post post = load(id);
-        boolean author = viewerId != null && post.getAuthor().getId() == viewerId;
+        boolean author = post.getAuthor().getId().equals(viewerId);
         if (post.getStatus() == Post.Status.DRAFT && !author) {
             throw notFound();
         }

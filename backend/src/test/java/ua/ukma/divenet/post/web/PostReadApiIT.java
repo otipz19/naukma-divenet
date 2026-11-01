@@ -59,6 +59,18 @@ class PostReadApiIT extends PostTestBase {
                 .andExpect(jsonPath("$.status").value("DRAFT"));
     }
 
+    /** Ids above the JVM's small-number cache: comparing two boxed Longs with == would refuse the author. */
+    @Test
+    void authorWithALargeIdReadsADraft() throws Exception {
+        jdbc.queryForObject(
+                "SELECT setval(pg_get_serial_sequence('users', 'id'), GREATEST(1000, (SELECT max(id) FROM users)))",
+                Long.class);
+        User author = user();
+        long id = written(author, draft("Mine"));
+
+        mvc.perform(get(POSTS + "/" + id).with(as(author))).andExpect(status().isOk());
+    }
+
     @Test
     void someoneElseReadsADraft() throws Exception {
         long id = written(user(), draft("Mine"));
