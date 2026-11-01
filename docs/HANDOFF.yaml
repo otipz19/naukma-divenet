@@ -1,4 +1,4 @@
-goal: M1 (Sites and map) started — add-reference-data applied, synced and archived; PR open
+goal: M1 (Sites and map) — add-dive-site-catalog applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*
@@ -8,11 +8,13 @@ done:
   - Workflow rules (archive before PR, one applied change at a time) merged (PR #7)
   - add-local-stack + retry-stack-image-pulls merged (PR #8) and archived (spec shared/local-stack)
   - add-authentication merged (PR #9) and archived (spec auth; shared/app-shell, shared/local-stack updated)
-  - add-reference-data implemented and archived (specs geo, site/gear-catalog)
-wip: PR from change/add-reference-data (change + archive); awaiting CI and user merge
+  - add-reference-data merged (PR #10) and archived (specs geo, site/gear-catalog)
+  - add-dive-site-catalog implemented and archived (specs site/catalog, site/map, site/details; shared/web-app, shared/local-stack updated)
+wip: PR from change/add-dive-site-catalog (change + archive); awaiting CI and user merge
 blocked: null
-next: after the add-reference-data PR merges, /opsx:propose add-dive-site-catalog
+next: after the add-dive-site-catalog PR merges, /opsx:propose add-site-search-and-filters
 decisions:
+  - add-dive-site-catalog design.md D1-D6; add-site-submission-and-moderation must validate lat/lng (PostGIS geography coerces out-of-range values)
   - add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - add-authentication design.md D1-D11 + impl notes (token_hash varchar(64); GET /actuator/** and GET /me rules; restoreSession in AppLayout; typed api client base = origin since contract paths include /api/v1)
   - retry-stack-image-pulls design.md D1-D4 + notes: smoke test pre-pulls 6 images (incl. # syntax= frontend), 3 attempts each; CI stack had failed on a Docker Hub 502
@@ -25,12 +27,12 @@ decisions:
   - bootstrap-backend deviations recorded in its archived design.md (FieldViolation, paging via properties, health probes off)
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
   - bootstrap-frontend design.md D1-D10 (TS pinned to 6.0.x for typescript-eslint; openapi-fetch client throwing ApiError; own language detector)
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-reference-data/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-dive-site-catalog/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; default JAVA_HOME here is 21) — openspec + design tokens + script tests + compose config + frontend steps (111 Vitest tests) + mvnw verify (9 unit, 56 integration)
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME) — full gate (125 Vitest tests; mvnw verify 9 unit, 67 integration); smoke:stack passed; browser check of map and site page on the compose stack (WEB_PORT=18080; 8080 taken locally)
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET
-  ci: PRs #1-#9 green on ubuntu-latest
+  ci: PRs #1-#10 green on ubuntu-latest
   not_covered: E2E (M6)
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI

@@ -29,7 +29,8 @@ flowchart LR
 `web` (nginx with the SPA build). Only `web` publishes a port (`WEB_PORT`); the
 database and the back-end are reachable only inside the compose network.
 Configuration comes from `.env` (template: `.env.example`), and the database
-keeps its data in a named volume.
+keeps its data in a named volume. The stack runs the `demo` profile unless
+`SPRING_PROFILES_ACTIVE` says otherwise.
 
 ## Repository layout
 
@@ -37,7 +38,7 @@ keeps its data in a named volume.
 backend/                 Maven project (mvnw), Spring Boot app
   src/main/java/ua/ukma/divenet/<feature>/{web,service,domain}/
   src/main/resources/db/migration/   Flyway migrations
-  src/main/resources/seed/           demo seed data (JSON)           (planned)
+  src/main/resources/seed/           demo seed data (JSON)
   src/test/java/ua/ukma/divenet/     TestcontainersConfiguration, TestDiveNetApplication
 frontend/                Vite app, pnpm workspace member (@divenet/frontend)
   src/app/                           App root, router, layout route, navigation entries, theme, query client
@@ -45,7 +46,7 @@ frontend/                Vite app, pnpm workspace member (@divenet/frontend)
   src/components/<Name>/             shared UI: <Name>.tsx + <Name>.module.css (AppHeader, AppFooter, ...)
   src/styles/                        global base styles and self-hosted font imports
   src/i18n/locales/{en,uk}.json
-  src/features/<feature>/            feature folders mirroring backend feature packages (planned)
+  src/features/<feature>/            feature folders mirroring backend feature packages
   scripts/                           gate checks: i18n parity, API types, tokens-only CSS, build output
   Dockerfile, nginx.conf             web image: SPA build served by nginx, /api and /media proxied
   e2e/                               Playwright tests                (planned, M6)
@@ -120,8 +121,9 @@ Rules:
 
 ### Data model overview
 
-`users` and `refresh_tokens` (`add-authentication`), and `countries`, `regions` and
-`gear_items` (`add-reference-data`) exist; the other tables are **(planned)**.
+`users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
+`gear_items` (`add-reference-data`), and `sites` and `site_gear` (`add-dive-site-catalog`)
+exist; the other tables are **(planned)**.
 
 ```mermaid
 erDiagram
@@ -129,8 +131,9 @@ erDiagram
   users ||--o{ refresh_tokens : has
   countries ||--o{ regions : contains
   regions ||--o{ sites : contains
+  sites ||--o{ site_gear : lists
+  gear_items ||--o{ site_gear : "required or recommended"
   users ||--o{ sites : submits
-  sites }o--o{ gear_items : "requires / recommends"
   sites ||--o{ site_media : has
   sites ||--o{ reviews : receives
   users ||--o{ reviews : writes

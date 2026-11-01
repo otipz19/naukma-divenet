@@ -1,0 +1,39 @@
+/* design/system/components/bundle.css: dn-badge. Type comes from the .caption class. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.neutral {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.accent {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.success {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.caution {
+  background: var(--caution-soft);
+  color: var(--caution);
+}
+
+.danger {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.info {
+  background: var(--info-soft);
+  color: var(--info);
+}

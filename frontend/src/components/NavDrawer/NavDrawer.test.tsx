@@ -56,7 +56,7 @@ describe("shared/app-shell: Narrow screens use a navigation drawer", () => {
     await userEvent.click(within(screen.getByRole("dialog")).getByRole("link", { name: "Map" }));
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1, name: "DiveNet" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Dive-site map" })).toBeInTheDocument();
   });
 
   it("keeps Tab focus inside the dialog", async () => {

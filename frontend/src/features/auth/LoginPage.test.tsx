@@ -34,7 +34,9 @@ describe("auth: The web app has a login page", () => {
     await user.type(screen.getByLabelText("Password"), "correct-horse");
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
-    expect(await screen.findByText("The dive-site map is coming soon.")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Dive-site map" }),
+    ).toBeInTheDocument();
     expect(sent).toEqual({ email: "mira@example.com", password: "correct-horse" });
     expect(
       within(screen.getByRole("banner")).getByRole("button", { name: /Mira Koval/ }),
@@ -106,7 +108,9 @@ describe("auth: Signed-in users skip the login and sign-up pages", () => {
     startSignedIn();
     renderRoute("/login");
 
-    expect(await screen.findByText("The dive-site map is coming soon.")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Dive-site map" }),
+    ).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Log in" })).not.toBeInTheDocument();
   });
 
@@ -114,6 +118,8 @@ describe("auth: Signed-in users skip the login and sign-up pages", () => {
     startSignedIn();
     renderRoute("/register");
 
-    expect(await screen.findByText("The dive-site map is coming soon.")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Dive-site map" }),
+    ).toBeInTheDocument();
   });
 });
