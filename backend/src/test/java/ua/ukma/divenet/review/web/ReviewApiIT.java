@@ -44,6 +44,7 @@ import ua.ukma.divenet.site.domain.SiteRepository;
 import ua.ukma.divenet.user.domain.Role;
 import ua.ukma.divenet.user.domain.User;
 import ua.ukma.divenet.user.domain.UserRepository;
+import ua.ukma.divenet.user.service.CertificateService;
 
 /** Spec review/reviews: the review API. */
 @SpringBootTest(properties = MediaTestSupport.MEDIA_DIR_PROPERTY)
@@ -71,6 +72,12 @@ class ReviewApiIT {
     @Autowired
     JdbcTemplate jdbc;
 
+    @Autowired
+    CertificateService certificates;
+
+    @Autowired
+    jakarta.persistence.EntityManagerFactory entityManagerFactory;
+
     User author;
     User other;
     long siteId;
@@ -84,6 +91,7 @@ class ReviewApiIT {
 
     @AfterEach
     void removeRows() {
+        jdbc.update("DELETE FROM certificates");
         jdbc.update("DELETE FROM reviews");
         jdbc.update("DELETE FROM media");
         jdbc.update("DELETE FROM sites");
@@ -491,5 +499,91 @@ class ReviewApiIT {
 
         mvc.perform(get("/api/v1/sites/" + siteId + "/reviews"))
                 .andExpect(jsonPath("$.content[0].author.avatarUrl").value("/media/" + avatar + "/thumb"));
+    }
+
+    private long verifiedCertificate(User user, String agency, String level) {
+        long id = certificates
+                .declare(user.getId(), new CertificateService.Declaration(agency, level, "N-1", null))
+                .id();
+        certificates.verify(id);
+        return id;
+    }
+
+    private org.springframework.test.web.servlet.ResultActions reviews() throws Exception {
+        return mvc.perform(get("/api/v1/sites/" + siteId + "/reviews"));
+    }
+
+    /** Spec review/site-reviews "A review's author shows a verified badge". */
+    @Test
+    void verifiedAuthor() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate", org.hamcrest.Matchers.nullValue()));
+
+        verifiedCertificate(author, "PADI", "Advanced Open Water");
+
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate").value("PADI Advanced Open Water"));
+    }
+
+    @Test
+    void severalVerified() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        verifiedCertificate(author, "PADI", "Open Water");
+        verifiedCertificate(author, "SSI", "Rescue");
+
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate").value("SSI Rescue"));
+    }
+
+    @Test
+    void unverifiedAuthor() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        certificates.declare(author.getId(), new CertificateService.Declaration("PADI", "Pending", "N", null));
+        long rejected = certificates
+                .declare(author.getId(), new CertificateService.Declaration("PADI", "Refused", "N", null))
+                .id();
+        certificates.reject(rejected, "Unreadable");
+
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate", org.hamcrest.Matchers.nullValue()));
+    }
+
+    @Test
+    void hiddenCertificates() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        verifiedCertificate(author, "PADI", "Open Water");
+        author.updateProfile(null, null, true, true, false);
+        users.save(author);
+
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate", org.hamcrest.Matchers.nullValue()));
+    }
+
+    @Test
+    void otherAgency() throws Exception {
+        create(author, siteId, "{\"text\": \"Nice\"}").andExpect(status().isCreated());
+        verifiedCertificate(author, "OTHER", "Rescue Diver");
+
+        reviews().andExpect(jsonPath("$.content[0].author.verifiedCertificate").value("Rescue Diver"));
+    }
+
+    /** Design D4: more authors on a page must not mean more queries. */
+    @Test
+    void badgesTakeOneQueryForAPage() throws Exception {
+        org.hibernate.stat.Statistics statistics =
+                entityManagerFactory.unwrap(org.hibernate.SessionFactory.class).getStatistics();
+        statistics.setStatisticsEnabled(true);
+        create(author, siteId, "{\"text\": \"First\"}").andExpect(status().isCreated());
+        verifiedCertificate(author, "PADI", "Open Water");
+        statistics.clear();
+        reviews().andExpect(status().isOk());
+        long withOneAuthor = statistics.getPrepareStatementCount();
+
+        for (int i = 0; i < 3; i++) {
+            User reviewer = user("Reviewer " + i);
+            create(reviewer, siteId, "{\"text\": \"More\"}").andExpect(status().isCreated());
+            verifiedCertificate(reviewer, "PADI", "Open Water");
+        }
+        statistics.clear();
+        reviews().andExpect(jsonPath("$.content.length()").value(4));
+
+        assertThat(statistics.getPrepareStatementCount()).isEqualTo(withOneAuthor);
+        statistics.setStatisticsEnabled(false);
     }
 }

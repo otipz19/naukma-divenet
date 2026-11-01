@@ -268,7 +268,19 @@
       "reject": "Reject",
       "conflict": "This site has already been moderated.",
       "failure": "That did not work. Please try again.",
-      "loadError": "The queue could not be loaded. Please try again later."
+      "loadError": "The queue could not be loaded. Please try again later.",
+      "tabs": {
+        "label": "Queues",
+        "sites": "Sites",
+        "certificates": "Certificates"
+      },
+      "certificates": {
+        "declaredBy": "Declared by",
+        "verify": "Verify",
+        "empty": "No certificates are waiting.",
+        "conflict": "This certificate has already been moderated.",
+        "photo": "Photo of {{name}}"
+      }
     }
   },
   "media": {
@@ -343,7 +355,8 @@
         "textTooLong": "Use at most 4000 characters.",
         "failed": "The review could not be saved. Please try again."
       }
-    }
+    },
+    "verifiedBadge": "Verified {{certificate}}"
   },
   "warning": {
     "title": "Recent warnings",
@@ -410,6 +423,46 @@
       "save": "Save",
       "cancel": "Cancel",
       "failure": "Your profile could not be saved. Please try again."
+    },
+    "certificates": {
+      "pageTitle": "Your certificates",
+      "title": "Certificates",
+      "manage": "Manage certificates",
+      "none": "No certificates yet.",
+      "hidden": "Certificates are hidden by this diver's privacy settings.",
+      "loadError": "The certificates could not be loaded. Please try again later.",
+      "failure": "The certificate could not be saved. Please try again.",
+      "status": {
+        "PENDING": "Pending verification",
+        "VERIFIED": "Verified",
+        "REJECTED": "Rejected"
+      },
+      "rejectedBecause": "Rejected because: {{reason}}",
+      "edit": "Edit",
+      "delete": "Delete",
+      "editOne": "Edit {{name}}",
+      "deleteOne": "Delete {{name}}",
+      "confirmDelete": "Delete this certificate?",
+      "confirmYes": "Yes, delete",
+      "confirmNo": "Keep it",
+      "addTitle": "Add a certificate",
+      "editTitle": "Edit certificate",
+      "reverifyWarning": "Saving changes means this certificate will need verifying again.",
+      "agency": "Agency",
+      "agencyOther": "Other",
+      "level": "Level",
+      "number": "Certificate number",
+      "numberHint": "Only you and admins see the number.",
+      "photo": "Photo of the card (optional)",
+      "photoHint": "Only you and admins are given the photo's address, but anyone who has that address can open it. Leave it out if you prefer.",
+      "save": "Save certificate",
+      "cancel": "Cancel",
+      "errors": {
+        "levelRequired": "Enter the level.",
+        "levelTooLong": "Use at most 100 characters.",
+        "numberRequired": "Enter the number.",
+        "numberTooLong": "Use at most 50 characters."
+      }
     }
   },
   "divelog": {

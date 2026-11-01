@@ -1,4 +1,4 @@
-goal: M3 (Divers) — add-dive-log merged (PR #19); add-certificates proposed on change/add-certificates, awaiting user review
+goal: M3 (Divers) complete — add-certificates applied, synced and archived; PR open
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -9,12 +9,13 @@ done:
   - add-reference-data (PR #10), add-dive-site-catalog (PR #11) merged and archived (specs geo, site/catalog, site/map, site/details, site/gear-catalog)
   - M1 done: add-site-search-and-filters (PR #12), add-site-submission-and-moderation (PR #13) merged and archived (specs site/search, site/submission, site/moderation)
   - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
-  - add-diver-profile merged (PR #18) and archived (spec user/profile; review/site-reviews, warning/site-warnings updated)
-  - add-dive-log merged (PR #19) and archived (specs divelog/entries, divelog/log-page; user/profile, site/details updated)
-wip: openspec/changes/add-certificates (planning only, committed, not pushed)
+  - add-diver-profile (PR #18), add-dive-log (PR #19) merged and archived (specs user/profile, divelog/entries, divelog/log-page; review/site-reviews, warning/site-warnings, site/details updated)
+  - add-certificates implemented and archived (specs user/certificates, user/certificate-verification; user/profile, review/site-reviews, site/moderation updated)
+wip: PR from change/add-certificates (change + archive); awaiting CI and user merge
 blocked: null
-next: after the user approves the proposal, /opsx:apply add-certificates
+next: after the PR merges, /opsx:propose add-posts (M4)
 decisions:
+  - add-certificates design.md D1-D6 (hidden certificates answer 403; number, photo, reason and rejected ones owner/admin only; editing returns a certificate to pending; moderation page has tabs)
   - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-diver-profile design.md D1-D5 + notes (privacy flags stored, enforced by add-dive-log and add-certificates through notes; profile fields on users; avatar URL derived from the id)
   - add-site-warnings design.md D1-D7 + impl: WarningType stays in warning.domain while WarningView/WarningRequest/WarningResponse use String with @Schema(allowableValues=...) so web never imports domain (ArchUnit) and OpenAPI keeps the 4-value union
@@ -22,16 +23,15 @@ decisions:
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
   - add-media-uploads design.md D1-D8; test setup gives jsdom Node's File/FormData (Vitest 5 + jsdom 30.1 drop multipart file bytes); Bash heredocs here eat backslashes, edit such files with Edit
   - add-site-submission-and-moderation design.md D1-D6 + notes (unapproved sites answer 404 except to author and admins; @ParameterObject on paged endpoints)
-  - add-site-search-and-filters design.md D1-D5 + notes (filters on the markers endpoint; other languages search through qRegion/qCountry codes; rating filter moved to add-site-reviews)
   - add-dive-site-catalog design.md D1-D6; add-reference-data design.md D1-D5 (string code PKs; English name in DB, translations in locale files; server search matches English only, so add-site-search-and-filters must cover Ukrainian US-06)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-dive-log/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-01-add-certificates/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate (309 Vitest; mvnw verify 27 unit, 249 integration); browser journey on the stack (WEB_PORT=18080): site page to log, search, edit, delete, hidden history as anonymous
+  last: pass 2026-11-01 on Windows (JDK 25 via JAVA_HOME; stack stopped) — full gate; browser journey on the stack (WEB_PORT=18080): declare with photo, verify, reject, badge on a review, owner page, anonymous profile, certificates hidden
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
   ci: PRs #1-#19 green on ubuntu-latest
   not_covered: E2E (M6)

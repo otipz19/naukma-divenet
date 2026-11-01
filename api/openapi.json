@@ -33,6 +33,9 @@
           "id" : {
             "format" : "int64",
             "type" : "integer"
+          },
+          "verifiedCertificate" : {
+            "type" : "string"
           }
         },
         "required" : [ "displayName", "id" ],
@@ -60,6 +63,102 @@
           }
         },
         "required" : [ "height", "id", "thumbnailUrl", "url", "width" ],
+        "type" : "object"
+      },
+      "CertificatePhotoResponse" : {
+        "properties" : {
+          "height" : {
+            "format" : "int32",
+            "type" : "integer"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "thumbnailUrl" : {
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          },
+          "width" : {
+            "format" : "int32",
+            "type" : "integer"
+          }
+        },
+        "required" : [ "height", "id", "thumbnailUrl", "url", "width" ],
+        "type" : "object"
+      },
+      "CertificateQueueItemResponse" : {
+        "properties" : {
+          "certificate" : {
+            "$ref" : "#/components/schemas/CertificateResponse"
+          },
+          "holderId" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "holderName" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "certificate", "holderId", "holderName" ],
+        "type" : "object"
+      },
+      "CertificateRequest" : {
+        "properties" : {
+          "agency" : {
+            "enum" : [ "PADI", "SSI", "CMAS", "OTHER" ],
+            "minLength" : 1,
+            "pattern" : "PADI|SSI|CMAS|OTHER",
+            "type" : "string"
+          },
+          "level" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "number" : {
+            "maxLength" : 50,
+            "minLength" : 0,
+            "type" : "string"
+          },
+          "photoId" : {
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "required" : [ "agency", "level", "number" ],
+        "type" : "object"
+      },
+      "CertificateResponse" : {
+        "properties" : {
+          "agency" : {
+            "enum" : [ "PADI", "SSI", "CMAS", "OTHER" ],
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "level" : {
+            "type" : "string"
+          },
+          "number" : {
+            "type" : "string"
+          },
+          "photo" : {
+            "$ref" : "#/components/schemas/CertificatePhotoResponse"
+          },
+          "rejectionReason" : {
+            "type" : "string"
+          },
+          "status" : {
+            "enum" : [ "PENDING", "VERIFIED", "REJECTED" ],
+            "type" : "string"
+          }
+        },
+        "required" : [ "agency", "id", "level", "status" ],
         "type" : "object"
       },
       "CountryResponse" : {
@@ -265,6 +364,21 @@
         "required" : [ "number", "size", "totalElements", "totalPages" ],
         "type" : "object"
       },
+      "PagedModelCertificateQueueItemResponse" : {
+        "properties" : {
+          "content" : {
+            "items" : {
+              "$ref" : "#/components/schemas/CertificateQueueItemResponse"
+            },
+            "type" : "array"
+          },
+          "page" : {
+            "$ref" : "#/components/schemas/PageMetadata"
+          }
+        },
+        "required" : [ "content", "page" ],
+        "type" : "object"
+      },
       "PagedModelEntryResponse" : {
         "properties" : {
           "content" : {
@@ -445,6 +559,17 @@
           }
         },
         "required" : [ "displayName", "email", "password" ],
+        "type" : "object"
+      },
+      "RejectCertificateRequest" : {
+        "properties" : {
+          "reason" : {
+            "maxLength" : 500,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "required" : [ "reason" ],
         "type" : "object"
       },
       "RejectRequest" : {
@@ -851,6 +976,129 @@
   },
   "openapi" : "3.1.0",
   "paths" : {
+    "/api/v1/admin/certificates" : {
+      "get" : {
+        "operationId" : "queue_1",
+        "parameters" : [ {
+          "description" : "Zero-based page index (0..N)",
+          "in" : "query",
+          "name" : "page",
+          "required" : false,
+          "schema" : {
+            "default" : 0,
+            "minimum" : 0,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "The size of the page to be returned",
+          "in" : "query",
+          "name" : "size",
+          "required" : false,
+          "schema" : {
+            "default" : 20,
+            "minimum" : 1,
+            "type" : "integer"
+          }
+        }, {
+          "description" : "Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.",
+          "in" : "query",
+          "name" : "sort",
+          "required" : false,
+          "schema" : {
+            "items" : {
+              "type" : "string"
+            },
+            "type" : "array"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PagedModelCertificateQueueItemResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
+      }
+    },
+    "/api/v1/admin/certificates/{id}/reject" : {
+      "post" : {
+        "operationId" : "reject_1",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/RejectCertificateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CertificateResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
+      }
+    },
+    "/api/v1/admin/certificates/{id}/verify" : {
+      "post" : {
+        "operationId" : "verify",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CertificateResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
+      }
+    },
     "/api/v1/admin/sites" : {
       "get" : {
         "operationId" : "queue",
@@ -1117,6 +1365,98 @@
           }
         },
         "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/certificates" : {
+      "post" : {
+        "operationId" : "declare",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CertificateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CertificateResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
+      }
+    },
+    "/api/v1/certificates/{id}" : {
+      "delete" : {
+        "operationId" : "delete_3",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
+      },
+      "put" : {
+        "operationId" : "update_4",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CertificateRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/CertificateResponse"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "certificate-controller" ]
       }
     },
     "/api/v1/countries" : {
@@ -1828,6 +2168,36 @@
           }
         },
         "tags" : [ "profile-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/certificates" : {
+      "get" : {
+        "operationId" : "list_2",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/CertificateResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "certificate-controller" ]
       }
     },
     "/api/v1/users/{id}/dive-log" : {

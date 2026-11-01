@@ -8,6 +8,7 @@ import { initials } from "../auth/AccountArea";
 import { useSession } from "../auth/useSession";
 import { ProfileDives } from "../divelog/ProfileDives";
 import { useProfile } from "./api";
+import { ProfileCertificates } from "./ProfileCertificates";
 import styles from "./ProfilePage.module.css";
 
 /** The header of design/screens/Profile.html; later changes add their sections (spec user/profile). */
@@ -54,6 +55,14 @@ export function ProfilePage() {
         )}
       </section>
       {/* Waits for the session, so an owner reloading is not treated as a stranger (design D6). */}
+      {session.status !== "loading" && (
+        <ProfileCertificates
+          userId={profile.data.id}
+          own={own}
+          admin={session.status === "signedIn" && session.user.role === "ADMIN"}
+          showCertificates={profile.data.showCertificates}
+        />
+      )}
       {session.status !== "loading" && (
         <ProfileDives
           userId={profile.data.id}
