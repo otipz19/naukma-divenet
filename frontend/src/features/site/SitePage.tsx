@@ -11,6 +11,7 @@ import { buttonClassName } from "../../components/Button/Button";
 import { Rating } from "../../components/Rating/Rating";
 import { useMyReview } from "../review/api";
 import { SiteReviews } from "../review/SiteReviews";
+import { SiteWarnings } from "../warning/SiteWarnings";
 import { useSession } from "../auth/useSession";
 import styles from "./SitePage.module.css";
 
@@ -89,6 +90,7 @@ function SiteDetails({ site }: { site: Site }) {
             </div>
             {site.status === "APPROVED" && <ReviewLink siteId={site.id} />}
           </div>
+          {site.status === "APPROVED" && <SiteWarnings siteId={site.id} />}
           <section className={styles.about}>
             <h2 className={`h2 ${styles.name}`}>{t("site.details.about")}</h2>
             <p className={`body ${styles.description}`}>{site.description}</p>
