@@ -22,6 +22,36 @@
         "required" : [ "accessToken", "expiresIn", "tokenType", "user" ],
         "type" : "object"
       },
+      "CountryResponse" : {
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          },
+          "regions" : {
+            "items" : {
+              "$ref" : "#/components/schemas/RegionResponse"
+            },
+            "type" : "array"
+          }
+        },
+        "required" : [ "code", "name", "regions" ],
+        "type" : "object"
+      },
+      "GearItemResponse" : {
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "name" ],
+        "type" : "object"
+      },
       "LoginRequest" : {
         "properties" : {
           "email" : {
@@ -34,6 +64,18 @@
           }
         },
         "required" : [ "email", "password" ],
+        "type" : "object"
+      },
+      "RegionResponse" : {
+        "properties" : {
+          "code" : {
+            "type" : "string"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "code", "name" ],
         "type" : "object"
       },
       "RegisterRequest" : {
@@ -213,6 +255,48 @@
           }
         },
         "tags" : [ "auth-controller" ]
+      }
+    },
+    "/api/v1/countries" : {
+      "get" : {
+        "operationId" : "countries",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/CountryResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "country-controller" ]
+      }
+    },
+    "/api/v1/gear-items" : {
+      "get" : {
+        "operationId" : "gearItems",
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/GearItemResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "gear-item-controller" ]
       }
     }
   },
