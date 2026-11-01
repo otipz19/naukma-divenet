@@ -88,7 +88,17 @@ function SiteDetails({ site }: { site: Site }) {
                 {`${formatCoordinates(site.lat, site.lng)} · ${country}, ${region}`}
               </span>
             </div>
-            {site.status === "APPROVED" && <ReviewLink siteId={site.id} />}
+            {site.status === "APPROVED" && (
+              <span className={styles.titleActions}>
+                <Link
+                  className={buttonClassName({ variant: "secondary" })}
+                  to={`/dive-log?site=${site.id}`}
+                >
+                  {t("site.details.logDive")}
+                </Link>
+                <ReviewLink siteId={site.id} />
+              </span>
+            )}
           </div>
           {site.status === "APPROVED" && <SiteWarnings siteId={site.id} />}
           <section className={styles.about}>

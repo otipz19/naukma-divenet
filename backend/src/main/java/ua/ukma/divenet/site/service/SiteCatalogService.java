@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,11 @@ public class SiteCatalogService {
         this.gearItems = gearItems;
         this.users = users;
         this.clock = clock;
+    }
+
+    /** For features that refer to a site and report their own error when it cannot be used. */
+    public Optional<Site> findApproved(long id) {
+        return sites.findById(id).filter(site -> site.getStatus() == SiteStatus.APPROVED);
     }
 
     /** Who asks: an unapproved site is shown only to its author and admins. */

@@ -6,6 +6,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { buttonClassName } from "../../components/Button/Button";
 import { initials } from "../auth/AccountArea";
 import { useSession } from "../auth/useSession";
+import { ProfileDives } from "../divelog/ProfileDives";
 import { useProfile } from "./api";
 import styles from "./ProfilePage.module.css";
 
@@ -52,6 +53,15 @@ export function ProfilePage() {
           </Link>
         )}
       </section>
+      {/* Waits for the session, so an owner reloading is not treated as a stranger (design D6). */}
+      {session.status !== "loading" && (
+        <ProfileDives
+          userId={profile.data.id}
+          own={own}
+          showDiveLog={profile.data.showDiveLog}
+          showStatistics={profile.data.showStatistics}
+        />
+      )}
     </div>
   );
 }

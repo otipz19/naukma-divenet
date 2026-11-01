@@ -278,3 +278,23 @@ describe("warning/site-warnings: Section placement and unapproved site", () => {
     expect(warningRequests).toHaveLength(0);
   });
 });
+
+describe("site/details: The site page links to logging a dive", () => {
+  it("links an approved site", async () => {
+    siteReturns();
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Log a dive here" })).toHaveAttribute(
+      "href",
+      "/dive-log?site=7",
+    );
+  });
+
+  it("has no link on a pending site", async () => {
+    siteReturns(blueHole({ status: "PENDING" }));
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { level: 1, name: "Blue Hole" });
+    expect(screen.queryByRole("link", { name: "Log a dive here" })).not.toBeInTheDocument();
+  });
+});
