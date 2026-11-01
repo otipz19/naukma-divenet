@@ -29,3 +29,4 @@ Date: YYYY-MM-DD
 | [0007](0007-planning-workflow.md) | Planning with project docs + OpenSpec | Accepted |
 | [0008](0008-layered-monolith.md) | Plain layered monolith | Accepted |
 | [0009](0009-design-in-repository.md) | UI design kept in the repository, Claude Design as a mirror | Accepted |
+| [0010](0010-plan-update-notes.md) | Plan-update notes for changes to other roadmap items | Accepted |

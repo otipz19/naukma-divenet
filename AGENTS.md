@@ -43,6 +43,7 @@ PRODUCT.md says what is wanted. Raise it with the user; do not pick one silently
 | Product | [docs/PRODUCT.md](docs/PRODUCT.md) | Scope, domain decisions, user stories (US-xx) | — |
 | Architecture | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/adr/](docs/adr/README.md) | Modules, API conventions, security, testing strategy | — |
 | Roadmap | [docs/ROADMAP.md](docs/ROADMAP.md) | Ordered OpenSpec change IDs and their status | — |
+| Plan updates | [docs/plan-updates/](docs/plan-updates/README.md) | Open notes from one change that change another roadmap item's plan (ADR-0010) | `scripts/check-plan-updates.mjs` (part of `pnpm check`) |
 | OpenSpec | [openspec/config.yaml](openspec/config.yaml), `openspec/specs/`, `openspec/changes/` | Change proposals, designs, tasks, spec deltas | `openspec validate --all --strict` (part of `pnpm check`) |
 | Quality gate | [scripts/check.mjs](scripts/check.mjs), [.github/workflows/check.yml](.github/workflows/check.yml) | The single check command and CI | `pnpm check` |
 | Back-end | `backend/` | Spring Boot layered monolith; feature packages under `ua.ukma.divenet` (ADR-0008) | `backend/mvnw verify` (part of `pnpm check`) |
@@ -83,6 +84,13 @@ Workflow rules:
 - **Archive right after apply.** When apply finishes, sync if needed and run the archive next,
   before opening the PR. Never open the PR first and archive after the merge: the
   specs in `master` must never lag behind its code.
+- **Plan updates go in notes.** When proposing or applying a change shows that another
+  roadmap item must change (scope, dependency, constraint, split, drop), write a note in
+  `docs/plan-updates/<target>/<this-change>--<slug>.md` ([format](docs/plan-updates/README.md)).
+  Never edit another item's roadmap row, its PRODUCT.md stories or its change folder.
+  When proposing an item, absorb its open notes; after merging `master`, absorb any new
+  one with `/opsx:update` before archiving. The gate fails on an open note for an
+  archived item.
 - **One applied change at a time.** Do not start `/opsx:apply` on a change while
   another one has been applied but not archived. Before applying, run
   `openspec list --json`: if any other active change has completed tasks, or any
@@ -150,17 +158,19 @@ It runs, in order:
 1. `openspec validate --all --strict`.
 2. `node design/build-tokens.mjs --check`: `design/system/tokens.css` matches `tokens.json`.
 3. `node --test "scripts/**/*.test.mjs"`: tests of the repository scripts.
-4. `node scripts/check-compose.mjs`: renders `compose.yaml` (builds nothing) and
+4. `node scripts/check-plan-updates.mjs`: plan-update notes are well formed and none is
+   open for an archived or dropped roadmap item.
+5. `node scripts/check-compose.mjs`: renders `compose.yaml` (builds nothing) and
    checks services, health checks, start order, that only `web` publishes a port,
    the database volume, pinned image tags, that a missing database password or
    `JWT_SECRET` is refused, and that the auth settings reach the back-end.
-5. Front-end (`frontend/`, Node only), one step each: i18n key parity
+6. Front-end (`frontend/`, Node only), one step each: i18n key parity
    (`en`/`uk`), tokens-only CSS (no literal colours, no px other than 1-2px
    hairlines, no redefined tokens), generated API types match `api/openapi.json`,
    `tsc` typecheck, ESLint (including the ban on hard-coded JSX text), Prettier
    check, Vitest tests, the Vite production build, and the build output check
    (design tokens and self-hosted fonts present, no Google Fonts host).
-6. `backend/mvnw verify`: compile, unit tests, integration tests against a
+7. `backend/mvnw verify`: compile, unit tests, integration tests against a
    Testcontainers PostGIS, the ArchUnit layer check (`LayeredArchitectureTest`),
    the OpenAPI snapshot check (`ApiContractTest`) and Spotless.
 

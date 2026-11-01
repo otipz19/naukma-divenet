@@ -24,6 +24,8 @@ const steps = [
   { name: "openspec: validate specs and changes", cmd: "openspec", args: ["validate", "--all", "--strict", "--no-interactive"] },
   { name: "design: tokens.css matches tokens.json", cmd: "node", args: ["design/build-tokens.mjs", "--check"] },
   { name: "scripts: unit tests", cmd: "node", args: ["--test", '"scripts/**/*.test.mjs"'] },
+  // Notes in docs/plan-updates/ are well formed and none is left open for an archived or dropped item.
+  { name: "plan updates: notes", cmd: "node", args: ["scripts/check-plan-updates.mjs"] },
   // Renders compose.yaml without building: services, health checks, ports, volume, pinned images, env.
   { name: "compose: configuration", cmd: "node", args: ["scripts/check-compose.mjs"] },
   frontend("i18n key parity", "i18n:check"),
