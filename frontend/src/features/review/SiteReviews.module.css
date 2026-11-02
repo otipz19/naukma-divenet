@@ -75,6 +75,13 @@
   white-space: pre-line;
 }
 
+.video {
+  display: block;
+  width: 100%;
+  max-width: 32rem;
+  border-radius: var(--radius-sm);
+}
+
 .photos {
   display: flex;
   flex-wrap: wrap;

@@ -17,8 +17,10 @@ import ua.ukma.divenet.auth.service.AuthExceptions.UnknownUserException;
 import ua.ukma.divenet.media.domain.Media;
 import ua.ukma.divenet.media.domain.MediaRepository;
 import ua.ukma.divenet.media.service.ImageProcessor.ProcessedImage;
+import ua.ukma.divenet.media.service.MediaExceptions.ImageTooLargeException;
 import ua.ukma.divenet.media.service.MediaExceptions.MediaNotAttachableException;
 import ua.ukma.divenet.media.service.MediaExceptions.MediaNotFoundException;
+import ua.ukma.divenet.media.service.MediaExceptions.UnsupportedVideoException;
 import ua.ukma.divenet.user.domain.User;
 import ua.ukma.divenet.user.domain.UserRepository;
 
@@ -29,6 +31,9 @@ import ua.ukma.divenet.user.domain.UserRepository;
  */
 @Service
 public class MediaService {
+
+    /** The multipart limit fits a video, so images check their own (ADR-0006). */
+    private static final int MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
     private final MediaRepository media;
     private final UserRepository users;
@@ -50,9 +55,32 @@ public class MediaService {
 
     @Transactional
     public MediaView upload(long uploaderId, byte[] bytes) {
+        if (bytes.length > MAX_IMAGE_BYTES) {
+            throw new ImageTooLargeException();
+        }
         ProcessedImage image = images.process(bytes);
         User uploader = users.findById(uploaderId).orElseThrow(UnknownUserException::new);
         UUID id = UUID.randomUUID();
+        deleteFilesOnRollback(id);
+        storage.write(originalKey(id), bytes);
+        storage.write(thumbnailKey(id), image.thumbnail());
+        Media saved = media.saveAndFlush(new Media(
+                id, uploader, image.contentType(), bytes.length, image.width(), image.height(), clock.instant()));
+        return MediaView.of(saved);
+    }
+
+    /** Stored as uploaded (ADR-0011). shortcut: holds up to 50 MB in the heap, stream with add-object-storage. */
+    @Transactional
+    public VideoView uploadVideo(long uploaderId, byte[] bytes) {
+        String contentType = VideoSniffer.contentType(bytes).orElseThrow(UnsupportedVideoException::new);
+        User uploader = users.findById(uploaderId).orElseThrow(UnknownUserException::new);
+        UUID id = UUID.randomUUID();
+        deleteFilesOnRollback(id);
+        storage.write(originalKey(id), bytes);
+        return VideoView.of(media.saveAndFlush(Media.video(id, uploader, contentType, bytes.length, clock.instant())));
+    }
+
+    private void deleteFilesOnRollback(UUID id) {
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCompletion(int status) {
@@ -61,11 +89,6 @@ public class MediaService {
                 }
             }
         });
-        storage.write(originalKey(id), bytes);
-        storage.write(thumbnailKey(id), image.thumbnail());
-        Media saved = media.saveAndFlush(new Media(
-                id, uploader, image.contentType(), bytes.length, image.width(), image.height(), clock.instant()));
-        return MediaView.of(saved);
     }
 
     @Transactional(readOnly = true)
@@ -82,17 +105,27 @@ public class MediaService {
 
     /**
      * Attaches the uploads to a feature's content on behalf of {@code userId}: all of them, or none
-     * when any is unknown, someone else's or attached already. Joins the caller's transaction.
+     * when any is unknown, someone else's, attached already or a video. Joins the caller's transaction.
      */
     @Transactional
     public List<MediaView> attach(Collection<UUID> ids, long userId) {
+        return attachKind(ids, userId, "image/").stream().map(MediaView::of).toList();
+    }
+
+    /** As {@link #attach}, for videos: it refuses an image. */
+    @Transactional
+    public void attachVideos(Collection<UUID> ids, long userId) {
+        attachKind(ids, userId, "video/");
+    }
+
+    private List<Media> attachKind(Collection<UUID> ids, long userId, String typePrefix) {
         Set<UUID> unique = new LinkedHashSet<>(ids);
         if (unique.isEmpty()) {
             return List.of();
         }
         // Truncated to what timestamptz stores, so the rows read back compare equal.
         Instant now = clock.instant().truncatedTo(ChronoUnit.MICROS);
-        int attached = media.attach(unique, userId, now);
+        int attached = media.attach(unique, userId, typePrefix + "%", now);
         List<Media> rows = media.findAllById(unique);
         if (attached != unique.size()) {
             Set<UUID> attachedNow = new LinkedHashSet<>();
@@ -110,7 +143,6 @@ public class MediaService {
                         .filter(m -> m.getId().equals(id))
                         .findFirst()
                         .orElseThrow())
-                .map(MediaView::of)
                 .toList();
     }
 
@@ -124,6 +156,19 @@ public class MediaService {
         return ids.stream()
                 .flatMap(id -> rows.stream().filter(m -> m.getId().equals(id)).findFirst().stream())
                 .map(MediaView::of)
+                .toList();
+    }
+
+    /** The videos in the order of {@code ids}; unknown ids are left out. */
+    @Transactional(readOnly = true)
+    public List<VideoView> videos(Collection<UUID> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        List<Media> rows = media.findAllById(new LinkedHashSet<>(ids));
+        return ids.stream()
+                .flatMap(id -> rows.stream().filter(m -> m.getId().equals(id)).findFirst().stream())
+                .map(VideoView::of)
                 .toList();
     }
 

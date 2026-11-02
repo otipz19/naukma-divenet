@@ -3,6 +3,7 @@ package ua.ukma.divenet.review.service;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.ukma.divenet.media.service.MediaExceptions.MediaNotAttachableException;
 import ua.ukma.divenet.media.service.MediaService;
 import ua.ukma.divenet.media.service.MediaView;
+import ua.ukma.divenet.media.service.VideoView;
 import ua.ukma.divenet.review.domain.Review;
 import ua.ukma.divenet.review.domain.ReviewRepository;
 import ua.ukma.divenet.review.service.ReviewExceptions.InvalidReviewException;
@@ -70,7 +72,8 @@ public class ReviewService {
             @Nullable Integer rating,
             @Nullable Integer difficulty,
             @Nullable String text,
-            List<UUID> photoIds) {}
+            List<UUID> photoIds,
+            List<UUID> videoIds) {}
 
     /** Unknown and unapproved sites answer 404, as their details do. */
     @Transactional(readOnly = true)
@@ -82,11 +85,13 @@ public class ReviewService {
                 : reviews.findNewest(siteId, pageable);
         Map<UUID, MediaView> photos = photos(
                 found.stream().flatMap(review -> review.getPhotoIds().stream()).toList());
+        Map<UUID, VideoView> videos = videos(
+                found.stream().flatMap(review -> review.getVideoIds().stream()).toList());
         Map<Long, String> badges = certificates.verifiedBadges(found.stream()
                 .map(review -> review.getAuthor().getId())
                 .distinct()
                 .toList());
-        return found.map(review -> view(review, photos, badges));
+        return found.map(review -> view(review, photos, videos, badges));
     }
 
     @Transactional(readOnly = true)
@@ -102,10 +107,13 @@ public class ReviewService {
         }
         String text = text(content);
         List<UUID> photoIds = distinct(content.photoIds());
+        List<UUID> videoIds = distinct(content.videoIds());
         attach(photoIds, authorId);
+        attachVideos(videoIds, authorId);
         Instant now = now();
         Review review = new Review(site, users.getReferenceById(authorId), now);
         review.setContent(content.rating(), content.difficulty(), text, photoIds, now);
+        review.setVideoIds(videoIds);
         long id = reviews.saveAndFlush(review).getId();
         refreshAggregates(siteId);
         return view(load(id));
@@ -120,13 +128,24 @@ public class ReviewService {
         String text = text(content);
         List<UUID> current = review.getPhotoIds();
         List<UUID> requested = distinct(content.photoIds());
+        List<UUID> currentVideos = review.getVideoIds();
+        List<UUID> requestedVideos = distinct(content.videoIds());
         attach(requested.stream().filter(photo -> !current.contains(photo)).toList(), userId);
+        attachVideos(
+                requestedVideos.stream()
+                        .filter(video -> !currentVideos.contains(video))
+                        .toList(),
+                userId);
         review = load(id);
         review.setContent(content.rating(), content.difficulty(), text, requested, now());
+        review.setVideoIds(requestedVideos);
         // The links go before the uploads they point to.
         reviews.flush();
         media.release(
                 current.stream().filter(photo -> !requested.contains(photo)).toList());
+        media.release(currentVideos.stream()
+                .filter(video -> !requestedVideos.contains(video))
+                .toList());
         refreshAggregates(siteId);
         return view(load(id));
     }
@@ -136,10 +155,11 @@ public class ReviewService {
         Review review = authored(id, userId);
         long siteId = review.getSite().getId();
         catalog.lockForReview(siteId);
-        List<UUID> photoIds = review.getPhotoIds();
+        List<UUID> uploads = new ArrayList<>(review.getPhotoIds());
+        uploads.addAll(review.getVideoIds());
         reviews.delete(review);
         reviews.flush();
-        media.release(photoIds);
+        media.release(uploads);
         refreshAggregates(siteId);
     }
 
@@ -176,6 +196,15 @@ public class ReviewService {
         }
     }
 
+    private void attachVideos(List<UUID> videoIds, long userId) {
+        try {
+            media.attachVideos(videoIds, userId);
+        } catch (MediaNotAttachableException e) {
+            throw new InvalidReviewException(
+                    new FieldViolation("videoIds", e.getBody().getDetail()));
+        }
+    }
+
     private void refreshAggregates(long siteId) {
         reviews.flush();
         ReviewRepository.Aggregates aggregates = reviews.aggregates(siteId);
@@ -192,6 +221,7 @@ public class ReviewService {
         return view(
                 review,
                 photos(review.getPhotoIds()),
+                videos(review.getVideoIds()),
                 certificates.verifiedBadges(List.of(review.getAuthor().getId())));
     }
 
@@ -199,7 +229,12 @@ public class ReviewService {
         return media.views(ids).stream().collect(Collectors.toMap(MediaView::id, Function.identity()));
     }
 
-    private static ReviewView view(Review review, Map<UUID, MediaView> photos, Map<Long, String> badges) {
+    private Map<UUID, VideoView> videos(List<UUID> ids) {
+        return media.videos(ids).stream().collect(Collectors.toMap(VideoView::id, Function.identity()));
+    }
+
+    private static ReviewView view(
+            Review review, Map<UUID, MediaView> photos, Map<UUID, VideoView> videos, Map<Long, String> badges) {
         return new ReviewView(
                 review.getId(),
                 review.getSite().getId(),
@@ -213,6 +248,7 @@ public class ReviewService {
                 review.getDifficulty(),
                 review.getText(),
                 review.getPhotoIds().stream().map(photos::get).toList(),
+                review.getVideoIds().stream().map(videos::get).toList(),
                 review.getCreatedAt(),
                 review.getUpdatedAt());
     }

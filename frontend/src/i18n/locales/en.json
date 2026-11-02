@@ -306,6 +306,20 @@
       "skipped_few": "{{count}} files were skipped: the photo limit is reached.",
       "skipped_many": "{{count}} files were skipped: the photo limit is reached.",
       "skipped_other": "{{count}} files were skipped: the photo limit is reached."
+    },
+    "videoField": {
+      "label": "Videos",
+      "add": "Add video",
+      "hint": "MP4 or WebM up to 50 MB each.",
+      "hintLimit": "You can add at most 3 videos.",
+      "player": "Video {{position}}",
+      "remove": "Remove video {{position}}",
+      "uploading": "Uploading video",
+      "errors": {
+        "tooLarge": "{{name}} is larger than 50 MB.",
+        "wrongType": "{{name}} is not an MP4 or WebM video.",
+        "failed": "{{name}} could not be uploaded. Please try again."
+      }
     }
   },
   "rating": {
@@ -357,7 +371,8 @@
         "failed": "The review could not be saved. Please try again."
       }
     },
-    "verifiedBadge": "Verified {{certificate}}"
+    "verifiedBadge": "Verified {{certificate}}",
+    "video": "Video {{position}} by {{name}}"
   },
   "warning": {
     "title": "Recent warnings",
@@ -613,7 +628,8 @@
       "title": "Posts about this site",
       "by": "by {{name}} · {{date}}",
       "seeAll": "See all posts"
-    }
+    },
+    "video": "Video {{position}} from {{title}}"
   },
   "achievement": {
     "title": "Achievements",

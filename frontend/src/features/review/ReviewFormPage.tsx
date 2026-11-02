@@ -12,6 +12,7 @@ import { DIFFICULTY_WORDS, difficultyWord, levelsOf } from "../../components/Bad
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { Chip } from "../../components/Chip/Chip";
 import { PhotoField } from "../../components/PhotoField/PhotoField";
+import { VideoField } from "../../components/VideoField/VideoField";
 import { RatingInput } from "../../components/Rating/Rating";
 import { TextAreaField } from "../../components/TextField/TextAreaField";
 import { useSession } from "../auth/useSession";
@@ -69,6 +70,7 @@ function valuesOf(review: Review | null): ReviewValues {
     difficulty: review.difficulty ?? null,
     text: review.text ?? "",
     photos: review.photos,
+    videos: review.videos,
   };
 }
 
@@ -96,6 +98,7 @@ function ReviewForm({ site, existing }: { site: Site; existing: Review | null })
       difficulty: values.difficulty ?? undefined,
       text: values.text.trim() || undefined,
       photoIds: values.photos.map((photo) => photo.id),
+      videoIds: values.videos.map((video) => video.id),
     };
     try {
       if (existing) await updateReview(existing.id, body);
@@ -169,6 +172,11 @@ function ReviewForm({ site, existing }: { site: Site; existing: Review | null })
           render={({ field }) => (
             <PhotoField value={field.value} onChange={field.onChange} max={MAX_REVIEW_PHOTOS} />
           )}
+        />
+        <Controller
+          control={control}
+          name="videos"
+          render={({ field }) => <VideoField value={field.value} onChange={field.onChange} />}
         />
         <div className={styles.actions}>
           <Link className={buttonClassName({ variant: "secondary" })} to={sitePath}>

@@ -22,6 +22,25 @@ public final class MediaExceptions {
     }
 
     /** A supported type that cannot be decoded, or has more pixels than allowed. */
+    public static final class ImageTooLargeException extends ErrorResponseException {
+        public ImageTooLargeException() {
+            super(
+                    HttpStatus.PAYLOAD_TOO_LARGE,
+                    ProblemDetail.forStatusAndDetail(HttpStatus.PAYLOAD_TOO_LARGE, "An image can be at most 10 MB."),
+                    null);
+        }
+    }
+
+    public static final class UnsupportedVideoException extends ErrorResponseException {
+        public UnsupportedVideoException() {
+            super(
+                    HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+                    ProblemDetail.forStatusAndDetail(
+                            HttpStatus.UNSUPPORTED_MEDIA_TYPE, "Only MP4 and WebM videos are accepted."),
+                    null);
+        }
+    }
+
     public static final class InvalidImageException extends ErrorResponseException {
         public InvalidImageException(String detail) {
             super(HttpStatus.BAD_REQUEST, ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail), null);

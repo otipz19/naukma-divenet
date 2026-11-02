@@ -87,6 +87,11 @@ public class Post {
     @OrderBy("position")
     private List<PostMedia> photos = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "post_videos", joinColumns = @JoinColumn(name = "post_id"))
+    @OrderBy("position")
+    private List<PostMedia> videos = new ArrayList<>();
+
     protected Post() {}
 
     public Post(User author, Details details, Instant now) {
@@ -151,6 +156,18 @@ public class Post {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    /** Replaces the videos; {@code videoIds} in display order. */
+    public void setVideoIds(List<UUID> videoIds) {
+        videos.clear();
+        for (int i = 0; i < videoIds.size(); i++) {
+            videos.add(new PostMedia(videoIds.get(i), (short) i));
+        }
+    }
+
+    public List<UUID> getVideoIds() {
+        return videos.stream().map(PostMedia::mediaId).toList();
     }
 
     /** The images' media ids in display order. */

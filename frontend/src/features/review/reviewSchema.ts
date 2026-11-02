@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { UploadedVideo } from "../../api/media";
 import type { PhotoFieldItem } from "../../components/PhotoField/PhotoField";
 
 export const MAX_REVIEW_PHOTOS = 6;
@@ -10,6 +11,7 @@ export const reviewSchema = z
     difficulty: z.number().int().min(1).max(5).nullable(),
     text: z.string().max(4000, "review.form.errors.textTooLong"),
     photos: z.array(z.custom<PhotoFieldItem>()).max(MAX_REVIEW_PHOTOS),
+    videos: z.array(z.custom<UploadedVideo>()),
   })
   .refine((values) => values.rating !== null || values.text.trim() !== "", {
     message: "review.form.errors.ratingOrText",
@@ -18,4 +20,10 @@ export const reviewSchema = z
 
 export type ReviewValues = z.infer<typeof reviewSchema>;
 
-export const EMPTY_REVIEW: ReviewValues = { rating: null, difficulty: null, text: "", photos: [] };
+export const EMPTY_REVIEW: ReviewValues = {
+  rating: null,
+  difficulty: null,
+  text: "",
+  photos: [],
+  videos: [],
+};

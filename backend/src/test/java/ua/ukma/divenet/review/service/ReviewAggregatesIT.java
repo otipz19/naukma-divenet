@@ -82,7 +82,9 @@ class ReviewAggregatesIT {
 
     private ReviewView review(long userId, @Nullable Integer rating, @Nullable Integer difficulty) {
         return reviews.create(
-                siteId, userId, new Content(rating, difficulty, rating == null ? "Text only." : null, List.of()));
+                siteId,
+                userId,
+                new Content(rating, difficulty, rating == null ? "Text only." : null, List.of(), List.of()));
     }
 
     @Test
@@ -122,7 +124,7 @@ class ReviewAggregatesIT {
         long author = user();
         ReviewView review = review(author, 2, null);
 
-        reviews.update(review.id(), author, new Content(5, null, null, List.of()));
+        reviews.update(review.id(), author, new Content(5, null, null, List.of(), List.of()));
 
         mvc.perform(get("/api/v1/sites/markers"))
                 .andExpect(jsonPath("$[0].averageRating").value(5.0))

@@ -17,8 +17,8 @@ spring:
   servlet:
     multipart:
       # One image of up to 10 MB per upload (spec media/uploads); the request adds multipart framing.
-      max-file-size: 10MB
-      max-request-size: 11MB
+      max-file-size: 50MB
+      max-request-size: 51MB
   data:
     web:
       pageable:

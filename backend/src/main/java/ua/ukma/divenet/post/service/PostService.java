@@ -28,6 +28,7 @@ import ua.ukma.divenet.geo.domain.RegionRepository;
 import ua.ukma.divenet.media.service.MediaExceptions.MediaNotAttachableException;
 import ua.ukma.divenet.media.service.MediaService;
 import ua.ukma.divenet.media.service.MediaView;
+import ua.ukma.divenet.media.service.VideoView;
 import ua.ukma.divenet.post.domain.Post;
 import ua.ukma.divenet.post.domain.PostRepository;
 import ua.ukma.divenet.shared.web.FieldViolation;
@@ -79,6 +80,7 @@ public class PostService {
             String status,
             @Nullable UUID coverId,
             @Nullable List<UUID> photoIds,
+            @Nullable List<UUID> videoIds,
             @Nullable String regionCode,
             @Nullable Long siteId) {}
 
@@ -103,6 +105,7 @@ public class PostService {
             AuthorView author,
             @Nullable MediaView cover,
             List<MediaView> photos,
+            List<VideoView> videos,
             @Nullable String countryCode,
             @Nullable String regionCode,
             @Nullable SiteLinkView site) {}
@@ -138,7 +141,10 @@ public class PostService {
         check(content, photoIds);
         attach(content.coverId() == null ? List.of() : List.of(content.coverId()), authorId, "coverId");
         attach(photoIds, authorId, "photoIds");
+        List<UUID> videoIds = videoIds(content);
+        attachVideos(videoIds, authorId);
         Post post = new Post(users.getReferenceById(authorId), details(content, photoIds), now());
+        post.setVideoIds(videoIds);
         PostView view = view(posts.save(post));
         if (post.getStatus() == Post.Status.PUBLISHED) {
             events.publishEvent(new PostPublished(authorId));
@@ -153,13 +159,21 @@ public class PostService {
         List<UUID> photoIds = photoIds(content);
         check(content, photoIds);
         List<UUID> current = uploads(post.getCoverId(), post.getPhotoIds());
+        List<UUID> currentVideos = post.getVideoIds();
+        List<UUID> videoIds = videoIds(content);
         UUID cover = content.coverId();
         attach(cover == null || current.contains(cover) ? List.of() : List.of(cover), userId, "coverId");
         attach(photoIds.stream().filter(photo -> !current.contains(photo)).toList(), userId, "photoIds");
+        attachVideos(
+                videoIds.stream()
+                        .filter(video -> !currentVideos.contains(video))
+                        .toList(),
+                userId);
         List<UUID> requested = uploads(cover, photoIds);
         post = load(id);
         boolean wasPublished = post.getStatus() == Post.Status.PUBLISHED;
         post.update(details(content, photoIds), now());
+        post.setVideoIds(videoIds);
         if (!wasPublished && post.getStatus() == Post.Status.PUBLISHED) {
             events.publishEvent(new PostPublished(userId));
         }
@@ -167,6 +181,9 @@ public class PostService {
         posts.flush();
         media.release(
                 current.stream().filter(photo -> !requested.contains(photo)).toList());
+        media.release(currentVideos.stream()
+                .filter(video -> !videoIds.contains(video))
+                .toList());
         return view(load(id));
     }
 
@@ -174,6 +191,7 @@ public class PostService {
     public void delete(long id, long userId) {
         Post post = authored(id, userId);
         List<UUID> uploads = uploads(post.getCoverId(), post.getPhotoIds());
+        uploads.addAll(post.getVideoIds());
         posts.delete(post);
         posts.flush();
         media.release(uploads);
@@ -260,6 +278,20 @@ public class PostService {
                 : content.photoIds().stream().distinct().toList();
     }
 
+    private static List<UUID> videoIds(Content content) {
+        return content.videoIds() == null
+                ? List.of()
+                : content.videoIds().stream().distinct().toList();
+    }
+
+    private void attachVideos(List<UUID> videoIds, long userId) {
+        try {
+            media.attachVideos(videoIds, userId);
+        } catch (MediaNotAttachableException e) {
+            throw invalid("videoIds", e.getBody().getDetail());
+        }
+    }
+
     private static void check(Content content, List<UUID> photoIds) {
         if (content.status().equals(Post.Status.PUBLISHED.name())
                 && (content.text() == null || content.text().isBlank())) {
@@ -343,6 +375,7 @@ public class PostService {
                 author(post.getAuthor()),
                 cover,
                 media.views(post.getPhotoIds()),
+                media.videos(post.getVideoIds()),
                 region == null ? null : region.getCountry().getCode(),
                 region == null ? null : region.getCode(),
                 site(post.getSite()));

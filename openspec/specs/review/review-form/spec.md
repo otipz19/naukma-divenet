@@ -70,3 +70,17 @@ instead of creating one.
 - **WHEN** the user changes the rating to 5 and saves
 - **THEN** an update request for that review is sent with `rating` 5
 - **AND** the app navigates to the site page
+
+### Requirement: The review form offers videos
+
+The review form SHALL include the video field, filled with the review's videos when editing, and send them as `videoIds`.
+
+#### Scenario: Sending
+
+- **WHEN** the user uploads a video and saves the review
+- **THEN** the request names the video in `videoIds`
+
+#### Scenario: Editing
+
+- **WHEN** the author opens the form of a review with a video
+- **THEN** the field shows that video

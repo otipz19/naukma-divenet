@@ -340,6 +340,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/media/videos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["uploadVideo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/posts": {
         parameters: {
             query?: never;
@@ -895,6 +911,7 @@ export interface components {
             status: "DRAFT" | "PUBLISHED";
             text?: string;
             title: string;
+            videoIds?: string[];
         };
         PostResponse: {
             author: components["schemas"]["PostAuthorResponse"];
@@ -915,6 +932,7 @@ export interface components {
             title: string;
             /** Format: date-time */
             updatedAt: string;
+            videos: components["schemas"]["PostVideoResponse"][];
         };
         PostSiteResponse: {
             /** Format: int64 */
@@ -939,6 +957,12 @@ export interface components {
             title: string;
             /** Format: date-time */
             updatedAt: string;
+        };
+        PostVideoResponse: {
+            contentType: string;
+            /** Format: uuid */
+            id: string;
+            url: string;
         };
         ProfileRequest: {
             /** Format: uuid */
@@ -985,6 +1009,7 @@ export interface components {
             /** Format: int32 */
             rating?: number;
             text?: string;
+            videoIds?: string[];
         };
         ReviewResponse: {
             author: components["schemas"]["AuthorResponse"];
@@ -1002,6 +1027,13 @@ export interface components {
             text?: string;
             /** Format: date-time */
             updatedAt: string;
+            videos: components["schemas"]["ReviewVideoResponse"][];
+        };
+        ReviewVideoResponse: {
+            contentType: string;
+            /** Format: uuid */
+            id: string;
+            url: string;
         };
         SiteMarkerResponse: {
             averageRating?: number;
@@ -1083,6 +1115,12 @@ export interface components {
             id: number;
             /** @enum {string} */
             role: "USER" | "ADMIN";
+        };
+        VideoResponse: {
+            contentType: string;
+            /** Format: uuid */
+            id: string;
+            url: string;
         };
         VisitedSiteResponse: {
             countryCode: string;
@@ -1653,6 +1691,33 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["MediaResponse"];
+                };
+            };
+        };
+    };
+    uploadVideo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["VideoResponse"];
                 };
             };
         };

@@ -39,6 +39,7 @@ const review = (overrides: Partial<Review> = {}): Review => ({
   rating: 5,
   text: "Best wall in Dahab.",
   photos: [],
+  videos: [],
   createdAt: "2026-05-12T10:00:00Z",
   updatedAt: "2026-05-12T10:00:00Z",
   ...overrides,
@@ -325,5 +326,27 @@ describe("review/site-reviews: A review's author shows a verified badge", () => 
 
     await screen.findByRole("link", { name: "Oleh Kravets" });
     expect(screen.queryByText(/^Verified/)).not.toBeInTheDocument();
+  });
+});
+
+describe("review/site-reviews: A review card plays its videos", () => {
+  it("shows a player", async () => {
+    serve(() =>
+      page([review({ videos: [{ id: "v", url: "/media/v", contentType: "video/mp4" }] })]),
+    );
+    renderRoute("/sites/7");
+
+    const player = await screen.findByLabelText(/Video 1/);
+    expect(player).toHaveAttribute("src", "/media/v");
+    expect(player).toHaveAttribute("preload", "metadata");
+    expect(player).toHaveAttribute("controls");
+  });
+
+  it("shows none without videos", async () => {
+    serve(() => page([review()]));
+    renderRoute("/sites/7");
+
+    await screen.findByRole("link", { name: "Oleh Kravets" });
+    expect(screen.queryByLabelText(/Video 1/)).not.toBeInTheDocument();
   });
 });

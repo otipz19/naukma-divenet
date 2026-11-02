@@ -107,6 +107,16 @@ export function ReviewCard({
           ))}
         </div>
       )}
+      {review.videos.map((video, index) => (
+        <video
+          key={video.id}
+          className={styles.video}
+          src={video.url}
+          controls
+          preload="metadata"
+          aria-label={t("review.video", { position: index + 1, name })}
+        />
+      ))}
     </article>
   );
 }

@@ -50,6 +50,7 @@ const ownReview: Review = {
   difficulty: 4,
   text: "Strong current on the bow line.",
   photos: [photo(1)],
+  videos: [{ id: "v", url: "/media/v", contentType: "video/mp4" }],
   createdAt: "2026-05-12T10:00:00Z",
   updatedAt: "2026-05-12T10:00:00Z",
 };
@@ -177,6 +178,7 @@ describe("review/review-form: The form publishes a review", () => {
       difficulty: 2,
       text: "Calm in the morning.",
       photoIds: [photo(2).id],
+      videoIds: [],
     });
     expect(
       await screen.findByRole("heading", { level: 1, name: "SS Thistlegorm" }),
@@ -211,7 +213,7 @@ describe("review/review-form: The form publishes a review", () => {
     await user.click(screen.getByRole("button", { name: "Publish review" }));
 
     await waitFor(() => expect(writes).toHaveLength(1));
-    expect(writes[0]!.body).toEqual({ rating: 2, photoIds: [] });
+    expect(writes[0]!.body).toEqual({ rating: 2, photoIds: [], videoIds: [] });
   });
 });
 
@@ -277,6 +279,7 @@ describe("review/review-form: The same form edits the own review", () => {
     const user = userEvent.setup();
     await screen.findByRole("heading", { level: 1, name: "Edit your review" });
 
+    expect(screen.getByLabelText("Video 1")).toHaveAttribute("src", "/media/v");
     await user.click(screen.getByRole("radio", { name: "5 stars" }));
     await user.click(screen.getByRole("button", { name: "Save review" }));
 
@@ -288,6 +291,7 @@ describe("review/review-form: The same form edits the own review", () => {
       difficulty: 4,
       text: "Strong current on the bow line.",
       photoIds: [photo(1).id],
+      videoIds: ["v"],
     });
     expect(
       await screen.findByRole("heading", { level: 1, name: "SS Thistlegorm" }),
