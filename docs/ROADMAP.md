@@ -92,6 +92,6 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Status |
 | --- | --- | --- |
-| `add-gear-locker` | Personal equipment inventory on the profile | planned |
+| `add-gear-locker` | Personal equipment inventory on the profile | proposed |
 | `add-video-media` | Video attachments for reviews and posts | planned |
 | `add-object-storage` | MinIO implementation of `MediaStorage` | planned |
