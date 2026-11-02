@@ -21,6 +21,7 @@ const post = (overrides: Partial<Post> = {}): Post => ({
   updatedAt: "2026-05-14T10:00:00Z",
   author: OLEH,
   photos: [],
+  videos: [],
   ...overrides,
 });
 
@@ -467,5 +468,47 @@ describe("user/profile: The profile page shows the author's posts", () => {
     await screen.findByRole("link", { name: "Night dive" });
     expect(state.drafts).toBe(false);
     expect(screen.queryByRole("link", { name: "Write a post" })).not.toBeInTheDocument();
+  });
+});
+
+const CLIP = { id: "v", url: "/media/v", contentType: "video/mp4" };
+
+describe("post/pages: The post page plays its videos", () => {
+  it("shows a player", async () => {
+    servePost(post({ videos: [CLIP] }));
+    renderRoute("/posts/5");
+
+    const player = await screen.findByLabelText(/Video 1/);
+    expect(player).toHaveAttribute("src", "/media/v");
+    expect(player).toHaveAttribute("preload", "metadata");
+  });
+
+  it("shows none without videos", async () => {
+    servePost(post());
+    renderRoute("/posts/5");
+
+    await screen.findByRole("heading", { name: "Night dive" });
+    expect(screen.queryByLabelText(/Video 1/)).not.toBeInTheDocument();
+  });
+});
+
+describe("post/editor: The editor offers videos", () => {
+  it("shows the post's video, and sends it", async () => {
+    startSignedIn();
+    serveEditorData();
+    servePost(mine({ status: "DRAFT", videos: [CLIP] }));
+    let sent: { videoIds?: string[] } | undefined;
+    server.use(
+      http.put(`${posts}/5`, async ({ request }) => {
+        sent = (await request.json()) as { videoIds?: string[] };
+        return HttpResponse.json(mine({ status: "DRAFT", videos: [CLIP] }));
+      }),
+    );
+    renderRoute("/posts/5/edit");
+
+    expect(await screen.findByLabelText("Video 1")).toHaveAttribute("src", "/media/v");
+    await userEvent.click(screen.getByRole("button", { name: "Save draft" }));
+
+    await waitFor(() => expect(sent?.videoIds).toEqual(["v"]));
   });
 });

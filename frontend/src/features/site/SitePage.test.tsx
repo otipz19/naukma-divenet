@@ -225,6 +225,7 @@ describe("site/details: The site page offers to write or edit a review", () => {
           author: { id: 7, displayName: "Mira Koval" },
           rating: 4,
           photos: [],
+          videos: [],
           createdAt: "2026-05-12T10:00:00Z",
           updatedAt: "2026-05-12T10:00:00Z",
         }),

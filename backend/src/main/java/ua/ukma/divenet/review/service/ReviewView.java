@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 import ua.ukma.divenet.media.service.MediaView;
+import ua.ukma.divenet.media.service.VideoView;
 
 /** A review as web code sees it; {@code photos} in display order. */
 public record ReviewView(
@@ -17,5 +18,6 @@ public record ReviewView(
         @Nullable Integer difficulty,
         @Nullable String text,
         List<MediaView> photos,
+        List<VideoView> videos,
         Instant createdAt,
         Instant updatedAt) {}

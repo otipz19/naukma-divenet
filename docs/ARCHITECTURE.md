@@ -125,7 +125,7 @@ Rules:
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
 `media` (`add-media-uploads`), `reviews` and `review_media` (`add-site-reviews`), and
-`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), `certificates` (`add-certificates`), `posts` and `post_media` (`add-posts`), `achievements` and `user_achievements` (`add-achievements`), and `locker_items` (`add-gear-locker`) exist; the other tables are **(planned)**. A site's rating
+`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), `certificates` (`add-certificates`), `posts` and `post_media` (`add-posts`), `achievements` and `user_achievements` (`add-achievements`), `locker_items` (`add-gear-locker`), and `review_videos` and `post_videos` (`add-video-media`) exist; the other tables are **(planned)**. A site's rating
 aggregates are columns of `sites`, kept by the `review` feature in the same transaction as
 every review write.
 
@@ -154,6 +154,8 @@ erDiagram
   posts }o--o| sites : "about"
   posts }o--o| regions : "about"
   posts ||--o{ post_media : has
+  posts ||--o{ post_videos : has
+  reviews ||--o{ review_videos : has
   posts }o--o| media : cover
   media ||--o{ site_media : ""
   media ||--o{ review_media : ""
@@ -226,6 +228,9 @@ Each change that adds tables updates this diagram.
 
 - `POST /api/v1/media` (multipart) accepts JPEG, PNG and WebP up to 10 MB. The
   type is checked by content, not by file extension.
+- `POST /api/v1/media/videos` accepts MP4 and WebM up to 50 MB, by container signature, and
+  stores them as uploaded, with no thumbnail (ADR-0011). An image can be attached only as an image,
+  and a video only as a video.
 - Files are stored through `MediaStorage` (local-disk implementation), and the
   database keeps the metadata. A resized thumbnail is generated on upload.
 - Files are served from `GET /media/{id}` and `/media/{id}/thumb`. Unreferenced

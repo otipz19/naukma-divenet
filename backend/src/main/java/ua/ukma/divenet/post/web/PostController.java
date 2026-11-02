@@ -105,11 +105,12 @@ class PostController {
 
             @Nullable UUID coverId,
             @Nullable @Size(max = 10) List<UUID> photoIds,
+            @Nullable @Size(max = 3) List<UUID> videoIds,
             @Nullable String regionCode,
             @Nullable Long siteId) {
 
         Content toContent() {
-            return new Content(title, text, status, coverId, photoIds, regionCode, siteId);
+            return new Content(title, text, status, coverId, photoIds, videoIds, regionCode, siteId);
         }
     }
 
@@ -120,6 +121,9 @@ class PostController {
             return new PostPhotoResponse(media.id(), media.url(), media.thumbnailUrl(), media.width(), media.height());
         }
     }
+
+    @Schema(requiredProperties = {"id", "url", "contentType"})
+    record PostVideoResponse(UUID id, String url, String contentType) {}
 
     @Schema(requiredProperties = {"id", "displayName"})
     record PostAuthorResponse(
@@ -138,7 +142,18 @@ class PostController {
         }
     }
 
-    @Schema(requiredProperties = {"id", "title", "text", "status", "readMinutes", "updatedAt", "author", "photos"})
+    @Schema(
+            requiredProperties = {
+                "id",
+                "title",
+                "text",
+                "status",
+                "readMinutes",
+                "updatedAt",
+                "author",
+                "photos",
+                "videos"
+            })
     record PostResponse(
             long id,
             String title,
@@ -153,6 +168,7 @@ class PostController {
             PostAuthorResponse author,
             @Nullable PostPhotoResponse cover,
             List<PostPhotoResponse> photos,
+            List<PostVideoResponse> videos,
             @Nullable String countryCode,
             @Nullable String regionCode,
             @Nullable PostSiteResponse site) {
@@ -169,6 +185,9 @@ class PostController {
                     PostAuthorResponse.of(view.author()),
                     view.cover() == null ? null : PostPhotoResponse.of(view.cover()),
                     view.photos().stream().map(PostPhotoResponse::of).toList(),
+                    view.videos().stream()
+                            .map(video -> new PostVideoResponse(video.id(), video.url(), video.contentType()))
+                            .toList(),
                     view.countryCode(),
                     view.regionCode(),
                     PostSiteResponse.of(view.site()));

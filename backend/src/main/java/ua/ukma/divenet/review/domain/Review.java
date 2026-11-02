@@ -61,6 +61,12 @@ public class Review {
     @BatchSize(size = 50)
     private List<ReviewMedia> photos = new ArrayList<>();
 
+    @ElementCollection
+    @CollectionTable(name = "review_videos", joinColumns = @JoinColumn(name = "review_id"))
+    @OrderBy("position")
+    @BatchSize(size = 50)
+    private List<ReviewMedia> videos = new ArrayList<>();
+
     protected Review() {}
 
     public Review(Site site, User author, Instant createdAt) {
@@ -117,6 +123,18 @@ public class Review {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    /** Replaces the videos; {@code videoIds} in display order. */
+    public void setVideoIds(List<UUID> videoIds) {
+        videos.clear();
+        for (int i = 0; i < videoIds.size(); i++) {
+            videos.add(new ReviewMedia(videoIds.get(i), (short) i));
+        }
+    }
+
+    public List<UUID> getVideoIds() {
+        return videos.stream().map(ReviewMedia::mediaId).toList();
     }
 
     /** The photos' media ids in display order. */

@@ -1,4 +1,4 @@
-goal: Stretch — add-gear-locker merged (PR #24); add-video-media proposed on change/add-video-media, awaiting user review; M6 still planned
+goal: Stretch — add-video-media applied, synced and archived; PR open; M6 still planned
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -10,12 +10,12 @@ done:
   - add-certificates merged (PR #20) and archived (specs user/certificates, user/certificate-verification; user/profile, review/site-reviews, site/moderation updated)
   - M4 done: add-posts (PR #21), add-feeds (PR #22) merged and archived (specs post/*; user/profile, site/details updated)
   - add-achievements merged (PR #23) and archived (spec achievement/achievements; user/profile, divelog/log-page updated)
-  - add-gear-locker merged (PR #24) and archived (spec user/gear-locker; user/profile updated)
-wip: openspec/changes/add-video-media (planning only, committed, not pushed)
+  - add-gear-locker (PR #24) merged and archived (spec user/gear-locker); add-video-media implemented and archived (spec media/video-field; media/uploads, review/*, post/* updated; ADR-0011)
+wip: PR from change/add-video-media (change + archive); awaiting CI and user merge
 blocked: null
-next: after the user approves the proposal, /opsx:apply add-video-media
+next: after the PR merges, pick the first M6 item in docs/ROADMAP.md (apply-ui-design) and /opsx:propose it
 decisions:
-  - add-gear-locker design.md D1-D4 (free-text names; public with no privacy flag; capped at 100, not paged; add and remove only)
+  - add-video-media design.md D1-D8 (stored as uploaded, no ffmpeg; separate endpoint and join tables; attach refuses the wrong kind; images keep their own 10 MB check; up to 50 MB held in the heap until add-object-storage)
   - add-achievements design.md D1-D6 (rules read live data; awards permanent; after-commit listener in the request thread; progress follows showStatistics; banner compares before and after)
   - add-feeds design.md D1-D6 (one list endpoint with optional filters; fixed newest-first order; unknown filter values give an empty page; filters and page in the URL)
   - add-posts design.md D1-D6 (plain text with images after it; a draft answers 404 to all but its author; a site's post takes its region; published_at survives moving to drafts; PostPublished left to add-achievements)
@@ -28,10 +28,10 @@ decisions:
   - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-02-add-gear-locker/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-02-add-video-media/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-02 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker Desktop must be running) — full gate; browser journey on the stack (WEB_PORT=18080): add, remove, anonymous profile
+  last: pass 2026-11-02 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker Desktop must be running) — full gate and smoke:stack; browser journey on the stack (WEB_PORT=18080): real 21 MB MP4 through nginx, play, seek, 206, review add and remove
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file
   ci: PRs #1-#24 green on ubuntu-latest
   not_covered: E2E (M6)

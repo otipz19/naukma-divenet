@@ -77,6 +77,16 @@ export function PostPage() {
             />
           </a>
         ))}
+        {data.videos.map((video, index) => (
+          <video
+            key={video.id}
+            className={styles.image}
+            src={video.url}
+            controls
+            preload="metadata"
+            aria-label={t("post.video", { position: index + 1, title: data.title })}
+          />
+        ))}
       </div>
     </article>
   );

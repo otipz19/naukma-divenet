@@ -18,8 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import ua.ukma.divenet.media.service.MediaService;
 import ua.ukma.divenet.media.service.MediaView;
+import ua.ukma.divenet.media.service.VideoView;
 
-/** Spec media/uploads "Signed-in users upload images". */
+/** Spec media/uploads "Signed-in users upload images" and "Signed-in users upload videos". */
 @RestController
 @RequestMapping("/api/v1/media")
 class MediaController {
@@ -40,6 +41,20 @@ class MediaController {
         response.setHeader(HttpHeaders.LOCATION, media.url());
         return MediaResponse.of(media);
     }
+
+    @PostMapping(path = "/videos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ResponseStatus(HttpStatus.CREATED)
+    @SecurityRequirement(name = "bearerAuth")
+    VideoResponse uploadVideo(
+            @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt, HttpServletResponse response)
+            throws IOException {
+        VideoView video = mediaService.uploadVideo(Long.parseLong(jwt.getSubject()), file.getBytes());
+        response.setHeader(HttpHeaders.LOCATION, video.url());
+        return new VideoResponse(video.id(), video.url(), video.contentType());
+    }
+
+    @Schema(requiredProperties = {"id", "url", "contentType"})
+    record VideoResponse(UUID id, String url, String contentType) {}
 
     @Schema(requiredProperties = {"id", "url", "thumbnailUrl", "contentType", "width", "height"})
     record MediaResponse(UUID id, String url, String thumbnailUrl, String contentType, int width, int height) {

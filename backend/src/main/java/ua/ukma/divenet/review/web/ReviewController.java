@@ -103,10 +103,16 @@ class ReviewController {
             @Nullable @Min(1) @Max(5) Integer rating,
             @Nullable @Min(1) @Max(5) Integer difficulty,
             @Nullable @Size(max = 4000) String text,
-            @Nullable @Size(max = 6) List<@NotNull UUID> photoIds) {
+            @Nullable @Size(max = 6) List<@NotNull UUID> photoIds,
+            @Nullable @Size(max = 3) List<@NotNull UUID> videoIds) {
 
         Content toContent() {
-            return new Content(rating, difficulty, text, photoIds == null ? List.of() : photoIds);
+            return new Content(
+                    rating,
+                    difficulty,
+                    text,
+                    photoIds == null ? List.of() : photoIds,
+                    videoIds == null ? List.of() : videoIds);
         }
     }
 
@@ -125,8 +131,11 @@ class ReviewController {
         }
     }
 
+    @Schema(requiredProperties = {"id", "url", "contentType"})
+    record ReviewVideoResponse(UUID id, String url, String contentType) {}
+
     /** Absent fields are the ones the author left out. */
-    @Schema(requiredProperties = {"id", "siteId", "author", "photos", "createdAt", "updatedAt"})
+    @Schema(requiredProperties = {"id", "siteId", "author", "photos", "videos", "createdAt", "updatedAt"})
     record ReviewResponse(
             long id,
             long siteId,
@@ -135,6 +144,7 @@ class ReviewController {
             @Nullable Integer difficulty,
             @Nullable String text,
             List<PhotoResponse> photos,
+            List<ReviewVideoResponse> videos,
             Instant createdAt,
             Instant updatedAt) {
 
@@ -151,6 +161,9 @@ class ReviewController {
                     review.difficulty(),
                     review.text(),
                     review.photos().stream().map(PhotoResponse::of).toList(),
+                    review.videos().stream()
+                            .map(video -> new ReviewVideoResponse(video.id(), video.url(), video.contentType()))
+                            .toList(),
                     review.createdAt(),
                     review.updatedAt());
         }

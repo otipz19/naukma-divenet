@@ -33,11 +33,10 @@ public class Media {
     @Column(name = "size_bytes", nullable = false)
     private long sizeBytes;
 
-    @Column(nullable = false)
-    private int width;
+    /** Null for a video. */
+    private @Nullable Integer width;
 
-    @Column(nullable = false)
-    private int height;
+    private @Nullable Integer height;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
@@ -57,6 +56,17 @@ public class Media {
         this.createdAt = createdAt;
     }
 
+    /** A video: stored as uploaded, so it has no dimensions (ADR-0011). */
+    public static Media video(UUID id, User uploader, String contentType, long sizeBytes, Instant createdAt) {
+        Media media = new Media();
+        media.id = id;
+        media.uploader = uploader;
+        media.contentType = contentType;
+        media.sizeBytes = sizeBytes;
+        media.createdAt = createdAt;
+        return media;
+    }
+
     public UUID getId() {
         return id;
     }
@@ -73,6 +83,7 @@ public class Media {
         return sizeBytes;
     }
 
+    /** Images only: attaching keeps videos out of everything that reads this. */
     public int getWidth() {
         return width;
     }

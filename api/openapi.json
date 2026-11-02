@@ -600,6 +600,15 @@
             "maxLength" : 200,
             "minLength" : 0,
             "type" : "string"
+          },
+          "videoIds" : {
+            "items" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "maxItems" : 3,
+            "minItems" : 0,
+            "type" : "array"
           }
         },
         "required" : [ "status", "title" ],
@@ -653,9 +662,15 @@
           "updatedAt" : {
             "format" : "date-time",
             "type" : "string"
+          },
+          "videos" : {
+            "items" : {
+              "$ref" : "#/components/schemas/PostVideoResponse"
+            },
+            "type" : "array"
           }
         },
-        "required" : [ "author", "id", "photos", "readMinutes", "status", "text", "title", "updatedAt" ],
+        "required" : [ "author", "id", "photos", "readMinutes", "status", "text", "title", "updatedAt", "videos" ],
         "type" : "object"
       },
       "PostSiteResponse" : {
@@ -716,6 +731,22 @@
           }
         },
         "required" : [ "author", "excerpt", "id", "readMinutes", "status", "title", "updatedAt" ],
+        "type" : "object"
+      },
+      "PostVideoResponse" : {
+        "properties" : {
+          "contentType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "contentType", "id", "url" ],
         "type" : "object"
       },
       "ProfileRequest" : {
@@ -865,6 +896,15 @@
             "maxLength" : 4000,
             "minLength" : 0,
             "type" : "string"
+          },
+          "videoIds" : {
+            "items" : {
+              "format" : "uuid",
+              "type" : "string"
+            },
+            "maxItems" : 3,
+            "minItems" : 0,
+            "type" : "array"
           }
         },
         "type" : "object"
@@ -906,9 +946,31 @@
           "updatedAt" : {
             "format" : "date-time",
             "type" : "string"
+          },
+          "videos" : {
+            "items" : {
+              "$ref" : "#/components/schemas/ReviewVideoResponse"
+            },
+            "type" : "array"
           }
         },
-        "required" : [ "author", "createdAt", "id", "photos", "siteId", "updatedAt" ],
+        "required" : [ "author", "createdAt", "id", "photos", "siteId", "updatedAt", "videos" ],
+        "type" : "object"
+      },
+      "ReviewVideoResponse" : {
+        "properties" : {
+          "contentType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "contentType", "id", "url" ],
         "type" : "object"
       },
       "SiteMarkerResponse" : {
@@ -1129,6 +1191,22 @@
           }
         },
         "required" : [ "displayName", "email", "id", "role" ],
+        "type" : "object"
+      },
+      "VideoResponse" : {
+        "properties" : {
+          "contentType" : {
+            "type" : "string"
+          },
+          "id" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "url" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "contentType", "id", "url" ],
         "type" : "object"
       },
       "VisitedSiteResponse" : {
@@ -1927,6 +2005,43 @@
               "*/*" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/MediaResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "media-controller" ]
+      }
+    },
+    "/api/v1/media/videos" : {
+      "post" : {
+        "operationId" : "uploadVideo",
+        "requestBody" : {
+          "content" : {
+            "multipart/form-data" : {
+              "schema" : {
+                "properties" : {
+                  "file" : {
+                    "format" : "binary",
+                    "type" : "string"
+                  }
+                },
+                "required" : [ "file" ],
+                "type" : "object"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/VideoResponse"
                 }
               }
             },

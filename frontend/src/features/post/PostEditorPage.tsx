@@ -14,6 +14,8 @@ import { PhotoField, type PhotoFieldItem } from "../../components/PhotoField/Pho
 import { SelectField } from "../../components/SelectField/SelectField";
 import { TextAreaField } from "../../components/TextField/TextAreaField";
 import { TextField } from "../../components/TextField/TextField";
+import { VideoField } from "../../components/VideoField/VideoField";
+import type { UploadedVideo } from "../../api/media";
 import { useSession } from "../auth/useSession";
 import { SitePicker, type PickedSite } from "../divelog/SitePicker";
 import { useInvalidatePosts, usePost, type Post, type PostRequest } from "./api";
@@ -25,6 +27,7 @@ const postSchema = z.object({
   text: z.string().max(20000, "post.errors.textTooLong"),
   cover: z.array(z.custom<PhotoFieldItem>()).max(1),
   photos: z.array(z.custom<PhotoFieldItem>()).max(10),
+  videos: z.array(z.custom<UploadedVideo>()),
   regionCode: z.string(),
   site: z.custom<PickedSite | null>(),
 });
@@ -95,6 +98,7 @@ function PostForm({ post }: { post: Post | null }) {
       text: post?.text ?? "",
       cover: post?.cover ? [post.cover] : [],
       photos: post?.photos ?? [],
+      videos: post?.videos ?? [],
       regionCode: post?.regionCode ?? "",
       site: post?.site ?? null,
     },
@@ -130,6 +134,7 @@ function PostForm({ post }: { post: Post | null }) {
         status,
         coverId: values.cover[0]?.id,
         photoIds: values.photos.map((photo) => photo.id),
+        videoIds: values.videos.map((video) => video.id),
         regionCode: values.regionCode || undefined,
         siteId: values.site?.id,
       };
@@ -222,6 +227,11 @@ function PostForm({ post }: { post: Post | null }) {
               max={10}
             />
           )}
+        />
+        <Controller
+          control={control}
+          name="videos"
+          render={({ field }) => <VideoField value={field.value} onChange={field.onChange} />}
         />
       </div>
       <aside className={styles.publishing}>
