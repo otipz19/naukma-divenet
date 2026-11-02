@@ -302,6 +302,30 @@
         "required" : [ "code", "name" ],
         "type" : "object"
       },
+      "LockerItemRequest" : {
+        "properties" : {
+          "name" : {
+            "maxLength" : 100,
+            "minLength" : 0,
+            "type" : "string"
+          }
+        },
+        "required" : [ "name" ],
+        "type" : "object"
+      },
+      "LockerItemResponse" : {
+        "properties" : {
+          "id" : {
+            "format" : "int64",
+            "type" : "integer"
+          },
+          "name" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "id", "name" ],
+        "type" : "object"
+      },
       "LoginRequest" : {
         "properties" : {
           "email" : {
@@ -1824,6 +1848,60 @@
         "tags" : [ "gear-item-controller" ]
       }
     },
+    "/api/v1/gear-locker" : {
+      "post" : {
+        "operationId" : "add",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/LockerItemRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LockerItemResponse"
+                }
+              }
+            },
+            "description" : "Created"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "locker-controller" ]
+      }
+    },
+    "/api/v1/gear-locker/{id}" : {
+      "delete" : {
+        "operationId" : "remove",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No Content"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "tags" : [ "locker-controller" ]
+      }
+    },
     "/api/v1/media" : {
       "post" : {
         "operationId" : "upload",
@@ -2643,7 +2721,7 @@
     },
     "/api/v1/users/{id}/achievements" : {
       "get" : {
-        "operationId" : "list_3",
+        "operationId" : "list_4",
         "parameters" : [ {
           "in" : "path",
           "name" : "id",
@@ -2673,7 +2751,7 @@
     },
     "/api/v1/users/{id}/certificates" : {
       "get" : {
-        "operationId" : "list_2",
+        "operationId" : "list_3",
         "parameters" : [ {
           "in" : "path",
           "name" : "id",
@@ -2784,6 +2862,36 @@
           }
         },
         "tags" : [ "dive-log-controller" ]
+      }
+    },
+    "/api/v1/users/{id}/gear-locker" : {
+      "get" : {
+        "operationId" : "list_2",
+        "parameters" : [ {
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "int64",
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "items" : {
+                    "$ref" : "#/components/schemas/LockerItemResponse"
+                  },
+                  "type" : "array"
+                }
+              }
+            },
+            "description" : "OK"
+          }
+        },
+        "tags" : [ "locker-controller" ]
       }
     },
     "/api/v1/users/{id}/posts" : {

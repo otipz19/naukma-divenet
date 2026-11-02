@@ -11,6 +11,7 @@ import { ProfileDives } from "../divelog/ProfileDives";
 import { ProfilePosts } from "../post/ProfilePosts";
 import { useProfile } from "./api";
 import { ProfileCertificates } from "./ProfileCertificates";
+import { ProfileGear } from "./ProfileGear";
 import styles from "./ProfilePage.module.css";
 
 /** The header of design/screens/Profile.html; later changes add their sections (spec user/profile). */
@@ -65,6 +66,7 @@ export function ProfilePage() {
           showCertificates={profile.data.showCertificates}
         />
       )}
+      {session.status !== "loading" && <ProfileGear userId={profile.data.id} own={own} />}
       {session.status !== "loading" && <ProfileAchievements userId={profile.data.id} />}
       {session.status !== "loading" && (
         <ProfileDives
