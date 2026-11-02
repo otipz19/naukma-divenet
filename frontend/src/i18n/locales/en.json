@@ -464,6 +464,20 @@
         "numberRequired": "Enter the number.",
         "numberTooLong": "Use at most 50 characters."
       }
+    },
+    "gear": {
+      "title": "Gear locker",
+      "none": "Nothing in your locker yet.",
+      "name": "Item name",
+      "add": "Add",
+      "remove": "Remove",
+      "removeOne": "Remove {{name}}",
+      "failure": "The change could not be saved. Please try again.",
+      "loadError": "The gear locker could not be loaded. Please try again later.",
+      "errors": {
+        "nameRequired": "Enter a name.",
+        "nameTooLong": "Use at most 100 characters."
+      }
     }
   },
   "divelog": {

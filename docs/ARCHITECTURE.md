@@ -125,13 +125,14 @@ Rules:
 `users` and `refresh_tokens` (`add-authentication`), `countries`, `regions` and
 `gear_items` (`add-reference-data`), `sites` and `site_gear` (`add-dive-site-catalog`),
 `media` (`add-media-uploads`), `reviews` and `review_media` (`add-site-reviews`), and
-`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), `certificates` (`add-certificates`), `posts` and `post_media` (`add-posts`), and `achievements` and `user_achievements` (`add-achievements`) exist; the other tables are **(planned)**. A site's rating
+`warnings` (`add-site-warnings`), `dive_log_entries` (`add-dive-log`), `certificates` (`add-certificates`), `posts` and `post_media` (`add-posts`), `achievements` and `user_achievements` (`add-achievements`), and `locker_items` (`add-gear-locker`) exist; the other tables are **(planned)**. A site's rating
 aggregates are columns of `sites`, kept by the `review` feature in the same transaction as
 every review write.
 
 ```mermaid
 erDiagram
   users ||--o{ certificates : declares
+  users ||--o{ locker_items : owns
   media |o--o{ users : "avatar of"
   users ||--o{ refresh_tokens : has
   countries ||--o{ regions : contains
