@@ -4,13 +4,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-export const SERVICES = ["db", "backend", "web"];
+export const SERVICES = ["db", "minio", "backend", "web"];
 export const PUBLIC_SERVICE = "web";
 export const DB_DATA_DIR = "/var/lib/postgresql/data";
-// Where the back-end keeps uploaded media (MEDIA_DIR); it must survive a restart.
-export const MEDIA_DIR = "/data/media";
-// Each service must wait for these to be healthy (start order: db -> backend -> web).
-const REQUIRED_DEPENDENCIES = { backend: "db", web: "backend" };
+// Where MinIO keeps uploaded media (ADR-0012); it must survive a restart.
+export const MINIO_DATA_DIR = "/data";
+// Each service must wait for these to be healthy (start order: db, minio -> backend -> web).
+const REQUIRED_DEPENDENCIES = { backend: ["db", "minio"], web: ["backend"] };
 
 /**
  * The back-end's profile with the variable unset and with it set to `prod` (spec shared/local-stack).
@@ -171,9 +171,8 @@ export function findComposeProblems(config, dockerfiles = {}) {
         problems.push(`${name}: depends on ${dependency} with ${condition}, not service_healthy`);
       }
     }
-    const required = REQUIRED_DEPENDENCIES[/** @type {keyof typeof REQUIRED_DEPENDENCIES} */ (name)];
-    if (required && !service.depends_on?.[required]) {
-      problems.push(`${name}: does not wait for ${required} to be healthy`);
+    for (const required of REQUIRED_DEPENDENCIES[/** @type {keyof typeof REQUIRED_DEPENDENCIES} */ (name)] ?? []) {
+      if (!service.depends_on?.[required]) problems.push(`${name}: does not wait for ${required} to be healthy`);
     }
 
     const ports = publishedPorts(service);
@@ -202,14 +201,13 @@ export function findComposeProblems(config, dockerfiles = {}) {
   if (db && !hasNamedVolumeAt(db, config.volumes ?? {}, DB_DATA_DIR)) {
     problems.push(`db: ${DB_DATA_DIR} is not on a named volume`);
   }
-  const backend = services.backend;
-  if (backend) {
-    const mediaDir = backend.environment?.MEDIA_DIR;
-    if (mediaDir !== MEDIA_DIR) {
-      problems.push(`backend: MEDIA_DIR must be ${MEDIA_DIR}, got ${mediaDir}`);
-    } else if (!hasNamedVolumeAt(backend, config.volumes ?? {}, MEDIA_DIR)) {
-      problems.push(`backend: ${MEDIA_DIR} is not on a named volume`);
-    }
+  const minio = services.minio;
+  if (minio && !hasNamedVolumeAt(minio, config.volumes ?? {}, MINIO_DATA_DIR)) {
+    problems.push(`minio: ${MINIO_DATA_DIR} is not on a named volume`);
+  }
+  const storage = services.backend?.environment?.MEDIA_STORAGE;
+  if (services.backend && storage !== "minio") {
+    problems.push(`backend: MEDIA_STORAGE must be minio, got ${storage}`);
   }
   return problems;
 }

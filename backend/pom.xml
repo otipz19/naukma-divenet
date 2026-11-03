@@ -21,6 +21,7 @@
         <archunit.version>1.5.1</archunit.version>
         <springdoc.version>3.2.0</springdoc.version>
         <!-- WebP reader for ImageIO; the JDK reads only JPEG and PNG (add-media-uploads design D4). -->
+        <minio.version>8.5.17</minio.version>
         <imageio-webp.version>3.15.3</imageio-webp.version>
         <spotless.version>3.10.4</spotless.version>
         <palantir-java-format.version>2.102.0</palantir-java-format.version>
@@ -71,6 +72,11 @@
             <version>${springdoc.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+            <version>${minio.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-webp</artifactId>
             <version>${imageio-webp.version}</version>
@@ -104,6 +110,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-minio</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -22,6 +22,15 @@ class VideoApiIT extends VideoTestBase {
     @Autowired
     MediaCleanup cleanup;
 
+    @Autowired
+    ua.ukma.divenet.media.service.MediaStorage storage;
+
+    /** Spec media/uploads, "Media can be kept in MinIO": local disk stays the default. */
+    @Test
+    void localDiskIsTheDefault() {
+        assertThat(storage).isInstanceOf(ua.ukma.divenet.media.service.LocalDiskMediaStorage.class);
+    }
+
     private static byte[] webm() {
         return new byte[] {0x1A, 0x45, (byte) 0xDF, (byte) 0xA3, 0x20, 0x42, (byte) 0x82, 0x04, 'w', 'e', 'b', 'm'};
     }
