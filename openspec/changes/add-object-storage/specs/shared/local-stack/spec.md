@@ -46,7 +46,7 @@ so stopping and starting the stack without removing volumes keeps every upload
 and its thumbnail. The back-end SHALL use MinIO storage, and SHALL start only
 once MinIO is healthy.
 
-#### Scenario: MinIO data is on a named volume
+#### Scenario: Media directory is on a named volume
 - **WHEN** the compose configuration is rendered with `.env.example`
 - **THEN** the `minio` service's data directory is mounted from a named volume
 - **AND** the back-end's media storage is `minio`, and it depends on `minio` being healthy
