@@ -36,8 +36,8 @@ shortcut: Spring serves a range by skipping from the start of the stream, so see
 
 ### D4. Compose
 
-- The `minio` service uses a pinned `minio/minio` release tag and runs `server /data`, with `/data` on a new named volume `minio-data`.
-  - Its health check uses the client bundled in the image, to be confirmed against that tag during apply.
+- The `minio` service uses `cgr.dev/chainguard/minio` pinned by digest, because `minio/minio` is gone from Docker Hub and `quay.io/minio/minio` refuses anonymous pulls. The image fails as its default user, so the service runs as root. It runs `server /data`, with `/data` on a new named volume `minio-data`.
+  - Its health check is `mc ready local`, as the image bundles `mc`.
   - It publishes no port, and has no console port.
 - `backend` gets `MEDIA_STORAGE=minio`, `MINIO_ENDPOINT=http://minio:9000` and the credentials, and depends on `minio` being healthy.
   - It drops `MEDIA_DIR` and the `media-data` mount, so its container holds no state.
@@ -48,7 +48,7 @@ shortcut: Spring serves a range by skipping from the start of the stream, so see
   - The pinned-image rule already covers the new image.
 - `check-compose.mjs` adds `MINIO_ROOT_PASSWORD` to the refused-when-missing list and `MINIO_` to the stack variable pattern. Its rule tests in `compose-rules.test.mjs` change to match.
 
-MinIO stopped publishing new community images in 2025. A pinned earlier release still pulls. That is a known risk for a later upgrade, recorded in ADR-0012, and is not something this change can avoid while using MinIO.
+A host clock far from Docker's makes MinIO refuse the integration tests' requests, as happened during apply; the stack itself is unaffected, since its containers share one clock.
 
 ### D5. Existing local files
 

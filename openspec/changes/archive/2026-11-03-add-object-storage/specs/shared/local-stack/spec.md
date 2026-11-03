@@ -3,13 +3,12 @@
 ## MODIFIED Requirements
 
 ### Requirement: Configuration comes from the env file
-The stack SHALL take from environment variables the database name, user and
-password, the web port, the JWT signing key (`JWT_SECRET`), the optional
-first-admin credentials (`ADMIN_EMAIL`, `ADMIN_PASSWORD`) and the MinIO
-credentials (`MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`). `.env.example` SHALL
-be the only committed env file, and it SHALL hold placeholder values only. The
-stack SHALL refuse to start when the database password, the JWT signing key or
-the MinIO password is not set, rather than use a built-in value.
+The stack SHALL take its settings from environment variables: the database
+name, user and password, the web port, `JWT_SECRET`, the optional first admin
+(`ADMIN_EMAIL`, `ADMIN_PASSWORD`) and the MinIO credentials
+(`MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`). `.env.example`, with placeholder
+values only, SHALL be the only committed env file. The stack SHALL refuse to
+start without the database password, `JWT_SECRET` or the MinIO password.
 
 #### Scenario: Missing password is rejected
 - **WHEN** the compose configuration is rendered with an env file that omits the database password

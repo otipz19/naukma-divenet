@@ -14,7 +14,7 @@ flowchart LR
   user[Browser] -->|HTTPS| web[frontend: React SPA served by nginx]
   web -->|/api/v1 JSON| api[backend: Spring Boot monolith]
   api --> db[(PostgreSQL + PostGIS)]
-  api --> media[(Media volume: local disk)]
+  api --> media[(MinIO: media bucket)]
   web -->|tiles| osm[OpenStreetMap tile server]
 ```
 
@@ -23,14 +23,14 @@ flowchart LR
 | `frontend/` | React 19, Vite, TypeScript, pnpm | SPA. In production, nginx serves the static build and proxies `/api` and `/media` to the backend. |
 | `backend/` | Java 25, Spring Boot 4.1, Maven (wrapper) | A single deployable REST API built as a modular monolith. |
 | `db` | PostgreSQL 17 + PostGIS 3 (`postgis/postgis` image) | The only datastore. There is no separate cache or search engine. |
-| media | A local directory (`MEDIA_DIR`), mounted as a Docker volume | Accessed only through the `MediaStorage` interface (ADR-0006). |
+| `minio` | MinIO (Chainguard image, pinned by digest) | One private bucket for uploaded media, accessed only through the `MediaStorage` interface (ADR-0012). Local disk outside the stack (ADR-0006). |
 
-`compose.yaml` at the repository root runs the full stack: `db`, `backend` and
+`compose.yaml` at the repository root runs the full stack: `db`, `minio`, `backend` and
 `web` (nginx with the SPA build). Only `web` publishes a port (`WEB_PORT`); the
-database and the back-end are reachable only inside the compose network.
+database, MinIO and the back-end are reachable only inside the compose network.
 Configuration comes from `.env` (template: `.env.example`). The database keeps its
-data in the named volume `db-data`, and the back-end keeps uploaded media in
-`media-data`, mounted at `/data/media` (`MEDIA_DIR`), so both survive a restart. The stack runs the `demo` profile unless
+data in the named volume `db-data`, and MinIO keeps uploaded media in `minio-data`,
+so both survive a restart; the back-end container holds no state. The stack runs the `demo` profile unless
 `SPRING_PROFILES_ACTIVE` says otherwise.
 
 ## Repository layout
@@ -231,7 +231,8 @@ Each change that adds tables updates this diagram.
 - `POST /api/v1/media/videos` accepts MP4 and WebM up to 50 MB, by container signature, and
   stores them as uploaded, with no thumbnail (ADR-0011). An image can be attached only as an image,
   and a video only as a video.
-- Files are stored through `MediaStorage` (local-disk implementation), and the
+- Files are stored through `MediaStorage`: MinIO in the compose stack (ADR-0012),
+  local disk elsewhere (`divenet.media.storage`), and the
   database keeps the metadata. A resized thumbnail is generated on upload.
 - Files are served from `GET /media/{id}` and `/media/{id}/thumb`. Unreferenced
   uploads older than 24 h are deleted by a scheduled job.

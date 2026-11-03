@@ -17,12 +17,19 @@ function rendered() {
         healthcheck,
         volumes: [{ type: "volume", source: "db-data", target: "/var/lib/postgresql/data", volume: {} }],
       },
+      minio: {
+        image: "cgr.dev/chainguard/minio@sha256:3c60a2a8c4d33409a9bc7a623a7fcbfb4605adc3d89422d2f53b3f673a6e5597",
+        healthcheck,
+        volumes: [{ type: "volume", source: "minio-data", target: "/data", volume: {} }],
+      },
       backend: {
         build: { context: "/repo/backend", dockerfile: "Dockerfile" },
-        depends_on: { db: { condition: "service_healthy", required: true } },
-        environment: { MEDIA_DIR: "/data/media" },
+        depends_on: {
+          db: { condition: "service_healthy", required: true },
+          minio: { condition: "service_healthy", required: true },
+        },
+        environment: { MEDIA_STORAGE: "minio" },
         healthcheck,
-        volumes: [{ type: "volume", source: "media-data", target: "/data/media", volume: {} }],
       },
       web: {
         build: { context: "/repo", dockerfile: "frontend/Dockerfile" },
@@ -31,7 +38,7 @@ function rendered() {
         ports: [{ mode: "ingress", target: 80, published: "8080", protocol: "tcp" }],
       },
     },
-    volumes: { "db-data": { name: "divenet_db-data" }, "media-data": { name: "divenet_media-data" } },
+    volumes: { "db-data": { name: "divenet_db-data" }, "minio-data": { name: "divenet_minio-data" } },
   };
 }
 
@@ -67,15 +74,18 @@ describe("findComposeProblems", () => {
     delete (/** @type {any} */ (config.services.backend).depends_on);
     assert.deepEqual(findComposeProblems(config, dockerfiles), [
       "backend: does not wait for db to be healthy",
+      "backend: does not wait for minio to be healthy",
     ]);
   });
 
-  it("rejects a port published by db or backend (Published ports)", () => {
+  it("rejects a port published by db, minio or backend (Published ports)", () => {
     const config = rendered();
+    /** @type {any} */ (config.services.minio).ports = ["9000:9000"];
     /** @type {any} */ (config.services.db).ports = ["5432:5432"];
     /** @type {any} */ (config.services.backend).ports = [{ target: 8080, published: "8081" }];
     assert.deepEqual(findComposeProblems(config, dockerfiles), [
       "db: publishes a port (5432); only web may",
+      "minio: publishes a port (9000); only web may",
       "backend: publishes a port (8081); only web may",
     ]);
   });
@@ -98,25 +108,35 @@ describe("findComposeProblems", () => {
     ]);
   });
 
-  it("requires the media directory on a named volume (Media directory is on a named volume)", () => {
+  it("requires MinIO data on a named volume (Media directory is on a named volume)", () => {
     const unmounted = rendered();
-    delete (/** @type {any} */ (unmounted.services.backend).volumes);
-    assert.deepEqual(findComposeProblems(unmounted, dockerfiles), ["backend: /data/media is not on a named volume"]);
+    delete (/** @type {any} */ (unmounted.services.minio).volumes);
+    assert.deepEqual(findComposeProblems(unmounted, dockerfiles), ["minio: /data is not on a named volume"]);
 
     const bind = rendered();
-    /** @type {any} */ (bind.services.backend).volumes = ["/repo/media:/data/media"];
-    assert.deepEqual(findComposeProblems(bind, dockerfiles), ["backend: /data/media is not on a named volume"]);
+    /** @type {any} */ (bind.services.minio).volumes = ["/repo/minio:/data"];
+    assert.deepEqual(findComposeProblems(bind, dockerfiles), ["minio: /data is not on a named volume"]);
 
     const shortForm = rendered();
-    /** @type {any} */ (shortForm.services.backend).volumes = ["media-data:/data/media"];
+    /** @type {any} */ (shortForm.services.minio).volumes = ["minio-data:/data"];
     assert.deepEqual(findComposeProblems(shortForm, dockerfiles), []);
   });
 
-  it("requires MEDIA_DIR to point at the mounted media directory", () => {
+  it("requires the back-end to keep media in MinIO", () => {
     const config = rendered();
     delete (/** @type {any} */ (config.services.backend).environment);
     assert.deepEqual(findComposeProblems(config, dockerfiles), [
-      "backend: MEDIA_DIR must be /data/media, got undefined",
+      "backend: MEDIA_STORAGE must be minio, got undefined",
+    ]);
+  });
+
+  it("names a missing minio service", () => {
+    const config = rendered();
+    delete (/** @type {any} */ (config.services).minio);
+    delete (/** @type {any} */ (config.services.backend).depends_on).minio;
+    assert.deepEqual(findComposeProblems(config, dockerfiles), [
+      "minio: service is missing",
+      "backend: does not wait for minio to be healthy",
     ]);
   });
 
@@ -175,6 +195,7 @@ describe("externalImages", () => {
   it("lists service images and Dockerfile base images, skipping stages", () => {
     assert.deepEqual(externalImages(rendered(), dockerfiles), [
       "postgis/postgis:17-3.5",
+      "cgr.dev/chainguard/minio@sha256:3c60a2a8c4d33409a9bc7a623a7fcbfb4605adc3d89422d2f53b3f673a6e5597",
       "eclipse-temurin:25-jdk",
       "eclipse-temurin:25-jre",
       "node:24-alpine",

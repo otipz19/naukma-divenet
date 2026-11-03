@@ -13,8 +13,8 @@ RUN --mount=type=cache,target=/root/.m2 ./mvnw -B -ntp package -DskipTests \
     && cp target/divenet-backend-*.jar /app.jar
 
 FROM eclipse-temurin:25-jre
-# curl is for the compose health check. /data/media is the MEDIA_DIR volume: a new named
-# volume takes this folder's owner, so the app can write uploads to it.
+# curl is for the compose health check. /data/media is for local-disk media (MEDIA_STORAGE=local);
+# the compose stack keeps media in MinIO instead (ADR-0012).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
