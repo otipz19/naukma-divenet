@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — apply-ui-design archived on change/apply-ui-design, PR open; next is complete-demo-seed
+goal: M6 (Release readiness) — complete-demo-seed proposed on change/complete-demo-seed, awaiting user review
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -12,10 +12,10 @@ done:
   - add-achievements merged (PR #23) and archived (spec achievement/achievements; user/profile, divelog/log-page updated)
   - add-gear-locker (PR #24), add-video-media (PR #25) merged and archived (specs user/gear-locker, media/video-field; media/uploads, review/*, post/* updated; ADR-0011)
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
-  - apply-ui-design archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences"; app-shell, site/*, divelog/log-page, user/profile, post/editor updated)
-wip: null
+  - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
+wip: openspec/changes/complete-demo-seed (planning only, committed, not pushed)
 blocked: null
-next: after the apply-ui-design PR merges, /opsx:propose complete-demo-seed (absorb its open note from add-achievements)
+next: after the user approves the proposal, /opsx:apply complete-demo-seed
 decisions:
   - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
   - add-object-storage design.md D1-D6 (divenet.media.storage local|minio, local by default; private bucket; re-readable resource keeps ranges; compose rules know minio; old media-data needs ADR-0012's copy command)
