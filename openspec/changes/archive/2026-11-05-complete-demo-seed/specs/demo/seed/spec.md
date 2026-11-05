@@ -46,7 +46,7 @@ The seeder SHALL do nothing when a demo diver already exists. A failure while se
 
 - **WHEN** the seed names a site that does not exist
 - **THEN** startup fails, naming that site
-- **AND** no demo diver exists
+- **AND** none of the seed's divers exists
 
 ### Requirement: Demo divers have their achievements
 

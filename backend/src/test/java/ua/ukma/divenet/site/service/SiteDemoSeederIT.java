@@ -40,7 +40,8 @@ class SiteDemoSeederIT {
 
     @Test
     void seededSitesAreApproved() {
-        assertThat(sites.findAll())
+        // Demo divers' own submissions (spec demo/seed) have an author and may be pending.
+        assertThat(sites.findAll().stream().filter(site -> site.getAuthor() == null))
                 .allSatisfy(site -> assertThat(site.getStatus()).isEqualTo(SiteStatus.APPROVED));
     }
 

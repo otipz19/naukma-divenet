@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import ua.ukma.divenet.site.domain.SiteRepository;
 /** Loads the demo sites into an empty database; an unknown region or gear code fails startup. */
 @Component
 @Profile("demo")
+@Order(1)
 public class SiteDemoSeeder implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(SiteDemoSeeder.class);

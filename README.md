@@ -149,6 +149,13 @@ Accounts:
 - When `ADMIN_EMAIL` and `ADMIN_PASSWORD` are both set, the back-end creates
   that account as an admin on its first start. Log in with it at `/login`.
   Everyone else signs up at `/register`.
+- Under the `demo` profile (the default), the first start also creates a demo
+  community: eight divers with dives, reviews, warnings, posts, certificates
+  and site submissions. They are ordinary users. Every one of them logs in
+  with the password `divenet-demo`:
+  `yaryna`, `marco`, `aiko`, `bohdan`, `sofia`, `james`, `ingrid` and
+  `nomvula`, each `@demo.divenet.test` (for example `yaryna@demo.divenet.test`).
+  Set `SPRING_PROFILES_ACTIVE` to another value to start without them.
 
 | What | Command |
 | --- | --- |

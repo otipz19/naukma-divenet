@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — complete-demo-seed proposed on change/complete-demo-seed, awaiting user review
+goal: M6 (Release readiness) — complete-demo-seed archived on change/complete-demo-seed, PR open; next is add-e2e-suite
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -13,25 +13,25 @@ done:
   - add-gear-locker (PR #24), add-video-media (PR #25) merged and archived (specs user/gear-locker, media/video-field; media/uploads, review/*, post/* updated; ADR-0011)
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
   - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
-wip: openspec/changes/complete-demo-seed (planning only, committed, not pushed)
+  - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
+wip: null
 blocked: null
-next: after the user approves the proposal, /opsx:apply complete-demo-seed
+next: after the complete-demo-seed PR merges, /opsx:propose add-e2e-suite (can log in as the demo divers)
 decisions:
+  - complete-demo-seed design.md D1-D7 (seed via services; demo package; sites by name; times = seeding time except dive dates; generated JPEGs; one transaction then evaluate; one documented password)
   - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
   - add-object-storage design.md D1-D6 (divenet.media.storage local|minio, local by default; private bucket; re-readable resource keeps ranges; compose rules know minio; old media-data needs ADR-0012's copy command)
   - add-video-media design.md D1-D8 (stored as uploaded, no ffmpeg; separate endpoint and join tables; attach refuses the wrong kind; images keep their own 10 MB check; up to 50 MB held in the heap until add-object-storage)
-  - add-posts design.md D1-D6 (plain text with images after it; a draft answers 404 to all but its author; a site's post takes its region; published_at survives moving to drafts; PostPublished left to add-achievements)
-  - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
   - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
   - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/, openspec/changes/archive/2026-11-05-apply-ui-design/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/, openspec/changes/archive/2026-11-05-complete-demo-seed/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker running) — full gate; stack audit at 375/1280, light/dark, en/uk
+  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker running) — full gate; fresh stack (down -v) seeds 51 sites + 8 divers, demo login and both admin queues checked
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file; add-object-storage: missing MINIO_ROOT_PASSWORD, a published minio port and minio data off a named volume each fail the compose step, naming the cause
   ci: PRs #1-#26 green on ubuntu-latest
   not_covered: E2E (M6)
