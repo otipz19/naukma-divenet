@@ -198,3 +198,12 @@
   background: var(--surface-1);
   color: var(--ink-muted);
 }
+
+/* Leaflet's zoom buttons are not ours: they get the phone touch target here (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .map :global(.leaflet-bar a) {
+    width: var(--touch-target);
+    height: var(--touch-target);
+    line-height: var(--touch-target);
+  }
+}

@@ -7,7 +7,7 @@ import { buttonClassName } from "../../components/Button/Button";
 import { initials } from "../auth/AccountArea";
 import { useSession } from "../auth/useSession";
 import { ProfileAchievements } from "../achievement/ProfileAchievements";
-import { ProfileDives } from "../divelog/ProfileDives";
+import { ProfileDives, ProfileStats } from "../divelog/ProfileDives";
 import { ProfilePosts } from "../post/ProfilePosts";
 import { useProfile } from "./api";
 import { ProfileCertificates } from "./ProfileCertificates";
@@ -51,6 +51,13 @@ export function ProfilePage() {
           <h1 className={`display ${styles.flush}`}>{displayName}</h1>
           {bio && <p className={`body ${styles.bio}`}>{bio}</p>}
         </div>
+        {session.status !== "loading" && (
+          <ProfileStats
+            userId={profile.data.id}
+            own={own}
+            showStatistics={profile.data.showStatistics}
+          />
+        )}
         {own && (
           <Link className={buttonClassName({ variant: "secondary" })} to="/profile/edit">
             {t("user.profile.edit")}
@@ -69,12 +76,7 @@ export function ProfilePage() {
       {session.status !== "loading" && <ProfileGear userId={profile.data.id} own={own} />}
       {session.status !== "loading" && <ProfileAchievements userId={profile.data.id} />}
       {session.status !== "loading" && (
-        <ProfileDives
-          userId={profile.data.id}
-          own={own}
-          showDiveLog={profile.data.showDiveLog}
-          showStatistics={profile.data.showStatistics}
-        />
+        <ProfileDives userId={profile.data.id} own={own} showDiveLog={profile.data.showDiveLog} />
       )}
       {session.status !== "loading" && <ProfilePosts userId={profile.data.id} own={own} />}
     </div>

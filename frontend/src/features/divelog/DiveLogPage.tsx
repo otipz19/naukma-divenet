@@ -45,6 +45,8 @@ export function DiveLogPage() {
   };
   // A new key starts the form over. The site from the URL applies only until the first save.
   const [formKey, setFormKey] = useState(0);
+  // Set by the header button, so the new form takes focus.
+  const [focusForm, setFocusForm] = useState(false);
   const entries = log.data?.pages.flatMap((page) => page.content) ?? [];
   // An approved site only: a pending one cannot be logged.
   const picked =
@@ -68,6 +70,17 @@ export function DiveLogPage() {
             })}
           </span>
         )}
+        <Button
+          className={styles.headAction}
+          onClick={() => {
+            setEditing(null);
+            setUnlocked([]);
+            setFocusForm(true);
+            setFormKey((key) => key + 1);
+          }}
+        >
+          {t("divelog.form.title")}
+        </Button>
       </div>
       <div className={styles.columns}>
         <section className={styles.logColumn} aria-label={t("divelog.table.label")}>
@@ -85,6 +98,7 @@ export function DiveLogPage() {
               onEdit={(entry) => {
                 setEditing(entry);
                 setUnlocked([]);
+                setFocusForm(false);
                 setFormKey((key) => key + 1);
               }}
             />
@@ -105,6 +119,7 @@ export function DiveLogPage() {
             entry={editing}
             site={picked}
             banner={<UnlockedBanner codes={unlocked} />}
+            focus={focusForm}
             onDone={() => {
               void announceUnlocked();
               setEditing(null);

@@ -151,3 +151,11 @@ The page of an approved site SHALL show up to 3 of the newest published posts li
 
 - **WHEN** the author opens their pending site
 - **THEN** no posts are requested
+
+### Requirement: The disclaimer box reads as a sentence
+
+The site page's disclaimer box SHALL start with a capital letter in every language, even where the footer shows the same text after a label.
+
+#### Scenario: Ukrainian
+- **WHEN** a visitor opens a site page in `uk`
+- **THEN** the disclaimer box's text starts with "Інформація"

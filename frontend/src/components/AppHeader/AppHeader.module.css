@@ -61,3 +61,12 @@
     display: inline-grid;
   }
 }
+
+/* Touch targets on phones (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch-target);
+  }
+}

@@ -97,3 +97,11 @@ rejection reason. Each name SHALL link to the site's page.
 #### Scenario: Statuses shown
 - **WHEN** the user has one pending and one rejected submission
 - **THEN** both show their status, and the rejected one shows its reason
+
+### Requirement: The submission page can be cancelled
+
+The submission page SHALL offer a Cancel link beside the submit button, which leaves the form for the map without sending anything.
+
+#### Scenario: Cancel
+- **WHEN** a signed-in user fills in the form and chooses Cancel
+- **THEN** the map opens and no submission is sent

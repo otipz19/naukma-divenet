@@ -201,3 +201,12 @@
     padding: var(--space-5) var(--space-4);
   }
 }
+
+/* Touch targets on phones (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .titleLink {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-target);
+  }
+}

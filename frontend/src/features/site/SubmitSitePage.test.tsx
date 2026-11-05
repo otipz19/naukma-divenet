@@ -249,3 +249,26 @@ describe("site/submission: The submission page lists the user's submissions", ()
     expect(screen.getByText("Duplicate of Canyon")).toBeInTheDocument();
   });
 });
+
+describe("site/submission: The submission page can be cancelled", () => {
+  it("returns to the map and sends nothing", async () => {
+    startSignedIn();
+    reference();
+    let sent = false;
+    server.use(
+      http.get(mineUrl, () => HttpResponse.json([])),
+      http.post(sitesUrl, () => {
+        sent = true;
+        return HttpResponse.json({}, { status: 201 });
+      }),
+    );
+    renderRoute("/sites/new");
+    const user = userEvent.setup();
+
+    await user.type(await screen.findByLabelText("Site name"), "Hidden Reef");
+    await user.click(screen.getByRole("link", { name: "Cancel" }));
+
+    expect(await screen.findByRole("heading", { name: "Dive-site map" })).toBeInTheDocument();
+    expect(sent).toBe(false);
+  });
+});

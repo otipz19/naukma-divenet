@@ -64,3 +64,11 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Touch targets on phones (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .button,
+  .sm {
+    min-height: var(--touch-target);
+  }
+}

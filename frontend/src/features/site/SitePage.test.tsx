@@ -299,3 +299,12 @@ describe("site/details: The site page links to logging a dive", () => {
     expect(screen.queryByRole("link", { name: "Log a dive here" })).not.toBeInTheDocument();
   });
 });
+
+describe("site/details: The disclaimer box reads as a sentence", () => {
+  it("starts with a capital in Ukrainian", async () => {
+    siteReturns();
+    renderRoute("/sites/7", { language: "uk" });
+
+    expect(await screen.findByText(/^Інформація на DiveNet/)).toBeInTheDocument();
+  });
+});
