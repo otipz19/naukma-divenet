@@ -17,3 +17,10 @@
   border-color: var(--accent);
   color: var(--accent-strong);
 }
+
+/* Touch targets on phones (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .chip {
+    min-height: var(--touch-target);
+  }
+}

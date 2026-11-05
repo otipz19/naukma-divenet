@@ -101,3 +101,18 @@
   background: var(--accent-soft);
   color: var(--accent-strong);
 }
+
+/* Touch targets on phones (docs/DESIGN.md rule 6). */
+@media (max-width: 767px) {
+  .starOption,
+  .noRating {
+    align-items: center;
+    justify-content: center;
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+  }
+
+  .noRating {
+    display: inline-flex;
+  }
+}

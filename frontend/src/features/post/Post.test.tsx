@@ -512,3 +512,13 @@ describe("post/editor: The editor offers videos", () => {
     await waitFor(() => expect(sent?.videoIds).toEqual(["v"]));
   });
 });
+
+describe("post/editor: The title uses the display type", () => {
+  it("styles the title as a heading", async () => {
+    startSignedIn();
+    serveEditorData();
+    renderRoute("/posts/new");
+
+    expect(await screen.findByLabelText("Title")).toHaveClass("h2");
+  });
+});

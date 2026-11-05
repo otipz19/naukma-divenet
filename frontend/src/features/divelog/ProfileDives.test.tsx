@@ -60,6 +60,10 @@ describe("user/profile: The profile page shows dive statistics", () => {
     renderRoute("/users/21");
 
     expect(await screen.findByText("112")).toBeInTheDocument();
+    // user/profile "The profile header shows the dive statistics": in the header, once.
+    const header = screen.getByRole("heading", { level: 1 }).closest("section")!;
+    expect(header).toContainElement(screen.getByText("112"));
+    expect(screen.getAllByText("112")).toHaveLength(1);
     expect(screen.getByText("38")).toBeInTheDocument();
     expect(screen.getByText("40 m")).toBeInTheDocument();
   });

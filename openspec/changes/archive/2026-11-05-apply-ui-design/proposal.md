@@ -9,7 +9,6 @@ Every feature was built to its screen in `design/`, but each was checked mostly 
 - An audit record, `openspec/changes/apply-ui-design/audit.md`, kept with this change and archived with it. It covers every screen in light and dark, at 1280 px and 375 px, and in `en` and `uk`. Each difference is marked fixed, or accepted with a reason.
 - Fixes for the gaps found so far:
   - **Touch targets:** buttons, chips and icon buttons are under 44 px on phones, against the design's accessibility rule. They get a `--touch-target` token that applies below `bp-md`.
-  - **Phone map filters:** the Filters toggle shows how many filters are active, as `MobileMap.html` does.
   - **Dive log:** a Log a dive button in the header starts a new entry, as `DiveLog.html` does.
   - **Profile:** the dive statistics move into the profile header, as `Profile.html` draws them.
   - **Post editor:** the title field uses the display type, as `PostEditor.html` draws it.
@@ -26,7 +25,6 @@ None.
 ### Modified Capabilities
 
 - `shared/app-shell`: controls are large enough to touch on phones.
-- `site/search`: the phone filters toggle shows the active filter count.
 - `site/details`: the disclaimer box reads as a sentence in both languages.
 - `site/submission`: the submission page offers Cancel.
 - `divelog/log-page`: the header offers to log a new dive.

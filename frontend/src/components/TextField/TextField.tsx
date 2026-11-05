@@ -11,7 +11,8 @@ type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 /** design/system/components/TextField: label above, hint or error below, linked by aria-describedby. */
-export function TextField({ label, hint, error, id, ref, ...input }: TextFieldProps) {
+/** `className` replaces the input's type style, `body` by default. */
+export function TextField({ label, hint, error, id, ref, className, ...input }: TextFieldProps) {
   const generated = useId();
   const inputId = id ?? generated;
   const noteId = `${inputId}-note`;
@@ -24,7 +25,7 @@ export function TextField({ label, hint, error, id, ref, ...input }: TextFieldPr
       <input
         ref={ref}
         id={inputId}
-        className={`body ${styles.input}`}
+        className={`${className ?? "body"} ${styles.input}`}
         aria-invalid={error ? true : undefined}
         aria-describedby={note ? noteId : undefined}
         {...input}

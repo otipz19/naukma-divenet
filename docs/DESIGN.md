@@ -103,6 +103,20 @@ specs for data. Names, numbers and photos are sample content. A
    - Below `bp-md` (768 px): one column, navigation in a drawer.
    - Below `bp-lg` (1100 px) the map's side panel becomes a bottom sheet.
 
+## Accepted differences
+
+The app differs from the mockups on purpose in these places. They are not gaps
+(audit: `openspec/changes/archive/2026-11-05-apply-ui-design/audit.md`).
+
+- **Moderation** has a Warnings tab beside the sites queue. It came with
+  site warnings, after the mockup was drawn.
+- **Auth** is two pages, `/login` and `/signup`, not one page with tabs.
+- **Sample-only content** in the mockups is not built: the site "Type" field,
+  the certificate "Issued" year, the Wreck Explorer and Reviewer achievements,
+  and the "6 min read" sample (the app shows its own reading time).
+- **Dive log on phones**: the table scrolls sideways inside its wrapper; there
+  is no phone mockup for it.
+
 ## Changing the design
 
 The repository is the source. A design change is a normal PR. It needs no

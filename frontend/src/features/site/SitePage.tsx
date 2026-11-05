@@ -138,7 +138,7 @@ function SiteDetails({ site }: { site: Site }) {
             <GearList title={t("site.details.requiredGear")} codes={site.requiredGear} />
             <GearList title={t("site.details.recommendedGear")} codes={site.recommendedGear} />
           </div>
-          <Alert tone="info">{t("shell.footer.disclaimer")}</Alert>
+          <Alert tone="info">{t("site.details.disclaimer")}</Alert>
           {site.status === "APPROVED" && <SitePosts siteId={site.id} />}
         </aside>
       </div>

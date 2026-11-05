@@ -190,7 +190,8 @@
       "communityNone": "—",
       "writeReview": "Write a review",
       "editReview": "Edit your review",
-      "logDive": "Log a dive here"
+      "logDive": "Log a dive here",
+      "disclaimer": "Information on DiveNet is for reference only and does not replace dive planning according to your agency's standards."
     },
     "search": {
       "label": "Search sites",
@@ -255,7 +256,8 @@
         "descriptionRequired": "Write a short description.",
         "descriptionTooLong": "Use at most 5000 characters.",
         "rejected": "The server refused this value."
-      }
+      },
+      "cancel": "Cancel"
     },
     "moderation": {
       "title": "Moderation",

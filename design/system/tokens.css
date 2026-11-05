@@ -77,6 +77,7 @@
   --content-max: 1200px;
   --reading-max: 720px;
   --sidebar-width: 360px;
+  --touch-target: 44px;
   --bp-md: 768px;
   --bp-lg: 1100px;
   --font-display: Manrope, "Golos Text", system-ui, sans-serif;

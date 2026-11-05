@@ -194,6 +194,7 @@ function PostForm({ post }: { post: Post | null }) {
         </div>
         <TextField
           label={t("post.editor.title")}
+          className="h2"
           error={message(errors.title?.message)}
           {...register("title")}
         />

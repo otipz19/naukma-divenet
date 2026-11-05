@@ -83,7 +83,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 
 | Change ID | Delivers | Stories | Depends on | Status |
 | --- | --- | --- | --- | --- |
-| `apply-ui-design` | Audit every page against `docs/DESIGN.md` (both themes, phone width, `uk`) and fix the gaps; features build to the design as they go | — | M1–M5 | proposed |
+| `apply-ui-design` | Audit every page against `docs/DESIGN.md` (both themes, phone width, `uk`) and fix the gaps; features build to the design as they go | — | M1–M5 | archived |
 | `complete-demo-seed` | Full demo dataset: users, reviews, dive logs, posts, warnings, media | — | M1–M5 | planned |
 | `add-e2e-suite` | Playwright journeys against the compose stack; CI job | — | `add-local-stack`, M1–M5 | planned |
 | `polish-release` | i18n completeness, accessibility pass, empty/error states, README with run instructions | — | M1–M5 | planned |

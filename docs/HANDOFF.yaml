@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — stretch done (PR #26 merged); apply-ui-design proposed on change/apply-ui-design, awaiting user review
+goal: M6 (Release readiness) — apply-ui-design archived on change/apply-ui-design, PR open; next is complete-demo-seed
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -12,14 +12,14 @@ done:
   - add-achievements merged (PR #23) and archived (spec achievement/achievements; user/profile, divelog/log-page updated)
   - add-gear-locker (PR #24), add-video-media (PR #25) merged and archived (specs user/gear-locker, media/video-field; media/uploads, review/*, post/* updated; ADR-0011)
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
-wip: openspec/changes/apply-ui-design (planning only, committed, not pushed)
+  - apply-ui-design archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences"; app-shell, site/*, divelog/log-page, user/profile, post/editor updated)
+wip: null
 blocked: null
-next: after the user approves the proposal, /opsx:apply apply-ui-design
+next: after the apply-ui-design PR merges, /opsx:propose complete-demo-seed (absorb its open note from add-achievements)
 decisions:
+  - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
   - add-object-storage design.md D1-D6 (divenet.media.storage local|minio, local by default; private bucket; re-readable resource keeps ranges; compose rules know minio; old media-data needs ADR-0012's copy command)
   - add-video-media design.md D1-D8 (stored as uploaded, no ffmpeg; separate endpoint and join tables; attach refuses the wrong kind; images keep their own 10 MB check; up to 50 MB held in the heap until add-object-storage)
-  - add-achievements design.md D1-D6 (rules read live data; awards permanent; after-commit listener in the request thread; progress follows showStatistics; banner compares before and after)
-  - add-feeds design.md D1-D6 (one list endpoint with optional filters; fixed newest-first order; unknown filter values give an empty page; filters and page in the URL)
   - add-posts design.md D1-D6 (plain text with images after it; a draft answers 404 to all but its author; a site's post takes its region; published_at survives moving to drafts; PostPublished left to add-achievements)
   - add-dive-log design.md D1-D6 + notes (hidden sections answer 403; buddies and notes owner-only; approved sites only; one day of grace past UTC; DiveLogged left to add-achievements)
   - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
@@ -28,10 +28,10 @@ decisions:
   - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, openspec/specs/, openspec/changes/archive/2026-11-03-add-object-storage/]
+refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/, openspec/changes/archive/2026-11-05-apply-ui-design/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-03 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker running; host clock must match Docker's for the MinIO ITs) — full gate and smoke:stack; stack: bucket holds media, seek and 206, restart keeps media, ADR copy command restores old uploads
+  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker running) — full gate; stack audit at 375/1280, light/dark, en/uk
   negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file; add-object-storage: missing MINIO_ROOT_PASSWORD, a published minio port and minio data off a named volume each fail the compose step, naming the cause
   ci: PRs #1-#26 green on ubuntu-latest
   not_covered: E2E (M6)

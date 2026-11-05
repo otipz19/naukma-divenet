@@ -24,9 +24,8 @@ Pages with no mockup follow their nearest screen and the components' READMEs: th
 
 ### D3. Small behaviour, specced
 
-The seven changes in the specs change what a user can see or do, so each has a scenario and a Vitest test. Pure styling found by the audit (spacing, alignment, type classes) needs no spec, under AGENTS.md's rule for changes that alter no behaviour, and is tracked in `audit.md`.
+The six changes in the specs change what a user can see or do, so each has a scenario and a Vitest test. Pure styling found by the audit (spacing, alignment, type classes) needs no spec, under AGENTS.md's rule for changes that alter no behaviour, and is tracked in `audit.md`.
 
-- The filter count reuses the parsed search state the map already keeps in the URL.
 - The dive log's header button reuses the page's existing start-over logic (`setEditing(null)` and a new form key), then focuses the site field.
 - The profile stats move from `ProfileDives` into the header, which still hides them by the same privacy rule. `ProfileDives` keeps the visited sites and history.
 - The disclaimer box gets its own `site.details.disclaimer` string in both locales. The footer keeps its label and lower-case continuation.

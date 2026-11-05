@@ -10,7 +10,7 @@ import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
 import { Alert } from "../../components/Alert/Alert";
 import { difficultyWord } from "../../components/Badge/DifficultyBadge";
-import { Button } from "../../components/Button/Button";
+import { Button, buttonClassName } from "../../components/Button/Button";
 import { Chip } from "../../components/Chip/Chip";
 import { SelectField } from "../../components/SelectField/SelectField";
 import { TextAreaField } from "../../components/TextField/TextAreaField";
@@ -282,6 +282,9 @@ export function SubmitSitePage() {
           </Alert>
         )}
         <div className={styles.actions}>
+          <Link className={buttonClassName({ variant: "secondary" })} to="/">
+            {t("site.submit.cancel")}
+          </Link>
           <Button type="submit" disabled={isSubmitting}>
             {t("site.submit.send")}
           </Button>

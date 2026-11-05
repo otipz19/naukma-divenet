@@ -9,7 +9,18 @@
 
 .head {
   display: grid;
-  gap: var(--space-1);
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-1) var(--space-4);
+}
+
+.head > :not(.headAction) {
+  grid-column: 1;
+}
+
+.headAction {
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .flush {

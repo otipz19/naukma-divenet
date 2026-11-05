@@ -304,3 +304,20 @@ describe("divelog/log-page: Entries are edited and deleted from the page", () =>
     expect(deleted).toBe(false);
   });
 });
+
+describe("divelog/log-page: The header offers to log a new dive", () => {
+  it("leaves an edit for an empty form, and focuses it", async () => {
+    startSignedIn();
+    serveLog(entry());
+    renderRoute("/dive-log");
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole("button", { name: "Edit dive at Blue Hole" }));
+    expect(await screen.findByRole("heading", { name: "Edit dive" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Log a dive" }));
+
+    expect(await screen.findByRole("heading", { name: "Log a dive" })).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText("Site")).toHaveFocus());
+    expect(screen.getByLabelText("Site")).toHaveValue("");
+  });
+});

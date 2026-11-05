@@ -70,12 +70,15 @@ export function DiveForm({
   entry,
   site,
   banner,
+  focus = false,
   onDone,
 }: {
   entry: DiveEntry | null;
   site: PickedSite | null;
   /** Shown above the actions; the page owns it, as a save remounts the form. */
   banner?: ReactNode;
+  /** Moves focus to the first field when the form mounts, after the header's Log a dive. */
+  focus?: boolean;
   onDone: () => void;
 }) {
   const { t } = useTranslation();
@@ -87,6 +90,9 @@ export function DiveForm({
   useEffect(() => {
     if (entry) formRef.current?.scrollIntoView?.({ block: "nearest" });
   }, [entry]);
+  useEffect(() => {
+    if (focus) formRef.current?.querySelector("input")?.focus();
+  }, [focus]);
   const {
     register,
     handleSubmit,

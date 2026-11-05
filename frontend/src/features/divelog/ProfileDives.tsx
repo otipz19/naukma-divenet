@@ -6,48 +6,24 @@ import { formatDiveNumber, useDiveLog, useDiveStats, useVisitedSites } from "./a
 import { DiveTable } from "./DiveTable";
 import styles from "./DiveLog.module.css";
 
-/** Statistics, visited sites and dive history on a profile; a section the viewer may not see is not requested. */
+/** Visited sites and dive history on a profile; a section the viewer may not see is not requested. */
 export function ProfileDives({
   userId,
   own,
   showDiveLog,
-  showStatistics,
 }: {
   userId: number;
   own: boolean;
   showDiveLog: boolean;
-  showStatistics: boolean;
 }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const canSeeLog = own || showDiveLog;
-  const canSeeStats = own || showStatistics;
-  const stats = useDiveStats(userId, canSeeStats);
   const visited = useVisitedSites(userId, canSeeLog);
   const log = useDiveLog(userId, canSeeLog);
   const entries = log.data?.pages.flatMap((page) => page.content) ?? [];
 
   return (
     <>
-      {stats.data && (
-        <dl className={styles.statsList}>
-          <div>
-            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.dives")}</dt>
-            <dd className="h2">{stats.data.dives}</dd>
-          </div>
-          <div>
-            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.sites")}</dt>
-            <dd className="h2">{stats.data.sites}</dd>
-          </div>
-          <div>
-            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.deepest")}</dt>
-            <dd className="h2">
-              {stats.data.deepest == null
-                ? "—"
-                : `${formatDiveNumber(stats.data.deepest, i18n.language)} ${t("divelog.units.m")}`}
-            </dd>
-          </div>
-        </dl>
-      )}
       {!canSeeLog && (
         <span className={`body-sm ${styles.muted}`}>{t("divelog.profile.hidden")}</span>
       )}
@@ -90,6 +66,44 @@ export function ProfileDives({
             </div>
           )}
         </section>
+      )}
+    </>
+  );
+}
+
+/** The dive statistics in the profile header (Profile.html); hidden ones are not requested. */
+export function ProfileStats({
+  userId,
+  own,
+  showStatistics,
+}: {
+  userId: number;
+  own: boolean;
+  showStatistics: boolean;
+}) {
+  const { t, i18n } = useTranslation();
+  const stats = useDiveStats(userId, own || showStatistics);
+  return (
+    <>
+      {stats.data && (
+        <dl className={styles.statsList}>
+          <div>
+            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.dives")}</dt>
+            <dd className="h2">{stats.data.dives}</dd>
+          </div>
+          <div>
+            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.sites")}</dt>
+            <dd className="h2">{stats.data.sites}</dd>
+          </div>
+          <div>
+            <dt className={`caption ${styles.muted}`}>{t("divelog.profile.deepest")}</dt>
+            <dd className="h2">
+              {stats.data.deepest == null
+                ? "—"
+                : `${formatDiveNumber(stats.data.deepest, i18n.language)} ${t("divelog.units.m")}`}
+            </dd>
+          </div>
+        </dl>
       )}
     </>
   );
