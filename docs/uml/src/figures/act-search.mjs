@@ -39,7 +39,7 @@ f.edge('again', 'change', 'transition', ['l'], ['l'], {
     [45, 265],
   ],
   label: '[уточнити]',
-  labelOffset: [8, 130],
+  labelOffset: [44, 130],
 });
 f.edge('again', 'end', 'transition', ['b'], ['t'], { label: '[достатньо]', labelOffset: [42, -2] });
 

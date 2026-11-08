@@ -47,7 +47,7 @@ f.edge('retry', 'fill', 'transition', ['l'], ['l'], {
     [48, 165],
   ],
   label: '[виправити]',
-  labelOffset: [6, 300],
+  labelOffset: [44, 300],
 });
 f.edge('retry', 'end2', 'transition', ['r'], ['l'], { label: '[ні]', labelOffset: [0, -11] });
 
