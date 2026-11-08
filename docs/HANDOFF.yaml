@@ -14,7 +14,7 @@ done:
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
   - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
   - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
-wip: null
+wip: UML figures for the university report on fix/uml-diagrams (docs/uml, draw.io in the browser only, no desktop install; 7 types, 26 figures, labels in Ukrainian; no Collaboration); all 26 figures drawn from docs/uml/src (node docs/uml/src/build.mjs); uncommitted; PNG export and the report not started
 blocked: null
 next: after the complete-demo-seed PR merges, /opsx:propose add-e2e-suite (can log in as the demo divers)
 decisions:
