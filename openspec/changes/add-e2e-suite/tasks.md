@@ -2,19 +2,19 @@
 
 ## 1. E2E package scaffold
 
-- [ ] 1.1 Create the `e2e/` workspace package: `package.json` with pinned
+- [x] 1.1 Create the `e2e/` workspace package: `package.json` with pinned
   `@playwright/test` and TypeScript, `tsconfig.json`, `playwright.config.ts`
   (base URL from `DIVENET_E2E_BASE_URL`, Chromium project, trace on retry),
   and add `e2e` to `pnpm-workspace.yaml`. Verify: `pnpm install` succeeds and
   `pnpm --filter e2e exec playwright --version` prints the pinned version.
-- [ ] 1.2 Add `e2e/src/support/` helpers (base URL, demo credentials, login
+- [x] 1.2 Add `e2e/src/support/` helpers (base URL, demo credentials, login
   helper, admin credentials from env) and an empty placeholder spec; verify
   `pnpm --filter e2e exec tsc --noEmit` typechecks and Playwright runs zero
   tests successfully against a manually started stack.
 
 ## 2. Stack runner
 
-- [ ] 2.1 Write `scripts/run-e2e.mjs` following `smoke-stack.mjs`: compose
+- [x] 2.1 Write `scripts/run-e2e.mjs` following `smoke-stack.mjs`: compose
   project `divenet-e2e`, web port 18081, env copied from `.env.example` with
   `ADMIN_EMAIL`/`ADMIN_PASSWORD` overridden, pull-with-retries, health-gated
   `up --build`, run Playwright, always `down -v --remove-orphans`; wire
