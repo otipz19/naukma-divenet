@@ -4,8 +4,7 @@
 
 The product is feature-complete and every layer below the browser is well tested
 (≈441 backend, ≈383 front-end, a compose smoke test), but nothing exercises the
-real chain a user faces: browser → nginx → back-end → PostGIS/MinIO. The course
-plan (PR1) promises E2E testing, the roadmap lists `add-e2e-suite` as the next
+real chain a user faces: browser → nginx → back-end → PostGIS/MinIO. The roadmap lists `add-e2e-suite` as the next
 M6 item, and the review found a concrete risk only E2E can guard: the
 `Secure` refresh cookie silently drops sessions on a non-localhost HTTP demo
 host, and no test today drives a login through a real browser cookie jar.
