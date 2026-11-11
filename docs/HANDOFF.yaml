@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — complete-demo-seed archived on change/complete-demo-seed, PR open; next is add-e2e-suite
+goal: M6 (Release readiness) — add-e2e-suite proposed on change/add-e2e-suite, awaiting review; next is apply
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -16,7 +16,7 @@ done:
   - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
 wip: null
 blocked: null
-next: after the complete-demo-seed PR merges, /opsx:propose add-e2e-suite (can log in as the demo divers)
+next: review the add-e2e-suite proposal, then /opsx:apply (Playwright journeys against compose, pnpm test:e2e, CI job e2e)
 decisions:
   - complete-demo-seed design.md D1-D7 (seed via services; demo package; sites by name; times = seeding time except dive dates; generated JPEGs; one transaction then evaluate; one documented password)
   - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
