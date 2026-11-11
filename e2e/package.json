@@ -1,0 +1,19 @@
+{
+  "name": "@divenet/e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "DiveNet end-to-end browser journeys against the compose stack",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "typescript": "6.0.3",
+    "@types/node": "24.19.2"
+  }
+}
