@@ -163,9 +163,17 @@ Accounts:
 | Stop and delete the database | `docker compose down -v` |
 | Open a database shell | `docker compose exec db psql -U divenet divenet` |
 | Smoke-test the stack (what the CI `stack` job runs) | `pnpm smoke:stack` |
+| Run the E2E journeys (what the CI `e2e` job runs) | `pnpm test:e2e` |
 
 `pnpm smoke:stack` uses its own compose project (`divenet-smoke`) on port 18080,
 and removes it afterwards, so it does not touch your stack.
+
+`pnpm test:e2e` starts the same stack under its own compose project
+(`divenet-e2e`) on port 18081 with fixed admin credentials, waits for the demo
+seed, runs the Playwright journeys in `e2e/`, and always removes the project
+afterwards. It needs Docker and a one-time `pnpm install`; Chromium is
+downloaded by `pnpm --filter e2e exec playwright install chromium`. The suite is
+not part of `pnpm check` — it is a separate CI job, like the stack smoke test.
 
 ### Back-end alone
 

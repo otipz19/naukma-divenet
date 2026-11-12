@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — complete-demo-seed archived on change/complete-demo-seed, PR open; next is add-e2e-suite
+goal: M6 (Release readiness) — add-e2e-suite archived, PR next; then measure-performance (k6 + Lighthouse, axe-core)
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -14,9 +14,10 @@ done:
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
   - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
   - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
+  - add-e2e-suite applied and archived (PR pending): e2e/ workspace package with pinned Playwright; six journeys in e2e/src (anonymous browse, register+review with photo, dive log+achievement, post+feed, admin moderation, session refresh) plus a stack smoke spec; scripts/run-e2e.mjs = pnpm test:e2e starts compose project divenet-e2e on port 18081 with fixed admin creds, waits for the demo seed before running Playwright (ApplicationRunners finish after "healthy"), always down -v; CI job e2e in check.yml
 wip: null
 blocked: null
-next: after the complete-demo-seed PR merges, /opsx:propose add-e2e-suite (can log in as the demo divers)
+next: push change/add-e2e-suite and open the PR (CI jobs check, stack, e2e); then propose measure-performance (k6 + Lighthouse, fold in axe-core)
 decisions:
   - complete-demo-seed design.md D1-D7 (seed via services; demo package; sites by name; times = seeding time except dive dates; generated JPEGs; one transaction then evaluate; one documented password)
   - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)

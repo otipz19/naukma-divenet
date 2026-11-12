@@ -154,7 +154,7 @@ async function checkMediaServed(http, media) {
  * @param {(ms: number) => Promise<void>} sleep
  * @param {(line: string) => void} log
  */
-async function pullImages(images, pull, sleep, log) {
+export async function pullImages(images, pull, sleep, log) {
   for (const image of images) {
     for (let attempt = 1; ; attempt++) {
       const result = pull(image);
