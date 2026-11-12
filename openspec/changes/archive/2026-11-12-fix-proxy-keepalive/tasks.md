@@ -2,7 +2,7 @@
 
 ## 1. The proxy fix
 
-- [ ] 1.1 Add the `upstream` block with `keepalive 64` to `frontend/nginx.conf`,
+- [x] 1.1 Add the `upstream` block with `keepalive 64` to `frontend/nginx.conf`,
   set `proxy_http_version 1.1` and an empty `Connection` header in the `/api/`
   and `/media/` locations, and drop the per-request `resolver` + `$backend`
   variable they replace. Verify: the compose configuration check in
@@ -10,7 +10,7 @@
 
 ## 2. Verification under load
 
-- [ ] 2.1 Re-run the k6 load suite (`perf/scripts/load.js` via the k6 container
+- [x] 2.1 Re-run the k6 load suite (`perf/scripts/load.js` via the k6 container
   on the stack's network) against the rebuilt stack. Verify: the error rate is
   0% where it was 49.6% before, every p95 stays under its threshold, and the
   back-end answers only on the pooled connections (no `Address not available`
