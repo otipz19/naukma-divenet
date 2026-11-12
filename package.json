@@ -9,7 +9,8 @@
   "scripts": {
     "check": "node scripts/check.mjs",
     "smoke:stack": "node scripts/smoke-stack.mjs",
-    "test:e2e": "node scripts/run-e2e.mjs"
+    "test:e2e": "node scripts/run-e2e.mjs",
+    "test:perf": "node scripts/run-perf.mjs"
   },
   "devDependencies": {
     "@fission-ai/openspec": "1.15.0"

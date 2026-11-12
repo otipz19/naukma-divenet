@@ -164,6 +164,7 @@ Accounts:
 | Open a database shell | `docker compose exec db psql -U divenet divenet` |
 | Smoke-test the stack (what the CI `stack` job runs) | `pnpm smoke:stack` |
 | Run the E2E journeys (what the CI `e2e` job runs) | `pnpm test:e2e` |
+| Measure performance (what the CI `perf` job runs) | `pnpm test:perf` |
 
 `pnpm smoke:stack` uses its own compose project (`divenet-smoke`) on port 18080,
 and removes it afterwards, so it does not touch your stack.
@@ -174,6 +175,16 @@ seed, runs the Playwright journeys in `e2e/`, and always removes the project
 afterwards. It needs Docker and a one-time `pnpm install`; Chromium is
 downloaded by `pnpm --filter e2e exec playwright install chromium`. The suite is
 not part of `pnpm check` — it is a separate CI job, like the stack smoke test.
+
+`pnpm test:perf` starts the stack under its own compose project (`divenet-perf`)
+on port 18082 and measures it two ways: the k6 scenarios in `perf/scripts/load.js`
+run in the stack's network (via the pinned `grafana/k6` image, so the measurement
+is the product, not the host's port-forward) with pass/fail p95 and error-rate
+thresholds per scenario, and `perf/scripts/lighthouse.mjs` checks the SPA's
+performance budget on the landing and one site page. It needs Docker; a Chrome,
+Edge or Playwright Chromium for Lighthouse; and a one-time `npm install` in
+`perf/` (kept outside the workspace on purpose). Also a separate CI job, not
+part of `pnpm check`.
 
 ### Back-end alone
 

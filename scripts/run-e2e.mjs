@@ -6,43 +6,27 @@
 // stack, so nothing real is committed.
 // Usage: node scripts/run-e2e.mjs   (or `pnpm test:e2e`; exits 1 when the suite fails)
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { externalImages, readDockerfiles } from "./compose-rules.mjs";
 import { PULL_WAITS_MS, pullImages } from "./smoke-stack.mjs";
+import {
+  composeCommands,
+  mustRun,
+  readEnv,
+  STACK_VARIABLE,
+  upAndWait,
+  wait,
+  waitUntilSeeded,
+} from "./stack.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
 const ENV_EXAMPLE = join(ROOT, ".env.example");
 export const PROJECT = "divenet-e2e";
 export const WEB_PORT = "18081";
-const WAIT = ["--wait", "--wait-timeout", "300"];
-const STACK_VARIABLE = /^(POSTGRES_|WEB_PORT$|COMPOSE_|DB_|JWT_SECRET$|ADMIN_)/i;
 // Fixed test-only credentials; the stack's admin bootstrap creates this account.
 const ADMIN_EMAIL = "admin@e2e.divenet.test";
 const ADMIN_PASSWORD = "divenet-e2e-admin";
-
-/** @param {(args: string[]) => { status: number, stdout: string, stderr: string }} run */
-function mustRun(run, args) {
-  const result = run(args);
-  if (result.status !== 0) {
-    throw new Error(`docker compose ${args.join(" ")} exited ${result.status}\n${result.stderr}`);
-  }
-  return result.stdout;
-}
-
-/** Reads the plain `KEY=value` pairs of .env.example. */
-function readEnvExample() {
-  return Object.fromEntries(
-    readFileSync(ENV_EXAMPLE, "utf8")
-      .split(/\r?\n/)
-      .filter((line) => /^[A-Z_]+=/.test(line))
-      .map((line) => [line.slice(0, line.indexOf("=")), line.slice(line.indexOf("=") + 1)]),
-  );
-}
-
-/** @param {(ms: number) => Promise<void>} sleep */
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Starts an isolated stack, runs the E2E suite against it, and always tears it down.
@@ -52,31 +36,6 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {{ images?: string[], pull?: (image: string) => { status: number, stderr: string }, sleep?: (ms: number) => Promise<void> }} options
  * @returns {Promise<number>} the exit code
  */
-/**
- * "Healthy" only means Tomcat answers: the demo seeders and the admin bootstrap
- * (Spring ApplicationRunners) keep running after that, and the admin is the last
- * account they create. Wait until the seeded catalog answers and the admin can
- * log in, because that is what the journeys rely on.
- */
-export async function waitUntilSeeded(baseUrl, sleep, log, timeoutMs = 180_000) {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const markers = await (await fetch(`${baseUrl}/api/v1/sites/markers`)).json();
-      const login = await fetch(`${baseUrl}/api/v1/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
-      });
-      if (Array.isArray(markers) && markers.length >= 50 && login.status === 200) return;
-    } catch {
-      // The stack is still seeding; try again after the pause below.
-    }
-    await sleep(2_000);
-  }
-  throw new Error(`the stack did not finish seeding within ${timeoutMs / 1000} s`);
-}
-
 export async function runE2E(run, spawn, log = console.log, options = {}) {
   const { images = [], pull = () => ({ status: 0, stderr: "" }), sleep = wait } = options;
   let failed = false;
@@ -84,23 +43,11 @@ export async function runE2E(run, spawn, log = console.log, options = {}) {
     await pullImages(images, pull, sleep, log);
 
     log("Starting the stack (build, then wait until healthy)...");
-    // A cold stack seeds the demo data on first boot, which can outlast the
-    // backend health check's budget on a slow machine; the health status is
-    // live, so waiting again is enough. Three attempts, like the image pulls.
-    for (let attempt = 1; ; attempt++) {
-      const failed = run(["up", "--build", ...WAIT]);
-      if (failed.status === 0) break;
-      if (attempt >= 3) {
-        throw new Error(`docker compose up exited ${failed.status}
-${failed.stderr}`);
-      }
-      log(`stack not healthy yet (attempt ${attempt} of 3); waiting and retrying...`);
-      await sleep(15_000);
-    }
+    await upAndWait(run, log, sleep);
     log("ok  stack healthy");
 
     log("Waiting until the demo seed and the admin bootstrap are done...");
-    await waitUntilSeeded(`http://localhost:${WEB_PORT}`, sleep, log);
+    await waitUntilSeeded(`http://localhost:${WEB_PORT}`, { adminEmail: ADMIN_EMAIL, adminPassword: ADMIN_PASSWORD }, sleep);
     log("ok  stack seeded");
 
     log("Running the E2E suite...");
@@ -133,21 +80,13 @@ ${failed.stderr}`);
 
 async function main() {
   const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !STACK_VARIABLE.test(key)));
-  /** @type {(args: string[]) => { status: number, stdout: string, stderr: string }} */
-  const run = (args) => {
-    const result = spawnSync("docker", ["compose", "-p", PROJECT, "--env-file", ENV_EXAMPLE, ...args], {
-      cwd: ROOT,
-      env: { ...env, WEB_PORT, ADMIN_EMAIL, ADMIN_PASSWORD },
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-      maxBuffer: 64 * 1024 * 1024,
-    });
-    return { status: result.error ? -1 : result.status, stdout: result.stdout ?? "", stderr: result.stderr || (result.error?.message ?? "") };
-  };
-  const pull = (image) => {
-    const result = spawnSync("docker", ["pull", "-q", image], { env, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"] });
-    return { status: result.error ? -1 : result.status, stdout: result.stdout ?? "", stderr: result.stderr || (result.error?.message ?? "") };
-  };
+  const { run, pull } = composeCommands({
+    project: PROJECT,
+    envFile: ENV_EXAMPLE,
+    cwd: ROOT,
+    env,
+    vars: { WEB_PORT, ADMIN_EMAIL, ADMIN_PASSWORD },
+  });
   const config = JSON.parse(mustRun(run, ["config", "--format", "json"]));
   const images = externalImages(config, readDockerfiles(config));
   /** @type {(command: string, args: string[], options: object) => { status: number }} */
