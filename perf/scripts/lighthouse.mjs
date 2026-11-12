@@ -70,7 +70,12 @@ const BUDGETS = {
   "total-byte-weight": { value: 1_500_000, label: "total page weight" },
 };
 
-const chrome = await launch({ chromePath: findChrome(), chromeFlags: ["--headless=new"] });
+// --no-sandbox and /dev/shm sizing are the standard headless-CI flags; they are
+// harmless locally, where Chrome runs with the normal sandbox.
+const chrome = await launch({
+  chromePath: findChrome(),
+  chromeFlags: ["--headless=new", "--no-sandbox", "--disable-dev-shm-usage"],
+});
 try {
   let failed = false;
   for (const page of PAGES) {
