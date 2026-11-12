@@ -165,6 +165,7 @@ Accounts:
 | Smoke-test the stack (what the CI `stack` job runs) | `pnpm smoke:stack` |
 | Run the E2E journeys (what the CI `e2e` job runs) | `pnpm test:e2e` |
 | Measure performance (what the CI `perf` job runs) | `pnpm test:perf` |
+| Audit production npm dependencies | `pnpm audit --prod --audit-level=high` |
 
 `pnpm smoke:stack` uses its own compose project (`divenet-smoke`) on port 18080,
 and removes it afterwards, so it does not touch your stack.
@@ -185,6 +186,16 @@ performance budget on the landing and one site page. It needs Docker; a Chrome,
 Edge or Playwright Chromium for Lighthouse; and a one-time `npm install` in
 `perf/` (kept outside the workspace on purpose). Also a separate CI job, not
 part of `pnpm check`.
+
+The dependency audit is the fast half of the CI `security` job: it fails when a
+production package in the workspace lockfile carries a high or critical
+advisory. The other half scans the built images with Trivy for unfixed high or
+critical findings, which also covers the back-end's Java dependencies, because
+the image contains the Spring Boot jar. Reproduce it locally with Docker:
+`docker build -t divenet-backend ./backend && docker run --rm -v
+/var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.36.1 image
+--security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1
+divenet-backend`.
 
 ### Back-end alone
 
