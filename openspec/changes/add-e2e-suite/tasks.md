@@ -51,18 +51,18 @@
 
 ## 4. CI
 
-- [ ] 4.1 Add the `e2e` job to `.github/workflows/check.yml`: Node 24,
+- [x] 4.1 Add the `e2e` job to `.github/workflows/check.yml`: Node 24,
   install Chromium with the lockfile-hashed cache, run
   `node scripts/run-e2e.mjs`. Verify: the workflow YAML is valid and the job
   is green on the change branch's PR.
 
 ## 5. Docs and gate
 
-- [ ] 5.1 Update `README.md` (how to run `pnpm test:e2e`, prerequisites) and
+- [x] 5.1 Update `README.md` (how to run `pnpm test:e2e`, prerequisites) and
   `docs/HANDOFF.yaml`; set `add-e2e-suite` to `in-progress` in
   `docs/ROADMAP.md` when starting and `archived` at the end. Verify: files
   updated and consistent.
-- [ ] 5.2 Run `pnpm check` from the repository root and confirm every step
+- [x] 5.2 Run `pnpm check` from the repository root and confirm every step
   passes (the E2E suite itself is not part of the gate). Verify: green gate
   output.
 

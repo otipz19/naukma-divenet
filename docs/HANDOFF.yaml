@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — add-e2e-suite proposed on change/add-e2e-suite, awaiting review; next is apply
+goal: M6 (Release readiness) — add-e2e-suite applied on change/add-e2e-suite; finish docs/gate, sync, archive, PR
 done:
   - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
   - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
@@ -14,9 +14,10 @@ done:
   - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
   - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
   - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
+  - add-e2e-suite applied (in flight): e2e/ workspace package with pinned Playwright; six journeys in e2e/src (anonymous browse, register+review with photo, dive log+achievement, post+feed, admin moderation, session refresh) plus a stack smoke spec; scripts/run-e2e.mjs = pnpm test:e2e starts compose project divenet-e2e on port 18081 with fixed admin creds, waits for the demo seed before running Playwright (ApplicationRunners finish after "healthy"), always down -v; CI job e2e in check.yml
 wip: null
 blocked: null
-next: review the add-e2e-suite proposal, then /opsx:apply (Playwright journeys against compose, pnpm test:e2e, CI job e2e)
+next: finish add-e2e-suite — pnpm check, sync shared/e2e delta into openspec/specs, archive on the branch, push, open PR; then propose measure-performance (k6 + Lighthouse, fold in axe-core)
 decisions:
   - complete-demo-seed design.md D1-D7 (seed via services; demo package; sites by name; times = seeding time except dive dates; generated JPEGs; one transaction then evaluate; one documented password)
   - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
