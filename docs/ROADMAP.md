@@ -87,6 +87,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `complete-demo-seed` | Full demo dataset: users, reviews, dive logs, posts, warnings, media; seeded users have their achievements | — | M1–M5 | archived |
 | `add-e2e-suite` | Playwright journeys against the compose stack; CI job | — | `add-local-stack`, M1–M5 | archived |
 | `fix-proxy-keepalive` | Connection pool between nginx and the back-end, found by the load suite | — | `add-e2e-suite` | archived |
+| `measure-performance` | k6 load tests with thresholds and a Lighthouse budget for the SPA; CI job | — | `add-e2e-suite` | in-progress |
 | `polish-release` | i18n completeness, accessibility pass, empty/error states, README with run instructions | — | M1–M5 | planned |
 
 ## Stretch
