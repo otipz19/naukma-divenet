@@ -52,6 +52,31 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {{ images?: string[], pull?: (image: string) => { status: number, stderr: string }, sleep?: (ms: number) => Promise<void> }} options
  * @returns {Promise<number>} the exit code
  */
+/**
+ * "Healthy" only means Tomcat answers: the demo seeders and the admin bootstrap
+ * (Spring ApplicationRunners) keep running after that, and the admin is the last
+ * account they create. Wait until the seeded catalog answers and the admin can
+ * log in, because that is what the journeys rely on.
+ */
+export async function waitUntilSeeded(baseUrl, sleep, log, timeoutMs = 180_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const markers = await (await fetch(`${baseUrl}/api/v1/sites/markers`)).json();
+      const login = await fetch(`${baseUrl}/api/v1/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: ADMIN_EMAIL, password: ADMIN_PASSWORD }),
+      });
+      if (Array.isArray(markers) && markers.length >= 50 && login.status === 200) return;
+    } catch {
+      // The stack is still seeding; try again after the pause below.
+    }
+    await sleep(2_000);
+  }
+  throw new Error(`the stack did not finish seeding within ${timeoutMs / 1000} s`);
+}
+
 export async function runE2E(run, spawn, log = console.log, options = {}) {
   const { images = [], pull = () => ({ status: 0, stderr: "" }), sleep = wait } = options;
   let failed = false;
@@ -59,8 +84,24 @@ export async function runE2E(run, spawn, log = console.log, options = {}) {
     await pullImages(images, pull, sleep, log);
 
     log("Starting the stack (build, then wait until healthy)...");
-    mustRun(run, ["up", "--build", ...WAIT]);
+    // A cold stack seeds the demo data on first boot, which can outlast the
+    // backend health check's budget on a slow machine; the health status is
+    // live, so waiting again is enough. Three attempts, like the image pulls.
+    for (let attempt = 1; ; attempt++) {
+      const failed = run(["up", "--build", ...WAIT]);
+      if (failed.status === 0) break;
+      if (attempt >= 3) {
+        throw new Error(`docker compose up exited ${failed.status}
+${failed.stderr}`);
+      }
+      log(`stack not healthy yet (attempt ${attempt} of 3); waiting and retrying...`);
+      await sleep(15_000);
+    }
     log("ok  stack healthy");
+
+    log("Waiting until the demo seed and the admin bootstrap are done...");
+    await waitUntilSeeded(`http://localhost:${WEB_PORT}`, sleep, log);
+    log("ok  stack seeded");
 
     log("Running the E2E suite...");
     // Playwright's own CLI, run with the current Node: no shell, no pnpm shim, works everywhere.

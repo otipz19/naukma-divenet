@@ -25,24 +25,24 @@
 
 ## 3. Journeys (each lands its own spec file)
 
-- [ ] 3.1 Anonymous browse journey (`e2e/src/anonymous-browse.spec.ts`): map
+- [x] 3.1 Anonymous browse journey (`e2e/src/anonymous-browse.spec.ts`): map
   page shows the seeded result list; open a seeded site; reviews are visible.
   Verify: the journey passes via `pnpm test:e2e`.
-- [ ] 3.2 Register → review journey (`register-review.spec.ts`): register a
+- [x] 3.2 Register → review journey (`register-review.spec.ts`): register a
   unique user, log in, submit a review with a photo on a seeded site; the
   review and photo appear and the site's average rating changes. Verify:
   journey passes; a deliberately broken selector makes it fail (checked
   once, then reverted).
-- [ ] 3.3 Dive log → achievement journey (`dive-achievement.spec.ts`): log in
+- [x] 3.3 Dive log → achievement journey (`dive-achievement.spec.ts`): log in
   as a demo diver whose dive count crosses a seeded achievement target, add a
   dive entry; the entry and the unlocked-achievement banner appear. Verify:
   journey passes.
-- [ ] 3.4 Post → feed journey (`post-feed.spec.ts`): log in, publish a post
+- [x] 3.4 Post → feed journey (`post-feed.spec.ts`): log in, publish a post
   linked to a region; it appears in the global feed. Verify: journey passes.
-- [ ] 3.5 Admin moderation journey (`admin-moderation.spec.ts`): a user
+- [x] 3.5 Admin moderation journey (`admin-moderation.spec.ts`): a user
   submits a site, the admin approves it from the queue; the site becomes
   visible on the map to an anonymous visitor. Verify: journey passes.
-- [ ] 3.6 Session-refresh journey (`session-refresh.spec.ts`): log in, reload
+- [x] 3.6 Session-refresh journey (`session-refresh.spec.ts`): log in, reload
   the page (in-memory token lost), open an authenticated page; the user is
   still logged in without seeing the login page. Verify: journey passes; it
   also fails as expected when run against a stack whose refresh cookie cannot
