@@ -1,0 +1,16 @@
+{
+  "name": "@divenet/perf",
+  "private": true,
+  "description": "Performance measurement for DiveNet: k6 load-test scenarios and the Lighthouse budget check. Kept outside the pnpm workspace so the app lockfile stays untouched (k6 itself is a binary on the PATH).",
+  "type": "module",
+  "scripts": {
+    "lighthouse": "node scripts/lighthouse.mjs"
+  },
+  "devDependencies": {
+    "chrome-launcher": "1.2.3",
+    "lighthouse": "13.6.0"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}

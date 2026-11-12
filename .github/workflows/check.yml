@@ -62,3 +62,32 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter e2e exec playwright install --with-deps chromium
       - run: node scripts/run-e2e.mjs
+
+  # Runs the k6 load scenarios and the Lighthouse budget against the real compose stack
+  # (spec shared/performance). Not part of `pnpm check`: it needs Docker and minutes, like `stack`
+  # and `e2e`. k6 itself is the pinned image the runner starts on the stack's network.
+  perf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          # No pnpm here: the runner needs only Node and perf/'s own lockfile.
+          package-manager-cache: false
+      - run: npm --prefix perf ci
+      # A browser for Lighthouse: Google Chrome stable. The Playwright Chromium the
+      # E2E suite uses hangs under chrome-launcher on this runner image.
+      - run: wget -q -O /tmp/chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+      - run: sudo apt-get install -y /tmp/chrome.deb
+      - run: echo "CHROME_PATH=/usr/bin/google-chrome" >> "$GITHUB_ENV"
+      - run: node scripts/run-perf.mjs 2>&1 | tee performance-report.txt
+        shell: bash
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-report
+          path: |
+            performance-report.txt
+          if-no-files-found: ignore
