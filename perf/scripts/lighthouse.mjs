@@ -38,8 +38,9 @@ function findChrome() {
   if (cache && existsSync(cache)) {
     for (const entry of readdirSync(cache)) {
       if (!entry.startsWith("chromium")) continue;
-      for (const sub of ["chrome-win64", "chrome-win", "chrome-linux"]) {
-        const executable = sub.endsWith("linux") ? "chrome" : "chrome.exe";
+      // Chrome-for-Testing builds (current Playwright) use -win64/-linux64.
+      for (const sub of ["chrome-win64", "chrome-win", "chrome-linux64", "chrome-linux"]) {
+        const executable = sub.startsWith("chrome-win") ? "chrome.exe" : "chrome";
         const candidate = join(cache, entry, sub, executable);
         if (existsSync(candidate)) candidates.push(candidate);
       }

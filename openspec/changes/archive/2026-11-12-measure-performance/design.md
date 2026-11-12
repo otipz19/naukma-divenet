@@ -31,11 +31,12 @@ binary.
 
 **D2: thresholds on p95 and error rate, generous enough for CI noise.**
 `p95` per scenario, calibrated with all four scenarios running concurrently
-(80 VUs total) in the stack's network: 800 ms for `site-search`, 600 ms for
-`site-details`, 800 ms for `feed`, 1500 ms for `login` (bcrypt dominates and
-needs the most headroom). Error rate: below 1% everywhere. These are budgets
-of a demonstrable product, not production SLAs; thresholds only tighten in a
-follow-up change, never mid-implementation.
+(80 VUs total): 1200 ms for the three read scenarios, 2000 ms for `login`
+(bcrypt dominates and needs the most headroom). The first CI run showed the
+2-vCPU runner measures ~750 ms for reads where a dev box measures ~350 ms, so
+the budgets hold the slowest machine class the suite runs on. Error rate: below
+1% everywhere. These are budgets of a demonstrable product, not production
+SLAs; thresholds only tighten in a follow-up change, never mid-implementation.
 
 **D3: steady load, not a fixed request count.** Each scenario ramps to ~20
 concurrent virtual users over 30 s, holds 60 s and ramps down (default k6
