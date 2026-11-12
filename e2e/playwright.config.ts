@@ -9,6 +9,9 @@ const baseURL = process.env.DIVENET_E2E_BASE_URL ?? `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./src",
+  // The journeys are long (registration, forms, moderation) against a stack
+  // whose back end is still warming its JIT, so give each one a generous budget.
+  timeout: 90_000,
   fullyParallel: false, // journeys share one stack and build on each other's data
   workers: 1,
   reporter: [["list"]],
