@@ -172,9 +172,8 @@ and removes it afterwards, so it does not touch your stack.
 
 `pnpm test:e2e` starts the same stack under its own compose project
 (`divenet-e2e`) on port 18081 with fixed admin credentials, waits for the demo
-seed, runs the Playwright journeys in `e2e/` plus the axe-core accessibility audits
-of every routed page (WCAG 2.1 A/AA, both themes, the `uk` locale), and always
-removes the project afterwards. It needs Docker and a one-time `pnpm install`; Chromium is
+seed, runs the Playwright journeys in `e2e/`, and always removes the project
+afterwards. It needs Docker and a one-time `pnpm install`; Chromium is
 downloaded by `pnpm --filter e2e exec playwright install chromium`. The suite is
 not part of `pnpm check` — it is a separate CI job, like the stack smoke test.
 

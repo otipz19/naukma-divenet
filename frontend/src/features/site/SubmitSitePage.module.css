@@ -111,13 +111,3 @@
     line-height: var(--touch-target);
   }
 }
-
-/* Leaflet's attribution link is styled for the light theme only and fails
-   color-contrast in the dark theme (audit-accessibility); key it to the tokens. */
-.page :global(.leaflet-control-attribution) {
-  background: var(--surface-1);
-  color: var(--ink-muted);
-}
-.page :global(.leaflet-control-attribution) a {
-  color: var(--info);
-}

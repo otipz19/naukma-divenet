@@ -89,8 +89,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `fix-proxy-keepalive` | Connection pool between nginx and the back-end, found by the load suite | — | `add-e2e-suite` | archived |
 | `measure-performance` | k6 load tests with thresholds and a Lighthouse budget for the SPA; CI job | — | `add-e2e-suite` | archived |
 | `harden-security` | Browser security headers with an e2e assertion, dependency audit and image scan in CI | — | `add-e2e-suite` | archived |
-| `audit-accessibility` | axe-core audits of every routed page in the E2E suite with a declared violation policy | — | `add-e2e-suite` | archived |
-| `polish-release` | i18n completeness, empty/error states, README with run instructions | — | M1–M5 | planned |
+| `polish-release` | i18n completeness, accessibility pass, empty/error states, README with run instructions | — | M1–M5 | planned |
 
 ## Stretch
 
