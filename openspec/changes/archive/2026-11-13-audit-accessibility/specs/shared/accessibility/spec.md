@@ -22,6 +22,14 @@ rendered text changes with the locale.
 - **THEN** the page is scanned in the default and dark themes, and each scan
   uses the live rendered DOM.
 
+#### Scenario: The page respects both theme settings
+
+- **WHEN** the system color-scheme preference is dark and the document carries
+  no theme attribute, or one that does not pin another theme
+- **THEN** the stylesheet applies the dark tokens through its
+  `prefers-color-scheme` block, and an attribute explicitly pinning a theme
+  overrides the system preference.
+
 #### Scenario: Translated chrome is audited
 
 - **WHEN** a page whose labels change with the locale is audited

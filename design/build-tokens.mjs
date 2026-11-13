@@ -18,9 +18,17 @@ const themed = [...tokens.color.tokens, ...(tokens.shadow?.tokens ?? [])];
 
 const blocks = [`/* ${tokens.name} — generated from tokens.json */`];
 blocks.push(`:root, [data-theme="${first}"] {\n${declare(themed, first).join("\n")}\n}`);
+// Each non-default theme activates two ways: the explicit attribute, and the
+// OS preference unless the attribute pins another theme. The body is duplicated because a media query cannot
+// share a selector list with a plain rule; the generator keeps copies identical.
 for (const theme of others) {
-  blocks.push(`[data-theme="${theme}"] {\n${declare(themed, theme).join("\n")}\n}`);
+  const body = declare(themed, theme).join("\n");
+  blocks.push(`[data-theme="${theme}"] {\n${body}\n}`);
+  blocks.push(
+    `@media (prefers-color-scheme: ${theme}) {\n  :root:not([data-theme="${first}"]) {\n${body.split("\n").map((l) => `  ${l}`).join("\n")}\n  }\n}`,
+  );
 }
+
 const plain = Object.entries(tokens)
   .filter(([key, family]) => !["color", "type", "shadow"].includes(key) && family?.tokens)
   .flatMap(([, family]) => family.tokens.map((t) => `  --${t.name}: ${t.value};`));
