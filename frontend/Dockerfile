@@ -13,5 +13,8 @@ COPY frontend/ frontend/
 RUN pnpm --filter @divenet/frontend build
 
 FROM nginx:1.29-alpine
+# The security job (shared/security) scans this image; the base's packages age
+# between base-image releases, so upgrade them from Alpine's security repo.
+RUN apk upgrade --no-cache
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/frontend/dist/ /usr/share/nginx/html/

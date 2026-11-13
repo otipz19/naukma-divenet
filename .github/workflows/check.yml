@@ -25,6 +25,9 @@ jobs:
           java-version: 25
           cache: maven
       - run: pnpm install --frozen-lockfile
+      # Spec shared/security "audited production dependencies": fails fast, before
+      # the minutes-long gate, when a shipped package carries a high advisory.
+      - run: pnpm audit --prod --audit-level=high
       - run: pnpm check
 
   # Builds and starts compose.yaml, checks it over HTTP and tears it down (spec shared/local-stack).
@@ -91,3 +94,24 @@ jobs:
           path: |
             performance-report.txt
           if-no-files-found: ignore
+  # Scans the two built images with Trivy (spec shared/security). One pass covers
+  # the image OS layers and the applications inside: the backend image carries the
+  # Spring Boot jar, so its Java dependencies are checked through Trivy's Java DB
+  # and no separate Maven CVE tool is needed. --ignore-unfixed keeps the gate to
+  # findings with an available fix. Not part of `pnpm check`: it needs Docker.
+  # The 30m scan budget: DB downloads and analysis share it, and the backend image
+  # (JDK + fat jar) needs minutes even on fast disks.
+  security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build -t divenet-backend -f backend/Dockerfile backend/
+      - run: docker build -t divenet-web -f frontend/Dockerfile .
+      # --timeout 30m: the default 5-minute budget covers the DB downloads too, and
+      # the backend image (JDK + fat jar) needs more than a fast machine's default.
+      # --security-checks vuln skips secret scanning. The shared trivy-cache volume
+      # lets the second scan reuse the databases instead of downloading them again.
+      - run: docker volume create trivy-cache
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.76.0 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-backend
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.76.0 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-web

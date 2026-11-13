@@ -21,13 +21,44 @@
         <archunit.version>1.5.1</archunit.version>
         <springdoc.version>3.2.0</springdoc.version>
         <!-- WebP reader for ImageIO; the JDK reads only JPEG and PNG (add-media-uploads design D4). -->
-        <minio.version>8.5.17</minio.version>
+        <minio.version>8.6.0</minio.version>
+        <!-- Pinned over the Spring Boot BOM: the security job (shared/security) fails on fixable HIGH/CRITICAL findings. -->
+        <guava.version>33.7.2-jre</guava.version>
+        <bcprov-jdk18on.version>1.85</bcprov-jdk18on.version>
+        <snappy-java.version>1.1.10.9</snappy-java.version>
+        <!-- okhttp 5.x ships an empty Maven marker jar (classes moved to okhttp-jvm), which minio 8.6.0 pulls in; pin the classic artifact. -->
+        <okhttp.version>4.12.0</okhttp.version>
         <imageio-webp.version>3.15.3</imageio-webp.version>
         <spotless.version>3.10.4</spotless.version>
         <palantir-java-format.version>2.102.0</palantir-java-format.version>
         <!-- Set to true to rewrite api/openapi.json (see ApiContractTest). -->
         <openapi.update>false</openapi.update>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bcprov-jdk18on.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>${snappy-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
