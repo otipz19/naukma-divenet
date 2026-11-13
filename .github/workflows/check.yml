@@ -113,5 +113,5 @@ jobs:
       # --security-checks vuln skips secret scanning. The shared trivy-cache volume
       # lets the second scan reuse the databases instead of downloading them again.
       - run: docker volume create trivy-cache
-      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.36.1 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-backend
-      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.36.1 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-web
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.76.0 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-backend
+      - run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v trivy-cache:/root/.cache aquasec/trivy:0.76.0 image --security-checks vuln --severity HIGH,CRITICAL --ignore-unfixed --timeout 30m --exit-code 1 divenet-web
