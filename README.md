@@ -188,6 +188,13 @@ Edge or Playwright Chromium for Lighthouse; and a one-time `npm install` in
 `perf/` (kept outside the workspace on purpose). Also a separate CI job, not
 part of `pnpm check`.
 
+The web platform usage is audited against the `modern-web-guidance` corpus
+(the pinned npm package): a findings ledger in the archived change records a
+verdict per topic, `legacy-scan` stays clean, and the theme contract test
+keeps the `color-scheme` declaration honest. The corpus is tracked for agent
+assistants through the committed `skills-lock.json`; agents materialize it
+with `npx skills restore` (the folder stays untracked).
+
 The dependency audit is the fast half of the CI `security` job: it fails when a
 production package in the workspace lockfile carries a high or critical
 advisory. The other half scans the built images with Trivy for unfixed high or

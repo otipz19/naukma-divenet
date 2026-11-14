@@ -74,7 +74,9 @@
         "displayName": "Use 1 to 50 characters.",
         "password": "Use at least 8 characters, and at most 72 bytes."
       }
-    }
+    },
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "geo": {
     "countries": {

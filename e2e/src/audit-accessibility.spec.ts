@@ -13,6 +13,10 @@ const SITE = "/sites/1";
 
 test("anonymous pages are accessible", async ({ page }) => {
   await page.goto("/");
+  // The map's tiles are the one external subresource (OSM, over HTTPS); the CSP
+  // must let them through — a blocked tile shows as an empty map with the
+  // journeys otherwise green.
+  await page.waitForSelector(".leaflet-tile-loaded", { timeout: 15000 });
   await expectAccessible(page, "map");
 
   await page.goto("/sites");
@@ -43,11 +47,17 @@ test("the theme respects both the system preference and the attribute", async ({
   const theme = () => page.locator("html").getAttribute("data-theme");
 
   // The attribute mirrors the OS preference and follows its changes (JS path).
+  // The change event reaches the watcher asynchronously, so wait for the
+  // attribute instead of reading it right after the emulation.
   expect(await theme()).toBe("light");
   await page.emulateMedia({ colorScheme: "dark" });
-  expect(await theme()).toBe("dark");
+  await expect
+    .poll(() => page.locator("html").getAttribute("data-theme"))
+    .toBe("dark");
   await page.emulateMedia({ colorScheme: "light" });
-  expect(await theme()).toBe("light");
+  await expect
+    .poll(() => page.locator("html").getAttribute("data-theme"))
+    .toBe("light");
 
   // The stylesheet's media path holds without the attribute (the no-JS case):
   // attribute removed, OS dark -> dark token, read synchronously so the
@@ -64,6 +74,15 @@ test("the theme respects both the system preference and the attribute", async ({
     document.documentElement.setAttribute("data-theme", "light");
     return getComputedStyle(document.documentElement).getPropertyValue("--surface-0").trim();
   })).toBe("#f5f8f9");
+
+  // Native UI follows the active theme: the stylesheet declares color-scheme on
+  // the same paths as the tokens, so scrollbars and form controls match.
+  const scheme = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("color-scheme").trim());
+  expect(await scheme()).toBe("light"); // attribute pinned light, OS dark
+  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  expect(await scheme()).toBe("dark");
+  await page.evaluate(() => document.documentElement.removeAttribute("data-theme"));
+  expect(await scheme()).toBe("dark"); // media path, OS still dark
 });
 
 test("anonymous pages are accessible in the dark theme", async ({ browser }) => {

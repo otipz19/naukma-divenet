@@ -39,7 +39,9 @@ export function PostPage() {
   return (
     <article className={styles.page}>
       <div className={styles.reading}>
-        {data.cover && <img className={styles.cover} src={data.cover.url} alt="" />}
+        {data.cover && (
+          <img className={styles.cover} src={data.cover.url} alt="" fetchPriority="high" />
+        )}
         <div className={styles.head}>
           <h1 className={`h1 ${styles.flush}`}>{data.title}</h1>
           {own && (

@@ -90,6 +90,7 @@ Statuses: `planned` → `proposed` → `in-progress` → `archived`; `dropped` (
 | `measure-performance` | k6 load tests with thresholds and a Lighthouse budget for the SPA; CI job | — | `add-e2e-suite` | archived |
 | `harden-security` | Browser security headers with an e2e assertion, dependency audit and image scan in CI | — | `add-e2e-suite` | archived |
 | `audit-accessibility` | axe-core audits of every routed page in the E2E suite with a declared violation policy | — | `add-e2e-suite` | archived |
+| `audit-modern-web` | Web platform usage audited against the modern-web guidance corpus; findings triaged in a ledger | — | `audit-accessibility` | archived |
 | `polish-release` | i18n completeness, empty/error states, README with run instructions | — | M1–M5 | planned |
 
 ## Stretch
