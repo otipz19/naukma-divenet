@@ -47,11 +47,17 @@ test("the theme respects both the system preference and the attribute", async ({
   const theme = () => page.locator("html").getAttribute("data-theme");
 
   // The attribute mirrors the OS preference and follows its changes (JS path).
+  // The change event reaches the watcher asynchronously, so wait for the
+  // attribute instead of reading it right after the emulation.
   expect(await theme()).toBe("light");
   await page.emulateMedia({ colorScheme: "dark" });
-  expect(await theme()).toBe("dark");
+  await expect
+    .poll(() => page.locator("html").getAttribute("data-theme"))
+    .toBe("dark");
   await page.emulateMedia({ colorScheme: "light" });
-  expect(await theme()).toBe("light");
+  await expect
+    .poll(() => page.locator("html").getAttribute("data-theme"))
+    .toBe("light");
 
   // The stylesheet's media path holds without the attribute (the no-JS case):
   // attribute removed, OS dark -> dark token, read synchronously so the
