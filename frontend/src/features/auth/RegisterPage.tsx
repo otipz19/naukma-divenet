@@ -9,6 +9,7 @@ import { signIn } from "../../api/session";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
 import { TextField } from "../../components/TextField/TextField";
+import { PasswordField } from "../../components/PasswordField/PasswordField";
 import styles from "./AuthPage.module.css";
 import { redirectTarget, type FromState } from "./redirect";
 import { registerSchema, type RegisterValues } from "./schemas";
@@ -79,12 +80,14 @@ export function RegisterPage() {
           label={t("auth.register.email")}
           type="email"
           autoComplete="email"
+          autoCorrect="off"
+          autoCapitalize="none"
+          spellCheck={false}
           error={message(errors.email?.message)}
           {...register("email")}
         />
-        <TextField
+        <PasswordField
           label={t("auth.register.password")}
-          type="password"
           autoComplete="new-password"
           error={message(errors.password?.message)}
           {...register("password")}

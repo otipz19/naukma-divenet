@@ -13,6 +13,10 @@ const SITE = "/sites/1";
 
 test("anonymous pages are accessible", async ({ page }) => {
   await page.goto("/");
+  // The map's tiles are the one external subresource (OSM, over HTTPS); the CSP
+  // must let them through — a blocked tile shows as an empty map with the
+  // journeys otherwise green.
+  await page.waitForSelector(".leaflet-tile-loaded", { timeout: 15000 });
   await expectAccessible(page, "map");
 
   await page.goto("/sites");
@@ -64,6 +68,15 @@ test("the theme respects both the system preference and the attribute", async ({
     document.documentElement.setAttribute("data-theme", "light");
     return getComputedStyle(document.documentElement).getPropertyValue("--surface-0").trim();
   })).toBe("#f5f8f9");
+
+  // Native UI follows the active theme: the stylesheet declares color-scheme on
+  // the same paths as the tokens, so scrollbars and form controls match.
+  const scheme = () => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue("color-scheme").trim());
+  expect(await scheme()).toBe("light"); // attribute pinned light, OS dark
+  await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
+  expect(await scheme()).toBe("dark");
+  await page.evaluate(() => document.documentElement.removeAttribute("data-theme"));
+  expect(await scheme()).toBe("dark"); // media path, OS still dark
 });
 
 test("anonymous pages are accessible in the dark theme", async ({ browser }) => {

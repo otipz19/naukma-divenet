@@ -76,7 +76,89 @@ OPTIONAL and the current behavior is correct stays a pass.
 Corpus: `modern-web-guidance@latest`, skill version `2026_11_09-5bcc021b`.
 `legacy-scan frontend/src`: 0 findings across 35 rules (33 guides).
 
-### Batch: forms (retrieved and audited before the PR)
+### Batch: theming (retrieved before the PR)
+
+- `dark-mode` / `browser-ui-theming` — **fixed**. Requirement: "MANDATORY:
+  Apply the `color-scheme` property to the `html` element or the `:root`
+  pseudo-class." The property was never set in CSS (only the meta tag
+  existed), so scrollbars, form controls and the canvas stayed light-themed
+  in dark mode. The generator now emits `color-scheme: light` / `dark` on the
+  same selectors as the themed tokens (attribute and media paths), and the
+  theme contract test asserts the computed value per path.
+
+### Batch: user content and security
+
+- `sanitize-untrusted-html` — **pass**. No `dangerouslySetInnerHTML` or
+  `innerHTML` exists in product code; all user content (reviews, posts,
+  warnings, names) renders as React text nodes, which the framework escapes.
+  There is no HTML-injection surface to sanitize.
+- `validate-origins` — **pass**. The client talks only to the same origin
+  (`/api/v1` through the web server's proxy); no cross-origin API calls.
+- `secure-external-subresources` — **fixed**. The single external subresource
+  (OSM tiles, `https://tile.openstreetmap.org`) is fetched over HTTPS but was
+  blocked by the CSP shipped in `harden-security`
+  (`img-src 'self' data: blob:`). The tile host is now allowed explicitly in
+  all three CSP locations, and the map audit waits for a loaded tile
+  (`.leaflet-tile-loaded`), so a blocked map can never pass again.
+
+### Batch: media
+
+- `optimize-image-priority` — **fixed**. The post page cover (the LCP
+  candidate) now carries `fetchpriority="high"`; feed and post-card covers
+  are below the fold and carry `loading="lazy"`.
+- `deliver-optimized-decorative-images` — **accepted**. Requirement context:
+  the guide wants intrinsic `width`/`height` to prevent layout shift and
+  multi-format `srcset`. Dimensions live in the media store and are not part
+  of the current API responses; the Lighthouse runs show no CLS-driven
+  failures. Follow-up: add image dimensions to the media API responses.
+- `lazy-load-video-and-audio` — **pass**. Video attachments render with
+  `controls` and `preload="metadata"` (no eager download); the upload fields
+  only preview locally selected files.
+
+### Batch: lists, overlays
+
+- `responsive-table`, `sortable-table` — **n/a**. The moderation queue and
+  admin lists are card/row lists, not `<table>` elements; no tabular data is
+  rendered client-side.
+- `dialog`, `light-dismiss-a-dialog` — **n/a**. The product renders no
+  dialogs today; confirmation flows are inline.
+- `persistent-toast-notifications` — **pass**. The achievement banner is a
+  transient live-region Alert (aria-live), announced and dismissible; no
+  focus is trapped.
+
+### Batch: SPA behavior and dates
+
+- `faster-spa-view-transitions` — **accepted**. The guide's
+  `content-visibility: hidden` view caching targets tabbed shells with a
+  small, predictable view count and demands an eviction strategy for dynamic
+  apps. Divenet's routes are distinct data-fetching pages; adopting the
+  pattern is a flow change, not a required fix. Follow-up: none planned.
+- `scroll-target-on-load` — **n/a**. No hash targets or initial-load scroll
+  positions exist; the feed scrolls to top on pagination by design.
+- `calculate-event-differentials`, `sort-high-precision-timestamps` — **n/a**.
+  The client renders absolute dates through `Intl.DateTimeFormat` with the
+  active locale and performs no timestamp arithmetic; ordering happens
+  server-side.
+
+### Batch: cross-checks
+
+- `accessibility` — **pass**. The prose guide's core requirements are already
+  enforced by the axe audits (semantic forms, labeled controls,
+  `:focus-visible` outline in `global.css`, the canonical visually-hidden
+  recipe on the map heading, no `aria-label` overriding visible text).
+- `color` — **pass**. Semantic token system with light/dark pairs; contrast
+  is axe-audited in both themes (the one failure found is fixed in this
+  change's sibling work).
+- `typography` — **fixed**. Requirement: "DON'T use `px` for font-size.
+  Prefer `rem` to honor the user's browser font-size preferences." The
+  generated type scale now converts px to rem.
+- `respect-os-text-scale` — **fixed** by the same conversion (rem type scale
+  scales with the root preference; no root font-size override exists —
+  verified).
+- `performance` — **pass**. The image-priority fixes above are the guide's
+  LCP-relevant items; the k6/Lighthouse gates keep the measured side honest.
+
+## Risks and Trade-offs
 
 - `forms` — **fixed (planned)**. Two violations of DO requirements:
   (1) "DO provide an accessible toggle `<button type="button">` with

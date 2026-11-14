@@ -16,7 +16,9 @@ export function PostCard({
   const { t, i18n } = useTranslation();
   return (
     <article className={styles.card}>
-      {post.cover && <img className={styles.cover} src={post.cover.thumbnailUrl} alt="" />}
+      {post.cover && (
+        <img className={styles.cover} src={post.cover.thumbnailUrl} alt="" loading="lazy" />
+      )}
       <div className={styles.cardBody}>
         {(post.regionCode || post.site) && (
           <div className={styles.links}>
