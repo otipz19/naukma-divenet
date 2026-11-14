@@ -29,3 +29,6 @@ Thumbs.db
 # Personal agent settings
 .claude/settings.local.json
 .claude/launch.json
+
+# The materialized modern-web-guidance skill from skills-lock.json (never committed)
+.agents/skills/modern-web-guidance/

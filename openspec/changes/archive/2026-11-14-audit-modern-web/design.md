@@ -160,14 +160,15 @@ Corpus: `modern-web-guidance@latest`, skill version `2026_11_09-5bcc021b`.
 
 ## Risks and Trade-offs
 
-- `forms` — **fixed (planned)**. Two violations of DO requirements:
+- `forms` — **fixed**. Two violations of DO requirements:
   (1) "DO provide an accessible toggle `<button type="button">` with
-  `aria-pressed` allowing users to unmask password input" — the login and
-  register password fields have no unmask control.
+  `aria-pressed` allowing users to unmask password input" — fixed by the new
+  `components/PasswordField` (toggle button with `aria-pressed`, icon + text,
+  en and uk strings), used by the login and register forms.
   (2) "DO turn off text correction on fields that hold identifiers rather than
   prose: `autocorrect="off"` (plus `autocapitalize="none"` and
-  `spellcheck="false"`) on usernames, emails" — the email fields carry only
-  `type="email"` and `autocomplete`.
+  `spellcheck="false"`) on usernames, emails" — fixed by those attributes on
+  the email fields of both auth forms.
 - `forms` (native constraints) — **accepted**. Requirement: "DO use native
   constraints: `required`, `minlength`, `maxlength`, `pattern`." Validation is
   handled by react-hook-form schemas (zod) with inline, translated error
@@ -186,10 +187,12 @@ Corpus: `modern-web-guidance@latest`, skill version `2026_11_09-5bcc021b`.
   `current-password` (login) and `new-password` (register) are set correctly;
   pasting is not blocked anywhere in the auth forms.
 - `required-field-feedback`, `accessible-error-announcement`,
-  `ime-safe-enter-submit` — **pass (pending runtime spot-check)**. No custom
+  `ime-safe-enter-submit` — **pass**. No custom
   Enter handlers exist in any form (IME composition is handled by the native
   form semantics); `aria-invalid` is synchronized with the visible error text.
-  Runtime confirmation rides the existing form journeys.
+  Runtime confirmation: the full E2E suite (16/16) exercises every form
+  end to end after the fixes — login, register, review, warning, dive log
+  and site submission.
 
 ## Risks and Trade-offs
 
