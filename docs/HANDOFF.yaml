@@ -4,11 +4,11 @@ done:
   - M6 archived and merged: apply-ui-design (#27), complete-demo-seed, add-e2e-suite, fix-proxy-keepalive (#31), measure-performance (#32), harden-security (#33), audit-accessibility (#34), audit-modern-web (#35)
   - UML report merged (PR #36): docs/uml (sources docs/uml/src, build with node docs/uml/src/build.mjs)
   - fix/ui-defects merged (PR #38): F-02, F-04, F-13
-  - add-dialogs-and-toasts archived: components/Dialog (Dialog, ConfirmDialog), components/Toast in AppLayout; dive log and certificates edit in dialogs
+  - add-dialogs-and-toasts merged (PR #39): components/Dialog (Dialog, ConfirmDialog), components/Toast in AppLayout; fix/audit-animation-wait merged (PR #40): a11y scans wait for finite animations
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: add-dialogs-and-toasts applied, synced and archived on change/add-dialogs-and-toasts; PR to open (F-14..F-17 done)
+wip: rework-map-page proposed on change/rework-map-page (F-03, F-10..F-12); awaiting owner review of the proposal
 blocked: null
-next: merge the add-dialogs-and-toasts PR; then propose scope-admin-account; rework-map-page reuses the shared Dialog for F-03; polish-release last
+next: owner reviews rework-map-page; then /opsx:apply it (or propose scope-admin-account first; both change the shell, apply one at a time); polish-release last
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
