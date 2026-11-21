@@ -44,7 +44,8 @@ visitor, and moderates. It has none of the diver features:
 - **Seed and bootstrap:** the admin gets no profile content. A demo database that
   already holds admin-authored content is not expected; the seed creates none.
 
-## Open point (owner)
-Hiding warnings is moderation, but *posting* a warning could be an official safety
-notice. Recommended: no. Admins stay out of content, for a clear split. Confirm when
-the change is proposed.
+## Warnings (owner, 2026-11-21)
+An admin cannot post a warning. Admins hide warnings, but they do not write content.
+
+Let go (owner, 2026-11-21): there is no warnings tab in the moderation queue, and
+hiding a warning has no undo. Both stay as they are.

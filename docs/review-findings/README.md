@@ -24,10 +24,10 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-07](F-07-feed-card-width.md) | Feed | Cards fill a 720 px column on the left, leaving the right side empty for visitors | design question | declined |
 | [F-08](F-08-theme-switch.md) | Shell | No theme switch; the theme only follows the system | spec gap | decided |
 | [F-09](F-09-guest-actions.md) | Auth UX | Visitors see actions (review, warning, log a dive) they must sign in to use | design question | declined |
-| [F-10](F-10-map-panel-desktop.md) | Map | Filters always expanded on desktop; the result count and list sit below the fold | UX | open |
-| [F-11](F-11-submit-site-placement.md) | Map | "Submit a site" sits inside the search form | UX | open |
-| [F-12](F-12-map-mobile.md) | Map | Phone map page scrolls and the form covers the map; it departs from `MobileMap.html` | UX / design drift | open |
-| [F-13](F-13-dive-form-errors-layout.md) | Dive log | Validation messages break the dive form layout | bug | decided |
+| [F-10](F-10-map-panel-desktop.md) | Map | Filters always expanded on desktop; the result count and list sit below the fold | UX | decided |
+| [F-11](F-11-submit-site-placement.md) | Map | "Submit a site" sits inside the search form | UX | decided |
+| [F-12](F-12-map-mobile.md) | Map | Phone map page scrolls and the form covers the map; it departs from `MobileMap.html` | UX / design drift | decided |
+| [F-13](F-13-dive-form-errors-layout.md) | Dive log | Validation messages break the dive form layout; reproduce and find the cause before fixing | bug | decided |
 | [F-14](F-14-achievement-toast.md) | Achievements | Unlock alert shows inside the form; use a toast | UX, spec change | decided |
 | [F-15](F-15-dive-form-dialog.md) | Dive log | Edit is not obvious; create and edit move to a dialog | UX, spec change | decided |
 | [F-16](F-16-dive-delete-hidden.md) | Dive log | Delete is only inside the edit form; users cannot find it | UX, spec change | decided |
@@ -66,3 +66,7 @@ names its findings. `fix/ui-defects` needs no roadmap row: it changes no behavio
 - The goal is a convincing demo: review, then fix. Do not add new automated
   check suites now (F-05). Fixes still carry the tests the gate requires.
 - Decisions are recorded here first. Implementation starts only when the owner asks.
+- The review is closed (2026-11-21). Every finding is decided or declined, and every
+  flow the owner did not comment on is accepted as it is.
+- A bug fix starts by reproducing the bug on the running stack and naming its real
+  cause, never by applying a guessed fix (F-13).

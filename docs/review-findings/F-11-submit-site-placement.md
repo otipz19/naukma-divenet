@@ -1,7 +1,7 @@
 # F-11 "Submit a site" sits inside the search form
 
 - **Area:** Map (`/`)
-- **Status:** open
+- **Status:** decided (owner, 2026-11-21: option 1, a floating "+ Add a site" button on the map)
 - **Delivered by:** `rework-map-page`
 
 ## Seen
