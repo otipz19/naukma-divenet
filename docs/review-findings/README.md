@@ -49,7 +49,8 @@ The owner agreed to this grouping on 2026-11-21. `add-dialogs-and-toasts`,
 `scope-admin-account` and `rework-map-page` are rows in [ROADMAP.md](../ROADMAP.md)
 (M6), in that order. F-03's disclaimer dialog reuses the shared Dialog, and both later
 items change the app shell, so they run one after the other. The `polish-release` row
-names its findings. `fix/ui-defects` needs no roadmap row: it changes no behaviour.
+names its findings. The owner moved it to the end of M6 (2026-11-21), so its audits
+cover the screens the other items change. `fix/ui-defects` needs no roadmap row: it changes no behaviour.
 
 ## Cross-cutting notes
 
