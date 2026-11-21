@@ -86,6 +86,7 @@ a:hover {
 .dn-field {
   display: grid;
   gap: var(--space-1);
+  align-content: start;
 }
 .dn-field__label {
   font: 500 14px/20px var(--font-sans);

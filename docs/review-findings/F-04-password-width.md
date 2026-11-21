@@ -1,7 +1,7 @@
 # F-04 Password field narrower than the email field
 
 - **Area:** Auth UI (`/login`, `/register`)
-- **Status:** decided
+- **Status:** taken: fix/ui-defects
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen
@@ -16,4 +16,8 @@ show/hide toggle from `audit-modern-web`. It sets
 ## Fix
 Remove `justify-items: start` from `.field` and add `justify-self: start` to `.toggle`.
 No behaviour change. No new check (F-05 declined); verify by hand on `/login` and
+`/register`.
+
+## Result (fix/ui-defects)
+Measured on `/login`: email 358 px, password 215 px before; both 358 px after, also on
 `/register`.
