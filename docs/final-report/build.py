@@ -187,6 +187,22 @@ def post_process(path: Path) -> None:
                     for run in paragraph.runs:
                         run.font.size = Pt(12)
 
+    # Lists: leave room for two-digit numbers before the text.
+    qn = docx.oxml.ns.qn
+    numbering = document.part.numbering_part.element
+    for lvl in numbering.iter(qn("w:lvl")):
+        level = int(lvl.get(qn("w:ilvl")))
+        ppr = lvl.find(qn("w:pPr"))
+        if ppr is None:
+            ppr = docx.oxml.OxmlElement("w:pPr")
+            lvl.append(ppr)
+        ind = ppr.find(qn("w:ind"))
+        if ind is None:
+            ind = docx.oxml.OxmlElement("w:ind")
+            ppr.append(ind)
+        ind.set(qn("w:left"), str(1134 + 425 * level))
+        ind.set(qn("w:hanging"), "425")
+
     # Tall diagrams: scale down to fit the page height.
     for shape in document.inline_shapes:
         if shape.height > MAX_IMAGE_HEIGHT:
