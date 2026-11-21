@@ -1,46 +1,28 @@
-goal: M6 (Release readiness) — audit-modern-web applied, finishing; then polish-release (i18n, empty/error states)
+goal: M6 (Release readiness) — act on the owner's product review (docs/review-findings), starting with fix/ui-defects and polish-release
 done:
-  - Agentic workflow, docs, OpenSpec, README, gate + CI, master protection (git history up to e7a243f)
-  - bootstrap-backend (PR #1), switch-to-layered-monolith (PR #2) merged and archived; specs in openspec/specs/shared/*; bootstrap-frontend (PR #3) merged and archived
-  - UI design (Claude Design) merged (PR #4): design/system, design/screens, docs/DESIGN.md, ADR-0009
-  - add-app-shell merged (PR #5) and archived (PR #6); specs shared/app-shell, shared/design-tokens
-  - add-authentication (PR #9) and M1 (PRs #10-#13) merged and archived (specs auth, geo, site/*)
-  - M2 done: add-media-uploads (PR #14), plan-update notes (PR #15), add-site-reviews (PR #16), add-site-warnings (PR #17) merged and archived (specs media/*, review/*, shared/rating, warning/*)
-  - add-diver-profile (PR #18), add-dive-log (PR #19) merged and archived (specs user/profile, divelog/entries, divelog/log-page; review/site-reviews, warning/site-warnings, site/details updated)
-  - add-certificates merged (PR #20) and archived (specs user/certificates, user/certificate-verification; user/profile, review/site-reviews, site/moderation updated)
-  - M4 done: add-posts (PR #21), add-feeds (PR #22) merged and archived (specs post/*; user/profile, site/details updated)
-  - add-achievements merged (PR #23) and archived (spec achievement/achievements; user/profile, divelog/log-page updated)
-  - add-gear-locker (PR #24), add-video-media (PR #25) merged and archived (specs user/gear-locker, media/video-field; media/uploads, review/*, post/* updated; ADR-0011)
-  - add-object-storage merged (PR #26) and archived (media/uploads, shared/local-stack updated; ADR-0012: Chainguard MinIO by digest, runs as root)
-  - apply-ui-design merged (PR #27) and archived (audit.md in its archive; --touch-target token; DESIGN.md "Accepted differences")
-  - complete-demo-seed archived (spec demo/seed; DemoSeeder through the services, seed/demo.json, generated images; demo password divenet-demo in README)
-  - add-e2e-suite applied and archived (PR pending): e2e/ workspace package with pinned Playwright; six journeys in e2e/src (anonymous browse, register+review with photo, dive log+achievement, post+feed, admin moderation, session refresh) plus a stack smoke spec; scripts/run-e2e.mjs = pnpm test:e2e starts compose project divenet-e2e on port 18081 with fixed admin creds, waits for the demo seed before running Playwright (ApplicationRunners finish after "healthy"), always down -v; CI job e2e in check.yml
-  - fix-proxy-keepalive applied and archived: the perf suite found nginx opening a new connection to the backend per request; ~860 req/s exhausted ephemeral ports (errno 99, 49.6% 502s). frontend/nginx.conf now pools connections (upstream keepalive 64, HTTP/1.1, empty Connection; spec shared/local-stack updated). k6 re-run: 70k requests, 0 failed.
-  - audit-modern-web applied (in flight): web platform audited against modern-web-guidance@latest (corpus 2026_11_09-5bcc021b, legacy-scan 0/35); ledger in the change design; the corpus is declared for agents via the committed skills-lock.json pinned to release v1.0.0 (restore with npx skills restore; .agents/skills/ is gitignored); fixes: color-scheme emitted by the token generator on both theme paths (native UI follows the active theme, asserted in the theme contract test), CSP img-src gains https://tile.openstreetmap.org (the map was tile-blocked in the built stack; map audit now waits for a loaded tile), PostPage cover fetchpriority=high + PostCard covers loading=lazy, type scale px to rem (OS text scaling), password unmask toggle (components/PasswordField, aria-pressed, en+uk strings), autocorrect/autocapitalize/spellcheck off on emails; accepted: intrinsic image dimensions (needs media API change), content-visibility view caching (flow change)
-  - audit-accessibility applied and archived (PR #34): axe-core (@axe-core/playwright 4.10.1) audits in e2e/src/audit-accessibility.spec.ts scan every routed page WCAG 2.1 A/AA through real flows, in both themes and the uk locale; expectAccessible in e2e/src/support/audit.ts fails on unaccepted critical/serious violations, ACCEPTED list with stale-entry check is empty today; one defect fixed: Leaflet attribution contrast in dark theme (token-keyed CSS in both map modules); theme contract now dual-path (design/build-tokens.mjs emits @media prefers-color-scheme + attribute negation for dark; audited by "the theme respects both the system preference and the attribute")
-  - harden-security applied and archived (PR #33): browser security headers on nginx (strict CSP with 'unsafe-inline' styles only for MUI emotion, HSTS, nosniff, X-Frame-Options DENY, Referrer-Policy; repeated in locations with their own add_header because nginx drops inherited ones), e2e stack-up spec asserts the header set, CI gains pnpm audit --prod in check and a security job scanning both built images with pinned aquasec/trivy:0.36.1 (--ignore-unfixed, --timeout 15m, shared cache volume); pnpm audit is clean
-  - measure-performance applied and archived (PR #32): perf/ package outside the pnpm workspace; k6 scenarios (site-search, site-details, feed, login; ramping-vus 20, p95 1200ms reads / 2000ms login after CI calibration, <1% errors) run as the pinned grafana/k6 image on the stack network (host port-forward drops connections at ~80 concurrent on Windows, so it is no measurement instrument); lighthouse.mjs checks FCP<3s, LCP<5s, weight<1.5MB with CHROME_PATH/Edge/Playwright-Chromium discovery; scripts/run-perf.mjs = pnpm test:perf, project divenet-perf port 18082, scripts/stack.mjs shared with run-e2e; CI job perf uploads performance-report.txt
-  - UML report done on fix/uml-diagrams: 26 draw.io figures in docs/uml built from docs/uml/src (node docs/uml/src/build.mjs), PNGs in docs/uml/png, report docs/uml/REPORT.md and its Word version docs/uml/ЗВІТ_ППС.docx
+  - M0-M5 and Stretch merged and archived (PRs #1-#26); specs in openspec/specs/, history in git and openspec/changes/archive/
+  - M6 archived and merged: apply-ui-design (#27), complete-demo-seed, add-e2e-suite, fix-proxy-keepalive (#31), measure-performance (#32), harden-security (#33), audit-accessibility (#34), audit-modern-web (#35)
+  - UML report merged (PR #36): docs/uml (sources docs/uml/src, build with node docs/uml/src/build.mjs)
+  - Owner product review closed 2026-11-21 on branch review (not pushed): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
 wip: null
 blocked: null
-next: finish audit-modern-web (gate, sync shared/modern-web, archive, PR); then polish-release (i18n completeness, empty/error states)
+next: fix/ui-defects (F-02 font CSP, F-04 password width, F-13 dive form layout; F-13 must be reproduced and its cause named before fixing), then /opsx:propose polish-release (absorbs F-01, F-06, F-08)
 decisions:
-  - complete-demo-seed design.md D1-D7 (seed via services; demo package; sites by name; times = seeding time except dive dates; generated JPEGs; one transaction then evaluate; one documented password)
-  - apply-ui-design design.md D1-D4 (audit is a file; 44 px touch target below bp-md; small specced fixes; accepted differences in DESIGN.md)
-  - add-object-storage design.md D1-D6 (divenet.media.storage local|minio, local by default; private bucket; re-readable resource keeps ranges; compose rules know minio; old media-data needs ADR-0012's copy command)
-  - add-video-media design.md D1-D8 (stored as uploaded, no ffmpeg; separate endpoint and join tables; attach refuses the wrong kind; images keep their own 10 MB check; up to 50 MB held in the heap until add-object-storage)
-  - add-site-reviews design.md D1-D8 + impl: MediaService.attach/release clear the persistence context (reload after); enum params bind case-insensitively (EnumParameterConfig); reviews list takes page/size, not Pageable (ARCHITECTURE.md); API on 8081 locally when 8080 is busy (DIVENET_API_URL)
-  - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes, never edits of their rows (docs/adr/0010, AGENTS.md workflow rules)
-  - Stack and conventions: docs/adr/0001, 0003-0006; layered monolith with ArchUnit layer rules: docs/adr/0008
-  - No required human review; master protected (PR + green check and stack jobs); repo allows auto-merge
+  - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
+  - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
+  - Admin is a moderator only, no diver features in UI or API (F-18); footer removed, disclaimer in a first-visit dialog (F-03)
+  - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes (docs/adr/0010)
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
-  - UI design lives in design/ (repo is the source); claude.ai design system + canvas are mirrors: docs/DESIGN.md, docs/adr/0009
-refs: [AGENTS.md, docs/ROADMAP.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/, openspec/changes/archive/2026-11-05-complete-demo-seed/]
+  - Layered monolith with ArchUnit layer rules (docs/adr/0008); stack and conventions docs/adr/0001, 0003-0006
+  - UI design lives in design/ (repo is the source): docs/DESIGN.md, docs/adr/0009
+  - Media: local or MinIO storage (docs/adr/0012); video stored as uploaded (docs/adr/0011)
+  - No required human review; master protected (PR + green check and stack jobs)
+refs: [AGENTS.md, docs/ROADMAP.md, docs/review-findings/README.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME; stack stopped; Docker running) — full gate; fresh stack (down -v) seeds 51 sites + 8 divers, demo login and both admin queues checked
-  negative_probes: removed uk key, hand-edited schema.gen.ts and literal JSX text each fail the gate at their step; ArchUnit, stale snapshot and Spotless probes from earlier changes; add-app-shell: hand-edited tokens.css fails at the design tokens step, #fff in src CSS fails at tokens-only CSS; add-local-stack: no backend health check and a published db port each fail the compose step, naming the service; add-authentication: JWT_SECRET with a compose default fails the compose step, naming JWT_SECRET; add-media-uploads: no media-data mount fails it, naming backend; plan-update notes: an open note for an archived item and a note without '## Why' each fail check-plan-updates, naming the file; add-object-storage: missing MINIO_ROOT_PASSWORD, a published minio port and minio data off a named volume each fail the compose step, naming the cause
-  ci: PRs #1-#34 green on ubuntu-latest; jobs check, stack, e2e (with a11y audits), perf, security
-  not_covered: E2E (M6)
+  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME, Docker running); later changes green in CI
+  ci: PRs #1-#36 green on ubuntu-latest; jobs check, stack, e2e (with a11y audits), perf, security
+  run_tests: pnpm test:e2e (port 18081), pnpm test:perf (port 18082), pnpm smoke:stack
+  demo: docker compose up --build on :8080; demo divers <name>@demo.divenet.test / divenet-demo; admin from ADMIN_EMAIL/ADMIN_PASSWORD
   env_note: global openspec.cmd blocked by NVM firewall locally — use node node_modules/@fission-ai/openspec/bin/openspec.js; pnpm via npx pnpm@12.15.0
 platforms: Windows 11 local (JDK 26, Node 26, Docker Desktop); ubuntu-latest CI
