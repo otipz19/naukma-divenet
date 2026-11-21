@@ -25,6 +25,11 @@ const serveMine = (...items: Certificate[]) =>
 
 const save = () => screen.getByRole("button", { name: "Save certificate" });
 
+async function openAdd(user: ReturnType<typeof userEvent.setup>, name = "Add a certificate") {
+  await user.click(await screen.findByRole("button", { name }));
+  return screen.getByRole("dialog", { name });
+}
+
 describe("user/certificates: The certificates page manages the user's certificates", () => {
   it("sends a signed-out visitor to the login page", async () => {
     renderRoute("/profile/certificates");
@@ -32,7 +37,7 @@ describe("user/certificates: The certificates page manages the user's certificat
     expect(await screen.findByRole("heading", { name: "Log in" })).toBeInTheDocument();
   });
 
-  it("lists statuses and a rejection reason", async () => {
+  it("lists statuses and a rejection reason, with no form on the page", async () => {
     startSignedIn();
     serveMine(
       cert({ id: 1, status: "VERIFIED" }),
@@ -43,9 +48,13 @@ describe("user/certificates: The certificates page manages the user's certificat
     expect(await screen.findByText("Verified")).toBeInTheDocument();
     expect(screen.getByText("Rejected")).toBeInTheDocument();
     expect(screen.getByText("Rejected because: Unreadable")).toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Level")).not.toBeInTheDocument();
   });
+});
 
-  it("sends a new certificate, clears the form and refreshes", async () => {
+describe("user/certificates: Certificates are added, edited and deleted in dialogs", () => {
+  it("adds a certificate in a dialog, closes it and refreshes", async () => {
     startSignedIn();
     let sent: unknown;
     server.use(
@@ -58,17 +67,18 @@ describe("user/certificates: The certificates page manages the user's certificat
     renderRoute("/profile/certificates");
     const user = userEvent.setup();
 
-    await user.selectOptions(await screen.findByLabelText("Agency"), "SSI");
-    await user.type(screen.getByLabelText("Level"), " Rescue ");
-    await user.type(screen.getByLabelText("Certificate number"), "S-9");
+    const form = await openAdd(user);
+    await user.selectOptions(within(form).getByLabelText("Agency"), "SSI");
+    await user.type(within(form).getByLabelText("Level"), " Rescue ");
+    await user.type(within(form).getByLabelText("Certificate number"), "S-9");
     await user.click(save());
 
     expect(await screen.findByText("PADI Rescue")).toBeInTheDocument();
     expect(sent).toEqual({ agency: "SSI", level: "Rescue", number: "S-9" });
-    expect(screen.getByLabelText("Level")).toHaveValue("");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("shows field errors and sends nothing", async () => {
+  it("shows field errors in the dialog and sends nothing", async () => {
     startSignedIn();
     let sent = false;
     server.use(
@@ -78,15 +88,17 @@ describe("user/certificates: The certificates page manages the user's certificat
       }),
     );
     renderRoute("/profile/certificates", { language: "uk" });
+    const user = userEvent.setup();
 
-    await userEvent.click(await screen.findByRole("button", { name: "Зберегти сертифікат" }));
+    const form = await openAdd(user, "Додати сертифікат");
+    await user.click(within(form).getByRole("button", { name: "Зберегти сертифікат" }));
 
-    expect(await screen.findByText("Вкажіть рівень.")).toBeInTheDocument();
-    expect(screen.getByText("Вкажіть номер.")).toBeInTheDocument();
+    expect(await within(form).findByText("Вкажіть рівень.")).toBeInTheDocument();
+    expect(within(form).getByText("Вкажіть номер.")).toBeInTheDocument();
     expect(sent).toBe(false);
   });
 
-  it("warns when editing a verified certificate, and updates it", async () => {
+  it("titles the edit dialog with the certificate, warns when it is verified, and updates it", async () => {
     startSignedIn();
     serveMine(cert({ status: "VERIFIED" }));
     let sent: { level?: string } | undefined;
@@ -100,17 +112,19 @@ describe("user/certificates: The certificates page manages the user's certificat
     const user = userEvent.setup();
 
     await user.click(await screen.findByRole("button", { name: "Edit PADI Open Water" }));
-    expect(screen.getByText(/will need verifying again/)).toBeInTheDocument();
-    const level = screen.getByLabelText("Level");
+    const form = screen.getByRole("dialog", { name: "Edit certificate: PADI Open Water" });
+    expect(within(form).getByText(/will need verifying again/)).toBeInTheDocument();
+    const level = within(form).getByLabelText("Level");
     expect(level).toHaveValue("Open Water");
     await user.clear(level);
     await user.type(level, "Instructor");
     await user.click(save());
 
     await waitFor(() => expect(sent?.level).toBe("Instructor"));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
 
-  it("deletes after confirmation", async () => {
+  it("deletes after a confirmation that names the certificate", async () => {
     startSignedIn();
     let deleted = false;
     server.use(
@@ -124,24 +138,51 @@ describe("user/certificates: The certificates page manages the user's certificat
     const user = userEvent.setup();
 
     await user.click(await screen.findByRole("button", { name: "Delete PADI Open Water" }));
+    const question = screen.getByRole("dialog", {
+      name: "Delete the certificate PADI Open Water?",
+    });
     expect(deleted).toBe(false);
-    await user.click(screen.getByRole("button", { name: "Yes, delete" }));
+    await user.click(within(question).getByRole("button", { name: "Delete" }));
 
     expect(await screen.findByText("No certificates yet.")).toBeInTheDocument();
+    expect(deleted).toBe(true);
   });
 
-  it("shows an alert and keeps the values when saving fails", async () => {
+  it("sends nothing when the confirmation is cancelled", async () => {
+    startSignedIn();
+    serveMine(cert());
+    let deleted = false;
+    server.use(
+      http.delete(`${write}/1`, () => {
+        deleted = true;
+        return new HttpResponse(null, { status: 204 });
+      }),
+    );
+    renderRoute("/profile/certificates");
+    const user = userEvent.setup();
+
+    await user.click(await screen.findByRole("button", { name: "Delete PADI Open Water" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByText("PADI Open Water")).toBeInTheDocument();
+    expect(deleted).toBe(false);
+  });
+
+  it("keeps the dialog open with an alert and the values when saving fails", async () => {
     startSignedIn();
     server.use(http.post(write, () => HttpResponse.json({ status: 500 }, { status: 500 })));
     renderRoute("/profile/certificates");
     const user = userEvent.setup();
 
-    await user.type(await screen.findByLabelText("Level"), "Rescue");
-    await user.type(screen.getByLabelText("Certificate number"), "S-9");
+    const form = await openAdd(user);
+    await user.type(within(form).getByLabelText("Level"), "Rescue");
+    await user.type(within(form).getByLabelText("Certificate number"), "S-9");
     await user.click(save());
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("could not be saved");
-    expect(screen.getByLabelText("Level")).toHaveValue("Rescue");
+    expect(await within(form).findByRole("alert")).toHaveTextContent("could not be saved");
+    expect(screen.getByRole("dialog", { name: "Add a certificate" })).toBeInTheDocument();
+    expect(within(form).getByLabelText("Level")).toHaveValue("Rescue");
   });
 });
 

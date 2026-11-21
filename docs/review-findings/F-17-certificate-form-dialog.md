@@ -1,7 +1,7 @@
 # F-17 Certificate editing is unclear; move create and edit into a dialog
 
 - **Area:** Certificates (`/profile/certificates`)
-- **Status:** decided (owner's proposal: dialogs, same as F-15)
+- **Status:** done: add-dialogs-and-toasts (owner's proposal: dialogs, same as F-15)
 - **Delivered by:** `add-dialogs-and-toasts`
 
 ## Seen

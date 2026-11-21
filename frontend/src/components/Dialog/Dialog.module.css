@@ -1,0 +1,120 @@
+/* design/system/components/Dialog (dn-dialog): native <dialog>, scrim backdrop, full screen below bp-md. */
+.dialog {
+  width: min(var(--reading-max), calc(100vw - var(--space-6)));
+  max-height: calc(100dvh - var(--space-8));
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-1);
+  color: var(--ink);
+  box-shadow: var(--shadow-2);
+  overflow: hidden;
+}
+
+.dialog[open] {
+  display: flex;
+  flex-direction: column;
+  animation: fade-in 150ms ease-out;
+}
+
+.dialog::backdrop {
+  background: var(--scrim);
+}
+
+.sm {
+  width: min(calc(var(--reading-max) * 0.6), calc(100vw - var(--space-6)));
+}
+
+.head {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border);
+}
+
+.sm .head {
+  border-bottom: 0;
+}
+
+.title {
+  margin: 0;
+  padding-top: var(--space-2);
+  overflow-wrap: anywhere;
+}
+
+.close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--touch-target);
+  height: var(--touch-target);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-muted);
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.form {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.body {
+  display: grid;
+  flex: 1 1 auto;
+  gap: var(--space-4);
+  min-height: 0;
+  padding: var(--space-5);
+  overflow-y: auto;
+}
+
+.actions {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+}
+
+.sm .actions {
+  border-top: 0;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .dialog {
+    margin: 0;
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    border-radius: 0;
+  }
+}

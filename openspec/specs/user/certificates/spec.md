@@ -96,8 +96,9 @@ Only the owner and admins SHALL receive `number`, `photo`, and `rejectionReason`
 - **THEN** both are returned with their details
 
 ### Requirement: The certificates page manages the user's certificates
-`/profile/certificates` SHALL need a signed-in user. It SHALL list their certificates with their status in the active language and any rejection reason, and offer a form to add
-one and to edit or delete each, with deletion confirmed. Editing a verified certificate SHALL warn that it will need verifying again. The profile's owner SHALL have a link to it.
+`/profile/certificates` SHALL need a signed-in user. It SHALL list their certificates with their status in the active language and
+any rejection reason, with an "Add a certificate" button above the list and Edit and Delete on each item. The page SHALL show no
+form outside a dialog. The profile's owner SHALL have a link to the page.
 
 #### Scenario: Signed out
 - **WHEN** a signed-out visitor opens the page
@@ -105,24 +106,33 @@ one and to edit or delete each, with deletion confirmed. Editing a verified cert
 
 #### Scenario: Listed
 - **WHEN** the user has a verified and a rejected certificate
-- **THEN** both show their status, and the rejected one its reason
+- **THEN** both show their status, and the rejected one its reason, and no certificate form is shown
+
+### Requirement: Certificates are added, edited and deleted in dialogs
+Add and Edit SHALL open the certificate form in a dialog, titled "Add a certificate" or with the certificate's agency and level.
+After saving, the dialog SHALL close and the list SHALL be refreshed. Editing a verified certificate SHALL show in the dialog, before
+saving, that it will need verifying again. Delete SHALL ask for confirmation in a confirmation dialog that names the certificate.
 
 #### Scenario: Added
-- **WHEN** the user fills in the form and saves
-- **THEN** the request carries the values, and the form is cleared and the list refreshed
+- **WHEN** the user presses Add a certificate, fills in the dialog and saves
+- **THEN** the request carries the values, the dialog is gone and the list is refreshed
 
 #### Scenario: Form errors
 - **WHEN** the user saves with no level or number
-- **THEN** field errors in the active language are shown and nothing is sent
+- **THEN** field errors in the active language are shown in the dialog and nothing is sent
 
 #### Scenario: Edit warning
-- **WHEN** the user edits a verified certificate
-- **THEN** the form shows the warning and the update request is sent on save
+- **WHEN** the user presses Edit on a verified certificate
+- **THEN** the dialog is titled with its agency and level, shows the warning, and sends the update request on save
 
 #### Scenario: Delete
-- **WHEN** the user deletes a certificate and confirms
-- **THEN** the delete request is sent, and it leaves the list
+- **WHEN** the user presses Delete on a certificate and confirms
+- **THEN** the confirmation named the certificate, the delete request is sent, and it leaves the list
+
+#### Scenario: Delete not confirmed
+- **WHEN** the user presses Delete on a certificate and cancels the confirmation
+- **THEN** nothing is sent and it stays in the list
 
 #### Scenario: Failed save
 - **WHEN** the API answers 500
-- **THEN** the page shows an alert and keeps the entered values
+- **THEN** the dialog stays open with an alert and keeps the entered values

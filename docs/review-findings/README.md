@@ -28,10 +28,10 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-11](F-11-submit-site-placement.md) | Map | "Submit a site" sits inside the search form | UX | decided |
 | [F-12](F-12-map-mobile.md) | Map | Phone map page scrolls and the form covers the map; it departs from `MobileMap.html` | UX / design drift | decided |
 | [F-13](F-13-dive-form-errors-layout.md) | Dive log | Validation messages break the dive form layout; reproduce and find the cause before fixing | bug | done: PR #38 |
-| [F-14](F-14-achievement-toast.md) | Achievements | Unlock alert shows inside the form; use a toast | UX, spec change | decided |
-| [F-15](F-15-dive-form-dialog.md) | Dive log | Edit is not obvious; create and edit move to a dialog | UX, spec change | decided |
-| [F-16](F-16-dive-delete-hidden.md) | Dive log | Delete is only inside the edit form; users cannot find it | UX, spec change | decided |
-| [F-17](F-17-certificate-form-dialog.md) | Certificates | Edit is unclear; create and edit move to a dialog | UX, spec change | decided |
+| [F-14](F-14-achievement-toast.md) | Achievements | Unlock alert shows inside the form; use a toast | UX, spec change | done: add-dialogs-and-toasts |
+| [F-15](F-15-dive-form-dialog.md) | Dive log | Edit is not obvious; create and edit move to a dialog | UX, spec change | done: add-dialogs-and-toasts |
+| [F-16](F-16-dive-delete-hidden.md) | Dive log | Delete is only inside the edit form; users cannot find it | UX, spec change | done: add-dialogs-and-toasts |
+| [F-17](F-17-certificate-form-dialog.md) | Certificates | Edit is unclear; create and edit move to a dialog | UX, spec change | done: add-dialogs-and-toasts |
 | [F-18](F-18-admin-is-not-a-diver.md) | Roles | The admin can log dives, write posts and has a profile; the admin should be a moderator only | product rule, spec change | decided |
 | [F-19](F-19-moderation-in-header.md) | Shell | Moderation link is in the account menu; move it to the header navigation | UX, spec change | decided |
 

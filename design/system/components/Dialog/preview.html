@@ -1,0 +1,26 @@
+<!-- @dsCard group="Overlays" height=560 subtitle="Form dialog and confirmation dialog over the scrim" -->
+<div style="display: grid; gap: 24px; justify-items: center; padding: 24px; background: var(--scrim)">
+  <div class="dn-dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="dn-dialog__head">
+      <h2 id="dlg-title" class="dn-dialog__title">Edit dive: SS Thistlegorm, 12 May 2026</h2>
+      <button class="dn-dialog__close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+    </div>
+    <div class="dn-dialog__body">
+      <label class="dn-field"><span class="dn-field__label">Date</span><input class="dn-input" type="date" value="2026-05-12" /></label>
+      <label class="dn-field"><span class="dn-field__label">Max depth (m)</span><input class="dn-input" inputmode="decimal" value="30.4" /></label>
+    </div>
+    <div class="dn-dialog__actions">
+      <button class="dn-btn dn-btn--secondary">Cancel</button>
+      <button class="dn-btn dn-btn--primary">Save dive</button>
+    </div>
+  </div>
+  <div class="dn-dialog dn-dialog--confirm" role="dialog" aria-modal="true" aria-labelledby="cfm-title">
+    <div class="dn-dialog__head">
+      <h2 id="cfm-title" class="dn-dialog__title">Delete the dive at SS Thistlegorm on 12 May 2026?</h2>
+    </div>
+    <div class="dn-dialog__actions">
+      <button class="dn-btn dn-btn--secondary">Cancel</button>
+      <button class="dn-btn dn-btn--danger">Delete</button>
+    </div>
+  </div>
+</div>

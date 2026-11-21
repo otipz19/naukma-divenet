@@ -6,6 +6,18 @@
     "title": "Page not found",
     "backHome": "Back to the home page"
   },
+  "common": {
+    "dialog": {
+      "close": "Close",
+      "discardQuestion": "Discard changes?",
+      "discard": "Discard",
+      "keepEditing": "Keep editing",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "close": "Close notification"
+    }
+  },
   "shell": {
     "skipToContent": "Skip to content",
     "nav": {
@@ -462,11 +474,9 @@
       "delete": "Delete",
       "editOne": "Edit {{name}}",
       "deleteOne": "Delete {{name}}",
-      "confirmDelete": "Delete this certificate?",
-      "confirmYes": "Yes, delete",
-      "confirmNo": "Keep it",
+      "confirmDelete": "Delete the certificate {{name}}?",
       "addTitle": "Add a certificate",
-      "editTitle": "Edit certificate",
+      "editTitle": "Edit certificate: {{name}}",
       "reverifyWarning": "Saving changes means this certificate will need verifying again.",
       "agency": "Agency",
       "agencyOther": "Other",
@@ -504,6 +514,7 @@
     "stats": "Dives: {{dives}} · Sites: {{sites}} · Deepest: {{deepest}}",
     "empty": "You have not logged a dive yet.",
     "loadError": "The dive log could not be loaded. Please try again later.",
+    "deleteFailure": "The dive could not be deleted. Please try again.",
     "loadMore": "Load more",
     "units": {
       "m": "m",
@@ -524,11 +535,12 @@
       "visibility": "Visibility",
       "actions": "Actions",
       "edit": "Edit",
-      "editEntry": "Edit dive at {{site}}"
+      "editEntry": "Edit dive at {{site}}, {{date}}",
+      "delete": "Delete",
+      "deleteEntry": "Delete dive at {{site}}, {{date}}"
     },
     "form": {
       "title": "Log a dive",
-      "editTitle": "Edit dive",
       "site": "Site",
       "siteHint": "Search the catalog, or open a site from the map and use its Log a dive here link.",
       "changeSite": "Change",
@@ -543,10 +555,6 @@
       "notes": "Notes",
       "save": "Save dive",
       "cancel": "Cancel",
-      "delete": "Delete",
-      "confirmDelete": "Delete this dive?",
-      "confirmYes": "Yes, delete",
-      "confirmNo": "Keep it",
       "failure": "The dive could not be saved. Please try again.",
       "errors": {
         "siteRequired": "Choose a site.",
@@ -567,7 +575,11 @@
       "visited": "Visited sites",
       "history": "Dive history",
       "diveCount": "Dives: {{n}}"
-    }
+    },
+    "dialog": {
+      "editTitle": "Edit dive: {{site}}, {{date}}"
+    },
+    "confirmDelete": "Delete the dive at {{site}} on {{date}}?"
   },
   "post": {
     "draft": "Draft",
@@ -676,6 +688,7 @@
         "name": "Site scout",
         "description": "Get a submitted site approved"
       }
-    }
+    },
+    "seeAll": "See achievements"
   }
 }

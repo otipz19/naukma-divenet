@@ -31,16 +31,8 @@
   color: var(--ink-muted);
 }
 
-.columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  align-items: flex-start;
-}
-
 .logColumn {
   display: grid;
-  flex: 999 1 30rem;
   gap: var(--space-3);
   min-width: 0;
 }
@@ -76,6 +68,10 @@
   text-align: right;
 }
 
+.actionCell > * + * {
+  margin-left: var(--space-1);
+}
+
 .hidden {
   position: absolute;
   width: 1px;
@@ -84,29 +80,10 @@
   clip-path: inset(50%);
 }
 
-.form {
-  display: grid;
-  flex: 1 1 20rem;
-  gap: var(--space-4);
-  min-width: 0;
-  padding: var(--space-5);
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-}
-
 .pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  gap: var(--space-2);
 }
 
 .picker,

@@ -17,7 +17,7 @@ and visual editing, so nobody needs a claude.ai account to use the design.
 | [design/system/README.md](../design/system/README.md) | Brand book: voice, colour, type, spacing, shape, layout, imagery, motion, icons | Read it first, before any UI work |
 | [design/system/tokens.json](../design/system/tokens.json) | **The tokens**: every colour (light and dark), type style, spacing, radius, shadow and layout value, each with a usage note | The single source of every visual value |
 | [design/system/tokens.css](../design/system/tokens.css) | CSS custom properties and type classes, generated from `tokens.json` | The front-end imports it |
-| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html` | Before building or changing that component |
+| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html`. Alert, AppFooter, AppHeader, Badge, Button, Chip, Cover, Dialog (modal and confirmation), Rating, SiteCard, TextField, Toast | Before building or changing that component |
 | [design/system/components/bundle.css](../design/system/components/bundle.css) | Reference CSS for the components (`dn-*` classes), using only tokens | The exact paddings, sizes and states to reproduce |
 | [design/screens/](../design/screens/) | One HTML mockup per screen, desktop at 1280 px plus two phone screens | Before building or changing that page |
 | [design/build-tokens.mjs](../design/build-tokens.mjs), [design/build-canvas.mjs](../design/build-canvas.mjs), [design/serve.mjs](../design/serve.mjs) | Generate `tokens.css`; wrap the screens as Claude Design artboards; serve the mockups locally | When the design changes |
@@ -42,7 +42,8 @@ files above.
 | `ReviewForm.html` | Rating input with "No rating", community difficulty, text, photos | `add-site-reviews`, `add-media-uploads` |
 | `Auth.html` | Log in with a failed-login banner, sign up with a field error | `add-authentication` |
 | `SubmitSite.html` | Site submission with a location picker, plus the author's submissions with their statuses | `add-site-submission-and-moderation` |
-| `DiveLog.html` | Dive table, log-a-dive form, an achievement-unlocked banner | M3 dive log and achievements |
+| `DiveLog.html` | Dive table with Edit and Delete on each row, an achievement-unlocked toast, then the Log a dive dialog open | M3 dive log and achievements, `add-dialogs-and-toasts` |
+| `Certificates.html` | The user's certificates with Add, Edit and Delete, then the edit dialog of a verified certificate with its warning | `add-dialogs-and-toasts` |
 | `Profile.html` | Profile header with stats, certificates with verification status, earned and locked achievements with progress, visited sites, privacy notice | M3 profile, certificates, achievements |
 | `Feed.html` | Feed with country and region filters, post cards, pagination, drafts | M5 posts and feeds |
 | `PostEditor.html` | Title, cover, text, region and site links, publish, save draft, delete | M5 posts |

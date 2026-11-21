@@ -8,14 +8,14 @@ state, with a declared pass/fail policy that the E2E suite and CI keep green.
 
 ## Requirements
 
-
 ### Requirement: Every routed page is audited against WCAG 2.1 A and AA
 
 The E2E suite SHALL scan every routed page of the app with axe-core against
 the WCAG 2.1 A and AA rule tags, reaching pages through real flows with
 seeded data (including an authenticated admin state for the moderation page),
 and SHALL scan pages in both color themes and in the `uk` locale where the
-rendered text changes with the locale.
+rendered text changes with the locale. A page that opens dialogs SHALL also be
+scanned with each of its form dialogs open.
 
 #### Scenario: A page is audited with data in both themes
 
@@ -36,6 +36,12 @@ rendered text changes with the locale.
 - **WHEN** a page whose labels change with the locale is audited
 - **THEN** it is scanned in the `uk` locale as well as the default, so unnamed
   elements introduced by a missing translation fail the audit.
+
+#### Scenario: An open dialog is audited
+
+- **WHEN** the audit suite opens the dive log dialog or the certificate dialog
+- **THEN** the page is scanned while the dialog is open, so the dialog's own
+  controls and names are checked.
 
 ### Requirement: Violations fail the suite by declared impact
 

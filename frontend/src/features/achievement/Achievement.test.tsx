@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
@@ -97,8 +97,12 @@ const NEW_DIVE = {
 /** Each save moves on to the next list of achievements. */
 function serveSaves(...lists: Achievement[][]) {
   let index = 0;
+  requests = { achievements: 0 };
   server.use(
-    http.get(achievementsUrl, () => HttpResponse.json(lists[index] ?? [])),
+    http.get(achievementsUrl, () => {
+      requests.achievements += 1;
+      return HttpResponse.json(lists[index] ?? []);
+    }),
     http.post(logUrl, () => {
       index += 1;
       return HttpResponse.json(NEW_DIVE, { status: 201 });
@@ -109,64 +113,92 @@ function serveSaves(...lists: Achievement[][]) {
   );
 }
 
+/** Opens the Log a dive dialog from the header, chooses the site and saves. */
 async function saveADive(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(await screen.findByLabelText("Site"), "Blue");
-  await user.click(await screen.findByRole("button", { name: /Blue Hole/ }));
-  await user.click(screen.getByRole("button", { name: "Save dive" }));
+  await user.click(await screen.findByRole("button", { name: "Log a dive" }));
+  const dialog = screen.getByRole("dialog", { name: "Log a dive" });
+  await user.type(within(dialog).getByLabelText("Site"), "Blue");
+  await user.click(await within(dialog).findByRole("button", { name: /Blue Hole/ }));
+  await user.click(within(dialog).getByRole("button", { name: "Save dive" }));
+  await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
 }
 
 const firstDive = { ...LOCKED, code: "first-dive", target: 1, progress: 0 };
 const deep = { code: "deep-diver", target: 40, progress: 10 };
+const toasts = () => screen.getByRole("status");
+
+/** Waits until the page has the before-save list, which the announcement compares against. */
+async function renderLog() {
+  renderRoute("/dive-log");
+  await waitFor(() => expect(requests.achievements).toBeGreaterThan(0));
+}
+
+let requests = { achievements: 0 };
 
 describe("divelog/log-page: The dive log page announces an unlocked achievement", () => {
-  it("announces one", async () => {
+  it("shows a toast for one, after the dialog closes", async () => {
     startSignedIn();
     serveSaves([firstDive], [EARNED]);
-    renderRoute("/dive-log");
-    await waitFor(() => expect(screen.getByLabelText("Site")).toBeInTheDocument());
+    await renderLog();
 
     await saveADive(userEvent.setup());
 
-    const alert = await screen.findByRole("alert");
-    expect(alert).toHaveTextContent("Achievement unlocked: First dive");
-    expect(alert).toHaveTextContent("Log your first dive");
+    await waitFor(() => expect(toasts()).toHaveTextContent("Achievement unlocked: First dive"));
+    expect(toasts()).toHaveTextContent("Log your first dive");
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("names both when a save earns two", async () => {
+  it("shows two toasts when a save earns two", async () => {
     startSignedIn();
     serveSaves(
       [firstDive, deep],
       [EARNED, { code: "deep-diver", target: 40, progress: 40, earnedAt: "2026-05-12T10:00:00Z" }],
     );
-    renderRoute("/dive-log");
+    await renderLog();
 
     await saveADive(userEvent.setup());
 
-    expect(await screen.findByText("Achievement unlocked: First dive")).toBeInTheDocument();
-    expect(screen.getByText("Achievement unlocked: Deep diver")).toBeInTheDocument();
+    expect(
+      await within(toasts()).findByText("Achievement unlocked: First dive"),
+    ).toBeInTheDocument();
+    expect(within(toasts()).getByText("Achievement unlocked: Deep diver")).toBeInTheDocument();
   });
 
-  it("shows nothing when a save earns nothing", async () => {
+  it("shows no toast when a save earns nothing", async () => {
     startSignedIn();
     serveSaves([EARNED], [EARNED]);
-    renderRoute("/dive-log");
+    await renderLog();
 
     await saveADive(userEvent.setup());
 
-    await waitFor(() => expect(screen.getByRole("button", { name: "Save dive" })).toBeEnabled());
-    expect(screen.queryByText(/Achievement unlocked/)).not.toBeInTheDocument();
+    await waitFor(() => expect(requests.achievements).toBeGreaterThan(1));
+    expect(toasts()).toBeEmptyDOMElement();
   });
 
-  it("goes away on the next save", async () => {
+  it("adds no toast on a next save that earns nothing", async () => {
     startSignedIn();
     serveSaves([firstDive], [EARNED], [EARNED]);
-    renderRoute("/dive-log");
+    await renderLog();
     const user = userEvent.setup();
 
     await saveADive(user);
-    await screen.findByText("Achievement unlocked: First dive");
+    await within(toasts()).findByText("Achievement unlocked: First dive");
     await saveADive(user);
 
-    await waitFor(() => expect(screen.queryByText(/Achievement unlocked/)).not.toBeInTheDocument());
+    await waitFor(() => expect(requests.achievements).toBeGreaterThan(2));
+    expect(within(toasts()).getAllByText(/Achievement unlocked/)).toHaveLength(1);
+  });
+
+  it("links to the user's achievements", async () => {
+    startSignedIn();
+    serveSaves([firstDive], [EARNED]);
+    await renderLog();
+
+    await saveADive(userEvent.setup());
+
+    expect(await within(toasts()).findByRole("link", { name: "See achievements" })).toHaveAttribute(
+      "href",
+      `/users/${MIRA.id}`,
+    );
   });
 });

@@ -111,9 +111,13 @@ test("a diver's pages are accessible", async ({ page }) => {
   await login(page, demoDiver.sofia, DEMO_PASSWORD, "Sofia Alvarez");
 
   await page.goto("/dive-log");
+  await expect(page.getByRole("region", { name: "Logged dives" })).toBeVisible();
   await expectAccessible(page, "dive log");
-  await page.goto("/dive-log/new");
-  await expectAccessible(page, "dive log entry form");
+  // The entry form lives in a dialog: scan the page with it open.
+  await page.getByRole("button", { name: "Log a dive" }).click();
+  await expect(page.getByRole("dialog", { name: "Log a dive" })).toBeVisible();
+  await expectAccessible(page, "dive log entry dialog");
+  await page.keyboard.press("Escape");
 
   await page.goto("/feed");
   await expectAccessible(page, "feed");
@@ -144,7 +148,22 @@ test("review and warning forms are accessible", async ({ page }) => {
 test("the certificates page is accessible", async ({ page }) => {
   await login(page, demoDiver.bohdan, DEMO_PASSWORD, "Богдан Лиманець");
   await page.goto("/profile/certificates");
+  await expect(page.getByRole("region", { name: "Certificates" })).toBeVisible();
   await expectAccessible(page, "certificates");
+  await page.getByRole("button", { name: "Add a certificate" }).click();
+  await expect(page.getByRole("dialog", { name: "Add a certificate" })).toBeVisible();
+  await expectAccessible(page, "certificate dialog");
+});
+
+test("the certificate dialog is accessible in the dark theme", async ({ browser }) => {
+  const context = await browser.newContext({ colorScheme: "dark" });
+  const page = await context.newPage();
+  await login(page, demoDiver.bohdan, DEMO_PASSWORD, "Богдан Лиманець");
+  await page.goto("/profile/certificates");
+  await page.getByRole("button", { name: "Add a certificate" }).click();
+  await expect(page.getByRole("dialog", { name: "Add a certificate" })).toBeVisible();
+  await expectAccessible(page, "certificate dialog (dark)");
+  await context.close();
 });
 
 test("the admin moderation page is accessible", async ({ page }) => {
