@@ -19,6 +19,16 @@ const ACCEPTED: Accepted[] = [
 ];
 
 export async function expectAccessible(page: Page, label: string) {
+  // Scan the settled page: mid-transition (a dialog's fade-in) colours are
+  // blended and fail contrast falsely. Infinite animations (spinners) never
+  // finish, so they are not awaited.
+  await page.evaluate(async () => {
+    const finite = document.getAnimations().filter((a) => {
+      const end = a.effect?.getComputedTiming().endTime;
+      return Number.isFinite(Number(end));
+    });
+    await Promise.all(finite.map((a) => a.finished.catch(() => undefined)));
+  });
   const builder = new AxeBuilder({ page }).withTags([
     "wcag2a",
     "wcag2aa",
