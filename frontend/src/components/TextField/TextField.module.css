@@ -2,6 +2,9 @@
 .field {
   display: grid;
   gap: var(--space-1);
+  /* Rows keep their own height when a grid parent stretches the field, e.g. beside a field
+     showing an error (review finding F-13). */
+  align-content: start;
 }
 
 .label {

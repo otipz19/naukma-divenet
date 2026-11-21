@@ -1,12 +1,12 @@
-goal: M6 (Release readiness) — act on the owner's product review (docs/review-findings), starting with fix/ui-defects and polish-release
+goal: M6 (Release readiness) — act on the owner's product review (docs/review-findings); polish-release runs last in M6
 done:
   - M0-M5 and Stretch merged and archived (PRs #1-#26); specs in openspec/specs/, history in git and openspec/changes/archive/
   - M6 archived and merged: apply-ui-design (#27), complete-demo-seed, add-e2e-suite, fix-proxy-keepalive (#31), measure-performance (#32), harden-security (#33), audit-accessibility (#34), audit-modern-web (#35)
   - UML report merged (PR #36): docs/uml (sources docs/uml/src, build with node docs/uml/src/build.mjs)
-  - Owner product review closed 2026-11-21 on branch review (not pushed): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: null
+  - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
+wip: fix/ui-defects (F-02, F-04, F-13 fixed and verified on the stack, committed, not pushed); add-dialogs-and-toasts proposed on change/add-dialogs-and-toasts (not pushed), awaiting owner review
 blocked: null
-next: fix/ui-defects (F-02 font CSP, F-04 password width, F-13 dive form layout; F-13 must be reproduced and its cause named before fixing), then /opsx:propose polish-release (absorbs F-01, F-06, F-08)
+next: open the PR for fix/ui-defects when the owner asks; owner reviews add-dialogs-and-toasts, then /opsx:apply; polish-release last (after rework-map-page)
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
@@ -20,7 +20,7 @@ decisions:
 refs: [AGENTS.md, docs/ROADMAP.md, docs/review-findings/README.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-05 on Windows (JDK 25 via JAVA_HOME, Docker running); later changes green in CI
+  last: pass 2026-11-21 on Windows (fix/ui-defects); later changes green in CI
   ci: PRs #1-#36 green on ubuntu-latest; jobs check, stack, e2e (with a11y audits), perf, security
   run_tests: pnpm test:e2e (port 18081), pnpm test:perf (port 18082), pnpm smoke:stack
   demo: docker compose up --build on :8080; demo divers <name>@demo.divenet.test / divenet-demo; admin from ADMIN_EMAIL/ADMIN_PASSWORD
