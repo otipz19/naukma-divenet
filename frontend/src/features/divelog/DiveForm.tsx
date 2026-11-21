@@ -1,15 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { api } from "../../api/client";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
+import {
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogCancel,
+  DialogForm,
+} from "../../components/Dialog/Dialog";
 import { SelectField } from "../../components/SelectField/SelectField";
 import { TextAreaField } from "../../components/TextField/TextAreaField";
 import { TextField } from "../../components/TextField/TextField";
-import { useInvalidateDiveLog, type DiveEntry, type DiveEntryRequest } from "./api";
+import { formatDiveDate, useInvalidateDiveLog, type DiveEntry, type DiveEntryRequest } from "./api";
 import { SitePicker, type PickedSite } from "./SitePicker";
 import styles from "./DiveLog.module.css";
 
@@ -65,57 +72,36 @@ function initialValues(entry: DiveEntry | null, site: PickedSite | null): DiveVa
 
 const numberOrUndefined = (value: string) => (value === "" ? undefined : Number(value));
 
-/** The log-a-dive form; the parent gives it a new `key` to start over (spec divelog/log-page). */
+/**
+ * The log-a-dive form in a dialog, titled "Log a dive" or "Edit dive: <site>, <date>" (spec
+ * divelog/log-page, design D6). Closing with unsaved changes asks first; saving closes it.
+ */
 export function DiveForm({
   entry,
   site,
-  banner,
-  focus = false,
-  onDone,
+  onSaved,
+  onClose,
 }: {
   entry: DiveEntry | null;
   site: PickedSite | null;
-  /** Shown above the actions; the page owns it, as a save remounts the form. */
-  banner?: ReactNode;
-  /** Moves focus to the first field when the form mounts, after the header's Log a dive. */
-  focus?: boolean;
-  onDone: () => void;
+  onSaved: () => void;
+  onClose: () => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const invalidate = useInvalidateDiveLog();
   const [failed, setFailed] = useState(false);
-  const [confirming, setConfirming] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
-  // On a phone the form is below the table, so Edit would otherwise seem to do nothing.
-  useEffect(() => {
-    if (entry) formRef.current?.scrollIntoView?.({ block: "nearest" });
-  }, [entry]);
-  useEffect(() => {
-    if (focus) formRef.current?.querySelector("input")?.focus();
-  }, [focus]);
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<DiveValues>({
     resolver: zodResolver(diveSchema),
     defaultValues: initialValues(entry, site),
   });
   const message = (key?: string) => (key ? t(key) : undefined);
 
-  const run = async (request: () => Promise<unknown>) => {
-    setFailed(false);
-    try {
-      await request();
-      await invalidate();
-      onDone();
-    } catch {
-      setFailed(true);
-    }
-  };
-
-  const onSubmit = handleSubmit((values) => {
+  const onSubmit = handleSubmit(async (values) => {
     const body: DiveEntryRequest = {
       siteId: values.site!.id,
       date: values.date,
@@ -126,121 +112,98 @@ export function DiveForm({
       buddies: values.buddies.trim() || undefined,
       notes: values.notes.trim() || undefined,
     };
-    return run(() =>
-      entry
+    setFailed(false);
+    try {
+      await (entry
         ? api.PUT("/api/v1/dive-log/{id}", { params: { path: { id: entry.id } }, body })
-        : api.POST("/api/v1/dive-log", { body }),
-    );
+        : api.POST("/api/v1/dive-log", { body }));
+      await invalidate();
+      onSaved();
+    } catch {
+      setFailed(true);
+    }
   });
 
+  const title = entry
+    ? t("divelog.dialog.editTitle", {
+        site: entry.siteName,
+        date: formatDiveDate(entry.date, i18n.language),
+      })
+    : t("divelog.form.title");
+
   return (
-    <form
-      ref={formRef}
-      className={styles.form}
-      noValidate
-      aria-labelledby="dive-form-title"
-      onSubmit={(event) => void onSubmit(event)}
-    >
-      <h2 id="dive-form-title" className={`h3 ${styles.flush}`}>
-        {t(entry ? "divelog.form.editTitle" : "divelog.form.title")}
-      </h2>
-      <Controller
-        control={control}
-        name="site"
-        render={({ field }) => (
-          <SitePicker
-            value={field.value}
-            onChange={field.onChange}
-            error={message(errors.site?.message)}
+    <Dialog title={title} dirty={isDirty} onClose={onClose}>
+      <DialogForm noValidate onSubmit={(event) => void onSubmit(event)}>
+        <DialogBody>
+          <Controller
+            control={control}
+            name="site"
+            render={({ field }) => (
+              <SitePicker
+                value={field.value}
+                onChange={field.onChange}
+                error={message(errors.site?.message)}
+              />
+            )}
           />
-        )}
-      />
-      <TextField
-        type="date"
-        label={t("divelog.form.date")}
-        error={message(errors.date?.message)}
-        {...register("date")}
-      />
-      <div className={styles.pair}>
-        <TextField
-          label={t("divelog.form.maxDepth")}
-          inputMode="decimal"
-          error={message(errors.maxDepth?.message)}
-          {...register("maxDepth")}
-        />
-        <TextField
-          label={t("divelog.form.visibility")}
-          inputMode="decimal"
-          error={message(errors.visibility?.message)}
-          {...register("visibility")}
-        />
-        <TextField
-          label={t("divelog.form.waterTemperature")}
-          inputMode="text"
-          error={message(errors.waterTemperature?.message)}
-          {...register("waterTemperature")}
-        />
-        <SelectField label={t("divelog.form.current")} {...register("current")}>
-          <option value="">{t("divelog.form.currentUnset")}</option>
-          {CURRENTS.map((current) => (
-            <option key={current} value={current}>
-              {t(`divelog.currents.${current}`)}
-            </option>
-          ))}
-        </SelectField>
-      </div>
-      <TextField
-        label={t("divelog.form.buddies")}
-        error={message(errors.buddies?.message)}
-        {...register("buddies")}
-      />
-      <TextAreaField
-        label={t("divelog.form.notes")}
-        rows={3}
-        error={message(errors.notes?.message)}
-        {...register("notes")}
-      />
-      {failed && (
-        <Alert tone="danger" live>
-          {t("divelog.form.failure")}
-        </Alert>
-      )}
-      {banner}
-      {confirming && entry ? (
-        <div className={styles.actions} role="group" aria-label={t("divelog.form.confirmDelete")}>
-          <span className="body-sm">{t("divelog.form.confirmDelete")}</span>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={() =>
-              void run(() =>
-                api.DELETE("/api/v1/dive-log/{id}", { params: { path: { id: entry.id } } }),
-              )
-            }
-          >
-            {t("divelog.form.confirmYes")}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-            {t("divelog.form.confirmNo")}
-          </Button>
-        </div>
-      ) : (
-        <div className={styles.actions}>
-          {entry && (
-            <>
-              <Button variant="ghost" onClick={() => setConfirming(true)}>
-                {t("divelog.form.delete")}
-              </Button>
-              <Button variant="secondary" onClick={onDone}>
-                {t("divelog.form.cancel")}
-              </Button>
-            </>
+          <TextField
+            type="date"
+            label={t("divelog.form.date")}
+            error={message(errors.date?.message)}
+            {...register("date")}
+          />
+          <div className={styles.pair}>
+            <TextField
+              label={t("divelog.form.maxDepth")}
+              inputMode="decimal"
+              error={message(errors.maxDepth?.message)}
+              {...register("maxDepth")}
+            />
+            <TextField
+              label={t("divelog.form.visibility")}
+              inputMode="decimal"
+              error={message(errors.visibility?.message)}
+              {...register("visibility")}
+            />
+            <TextField
+              label={t("divelog.form.waterTemperature")}
+              inputMode="text"
+              error={message(errors.waterTemperature?.message)}
+              {...register("waterTemperature")}
+            />
+            <SelectField label={t("divelog.form.current")} {...register("current")}>
+              <option value="">{t("divelog.form.currentUnset")}</option>
+              {CURRENTS.map((current) => (
+                <option key={current} value={current}>
+                  {t(`divelog.currents.${current}`)}
+                </option>
+              ))}
+            </SelectField>
+          </div>
+          <TextField
+            label={t("divelog.form.buddies")}
+            error={message(errors.buddies?.message)}
+            {...register("buddies")}
+          />
+          <TextAreaField
+            label={t("divelog.form.notes")}
+            rows={3}
+            error={message(errors.notes?.message)}
+            {...register("notes")}
+          />
+          {failed && (
+            <Alert tone="danger" live>
+              {t("divelog.form.failure")}
+            </Alert>
           )}
+        </DialogBody>
+        <DialogActions>
+          <DialogCancel>{t("divelog.form.cancel")}</DialogCancel>
           <Button type="submit" disabled={isSubmitting}>
             {t("divelog.form.save")}
           </Button>
-        </div>
-      )}
-    </form>
+        </DialogActions>
+      </DialogForm>
+    </Dialog>
   );
 }

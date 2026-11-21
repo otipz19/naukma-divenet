@@ -1,4 +1,4 @@
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
@@ -175,7 +175,7 @@ describe("post/editor: The editor saves a draft or publishes", () => {
     await user.type(await screen.findByLabelText("Title"), " Mine ");
     await user.click(screen.getByRole("button", { name: "Save draft" }));
 
-    expect(await screen.findByRole("status")).toHaveTextContent("Saved");
+    expect(await within(screen.getByRole("main")).findByRole("status")).toHaveTextContent("Saved");
     expect(sent).toMatchObject({ title: "Mine", status: "DRAFT", photoIds: [] });
     expect(screen.getByRole("button", { name: "Delete post" })).toBeInTheDocument();
   });

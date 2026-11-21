@@ -1,7 +1,7 @@
 # F-13 Validation messages break the dive form layout
 
 - **Area:** Dive log (`/dive-log`)
-- **Status:** taken: fix/ui-defects
+- **Status:** done: PR #38
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen

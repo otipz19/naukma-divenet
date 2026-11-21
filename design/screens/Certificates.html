@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Certificates · DiveNet</title>
+    <!-- @screen w=1280 h=1400 title="Certificates: the list with Add, then the edit dialog of a verified certificate" -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
+    <link rel="stylesheet" href="../system/tokens.css" />
+    <link rel="stylesheet" href="../system/components/bundle.css" />
+  </head>
+  <body>
+    <!-- Screen 1: the list is the page. -->
+    <div style="height: 640px; overflow: hidden; background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <main style="max-width: var(--content-max); margin: 0 auto; padding: 32px; display: grid; gap: 24px">
+        <div style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center">
+          <h1 class="h1" style="margin: 0">Your certificates</h1>
+          <button class="dn-btn dn-btn--primary">Add a certificate</button>
+        </div>
+        <section style="display: grid; gap: 12px; max-width: var(--reading-max)" aria-label="Certificates">
+          <article class="dn-card" style="padding: 16px; display: grid; gap: 8px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px"><span class="label">PADI Advanced Open Water</span><span class="dn-badge dn-badge--success">Verified</span></div>
+            <span class="data" style="color: var(--ink-muted)">AOW-2021-48812</span>
+            <div style="display: flex; justify-content: flex-end; gap: 8px"><button class="dn-btn dn-btn--ghost dn-btn--sm">Edit</button><button class="dn-btn dn-btn--ghost dn-btn--sm">Delete</button></div>
+          </article>
+          <article class="dn-card" style="padding: 16px; display: grid; gap: 8px">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px"><span class="label">SSI Wreck Diving</span><span class="dn-badge dn-badge--danger">Rejected</span></div>
+            <span class="data" style="color: var(--ink-muted)">SSI-77310</span>
+            <span class="body-sm">Rejected: the photo does not show the card number.</span>
+            <div style="display: flex; justify-content: flex-end; gap: 8px"><button class="dn-btn dn-btn--ghost dn-btn--sm">Edit</button><button class="dn-btn dn-btn--ghost dn-btn--sm">Delete</button></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <!-- Screen 2: Edit opens the form in a dialog titled with the certificate; a verified one warns first. -->
+    <div style="height: 760px; display: grid; place-items: center; background: var(--scrim); color: var(--ink); font-family: var(--font-sans)">
+      <form class="dn-dialog" role="dialog" aria-modal="true" aria-labelledby="cert-title">
+        <div class="dn-dialog__head">
+          <h2 id="cert-title" class="dn-dialog__title">PADI Advanced Open Water</h2>
+          <button type="button" class="dn-dialog__close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+        </div>
+        <div class="dn-dialog__body">
+          <div class="dn-alert dn-alert--caution">
+            <svg class="dn-alert__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+            <div><span class="dn-alert__body">This certificate is verified. After a change it needs verifying again.</span></div>
+          </div>
+          <label class="dn-field"><span class="dn-field__label">Agency</span><select class="dn-input"><option>PADI</option></select></label>
+          <label class="dn-field"><span class="dn-field__label">Level</span><input class="dn-input" value="Advanced Open Water" /></label>
+          <label class="dn-field"><span class="dn-field__label">Number</span><input class="dn-input" value="AOW-2021-48812" /><span class="dn-field__hint">As printed on the card.</span></label>
+        </div>
+        <div class="dn-dialog__actions">
+          <button type="button" class="dn-btn dn-btn--secondary">Cancel</button>
+          <button class="dn-btn dn-btn--primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -17,6 +17,19 @@ if (typeof window !== "undefined" && !window.matchMedia) {
     });
 }
 
+// jsdom 30 has no showModal() (spec shared/dialogs, design D1). This shim only toggles `open` and
+// fires `close`; the top layer, inertness and Escape are checked in the Playwright suite.
+if (typeof window !== "undefined" && !HTMLDialogElement.prototype.showModal) {
+  HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement) {
+    if (!this.hasAttribute("open")) return;
+    this.removeAttribute("open");
+    this.dispatchEvent(new Event("close"));
+  };
+}
+
 // Vitest 5 converts a jsdom FormData for Node's fetch, but with jsdom 30.1 it loses each file's
 // bytes and name. Node's File and FormData go to fetch as they are, so multipart bodies arrive
 // whole; jsdom's Blob stays, so its other conversions keep working.

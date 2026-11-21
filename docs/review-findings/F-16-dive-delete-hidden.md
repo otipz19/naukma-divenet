@@ -1,7 +1,7 @@
 # F-16 No visible way to delete a dive
 
 - **Area:** Dive log (`/dive-log`)
-- **Status:** decided
+- **Status:** done: add-dialogs-and-toasts
 - **Delivered by:** `add-dialogs-and-toasts`
 
 ## Seen

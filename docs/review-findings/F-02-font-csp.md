@@ -1,7 +1,7 @@
 # F-02 Inlined font subsets are blocked by the CSP
 
 - **Area:** Fonts / CSP
-- **Status:** taken: fix/ui-defects
+- **Status:** done: PR #38
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen

@@ -1,7 +1,7 @@
 # F-04 Password field narrower than the email field
 
 - **Area:** Auth UI (`/login`, `/register`)
-- **Status:** taken: fix/ui-defects
+- **Status:** done: PR #38
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen

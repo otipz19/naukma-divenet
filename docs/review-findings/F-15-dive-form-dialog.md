@@ -1,7 +1,7 @@
 # F-15 Dive edit is not obvious; move create and edit into a dialog
 
 - **Area:** Dive log (`/dive-log`)
-- **Status:** decided (owner's proposal: dialogs)
+- **Status:** done: add-dialogs-and-toasts (owner's proposal: dialogs)
 - **Delivered by:** `add-dialogs-and-toasts`
 
 ## Seen

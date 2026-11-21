@@ -1,7 +1,7 @@
 # F-14 Achievement unlock shows inside the form; use a toast
 
 - **Area:** Dive log, achievements
-- **Status:** decided (owner's proposal: toasts)
+- **Status:** done: add-dialogs-and-toasts (owner's proposal: toasts)
 - **Delivered by:** `add-dialogs-and-toasts` (see the index)
 
 ## Seen

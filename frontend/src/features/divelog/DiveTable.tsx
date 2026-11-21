@@ -6,19 +6,25 @@ import styles from "./DiveLog.module.css";
 
 const DASH = "—";
 
-/** The dive table of design/screens/DiveLog.html; `onEdit` adds the row action. */
+/** The dive table of design/screens/DiveLog.html; `onEdit` and `onDelete` add the row actions. */
 export function DiveTable({
   entries,
   onEdit,
+  onDelete,
 }: {
   entries: DiveEntry[];
   onEdit?: (entry: DiveEntry) => void;
+  onDelete?: (entry: DiveEntry) => void;
 }) {
   const { t, i18n } = useTranslation();
   const value = (number: number | undefined | null, unit: string) =>
     number == null
       ? DASH
       : `${formatDiveNumber(number, i18n.language)} ${t(`divelog.units.${unit}`)}`;
+  const named = (entry: DiveEntry) => ({
+    site: entry.siteName,
+    date: formatDiveDate(entry.date, i18n.language),
+  });
   return (
     <div className={styles.tableBox}>
       <table className={styles.table}>
@@ -52,11 +58,21 @@ export function DiveTable({
                   <Button
                     variant="ghost"
                     size="sm"
-                    aria-label={t("divelog.table.editEntry", { site: entry.siteName })}
+                    aria-label={t("divelog.table.editEntry", named(entry))}
                     onClick={() => onEdit(entry)}
                   >
                     {t("divelog.table.edit")}
                   </Button>
+                  {onDelete && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t("divelog.table.deleteEntry", named(entry))}
+                      onClick={() => onDelete(entry)}
+                    >
+                      {t("divelog.table.delete")}
+                    </Button>
+                  )}
                 </td>
               )}
             </tr>
