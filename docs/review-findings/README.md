@@ -16,9 +16,9 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | ID | Area | Finding | Kind | Status |
 | --- | --- | --- | --- | --- |
 | [F-01](F-01-refresh-401.md) | Auth | Signed-out visit logs a 401 from `/auth/refresh` | cosmetic | decided |
-| [F-02](F-02-font-csp.md) | Fonts / CSP | Inlined font subsets blocked by the CSP; `ґ` and `₴` in headings fall back to a system font | bug | decided |
+| [F-02](F-02-font-csp.md) | Fonts / CSP | Inlined font subsets blocked by the CSP; `ґ` and `₴` in headings fall back to a system font | bug | done: PR #38 |
 | [F-03](F-03-footer-modal.md) | Shell | Footer makes the map page scroll; owner decided: remove the footer, show the disclaimer in a first-visit modal | spec change | decided |
-| [F-04](F-04-password-width.md) | Auth UI | Password field narrower than the email field | bug | decided |
+| [F-04](F-04-password-width.md) | Auth UI | Password field narrower than the email field | bug | done: PR #38 |
 | [F-05](F-05-checks-missed-ui.md) | Tests | No check catches console errors, page overflow or layout drift | test gap | declined |
 | [F-06](F-06-feed-paging-invisible.md) | Feed | Paging exists but never shows: 10 published posts, page size 20; seed more posts | demo gap | decided |
 | [F-07](F-07-feed-card-width.md) | Feed | Cards fill a 720 px column on the left, leaving the right side empty for visitors | design question | declined |
@@ -27,7 +27,7 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-10](F-10-map-panel-desktop.md) | Map | Filters always expanded on desktop; the result count and list sit below the fold | UX | decided |
 | [F-11](F-11-submit-site-placement.md) | Map | "Submit a site" sits inside the search form | UX | decided |
 | [F-12](F-12-map-mobile.md) | Map | Phone map page scrolls and the form covers the map; it departs from `MobileMap.html` | UX / design drift | decided |
-| [F-13](F-13-dive-form-errors-layout.md) | Dive log | Validation messages break the dive form layout; reproduce and find the cause before fixing | bug | decided |
+| [F-13](F-13-dive-form-errors-layout.md) | Dive log | Validation messages break the dive form layout; reproduce and find the cause before fixing | bug | done: PR #38 |
 | [F-14](F-14-achievement-toast.md) | Achievements | Unlock alert shows inside the form; use a toast | UX, spec change | decided |
 | [F-15](F-15-dive-form-dialog.md) | Dive log | Edit is not obvious; create and edit move to a dialog | UX, spec change | decided |
 | [F-16](F-16-dive-delete-hidden.md) | Dive log | Delete is only inside the edit form; users cannot find it | UX, spec change | decided |

@@ -1,7 +1,7 @@
 # F-13 Validation messages break the dive form layout
 
 - **Area:** Dive log (`/dive-log`)
-- **Status:** decided (fix the layout)
+- **Status:** done: PR #38
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen
@@ -19,7 +19,24 @@ Do not apply the hypothesis below blindly. The agent fixing this must:
 
 If the cause turns out to be different from the hypothesis, record the real one here.
 
-## Hypothesis (not confirmed)
+## Confirmed cause (fix/ui-defects)
+Reproduced on the stack at 1280 px and 375 px wide, with "abc" in Max depth:
+- the `.pair` row grew to 131 px to hold the error;
+- the Visibility field next to it was stretched to the same height;
+- its `.field` grid has the default `align-content: normal`, so its two auto rows shared the
+  extra 65 px: label row 20 → 53 px, input 42 → 74 px (at 375 px: 20 → 52, 44 → 76).
+
+The hypothesis holds. Fix: `align-content: start` on every grid field component
+(`TextField`, which `SelectField` shares, plus `PasswordField`, `PhotoField`, `VideoField`)
+and on `dn-field` in `design/system/components/bundle.css`.
+
+After the fix, the same inputs keep Visibility at 20 + 42 px, with its input level with
+Max depth's. The Current select next to an invalid Water temp behaves the same, at both
+widths. Also checked with errors showing:
+- submit site: a valid latitude next to an invalid longitude keeps 20 + 42 px;
+- certificates, review and warning: single-column forms, so they were never affected.
+
+## Hypothesis (confirmed)
 From reading the code only. In `frontend/src/features/divelog/DiveForm.tsx`,
 max depth, visibility, water temperature and current sit in a two-column grid
 (`.pair` in `DiveLog.module.css`). An error message makes one cell taller. The cell

@@ -1,7 +1,7 @@
 # F-02 Inlined font subsets are blocked by the CSP
 
 - **Area:** Fonts / CSP
-- **Status:** decided
+- **Status:** done: PR #38
 - **Delivered by:** `fix/ui-defects`
 
 ## Seen
@@ -25,3 +25,9 @@ Do not inline fonts. In `frontend/vite.config.ts`, set `build.assetsInlineLimit`
 to a function that returns `false` for `.woff`/`.woff2` files. Keep `font-src 'self'`;
 do not add `data:`. No new check (F-05 declined); verify by hand that the console
 has no CSP errors on the built stack.
+
+## Result (fix/ui-defects)
+Reproduced on the stack (:8080): the console showed `font-src 'self'` violations for
+`data:font/woff2` and `data:font/woff` URIs. After the fix, the built stylesheet holds no
+`data:font/` URI and 14 Cyrillic `.woff2` URLs, and `document.fonts.load('700 32px Manrope', 'ґ₴')`
+loads the Manrope Cyrillic faces.
