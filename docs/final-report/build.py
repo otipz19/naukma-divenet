@@ -1,4 +1,4 @@
-"""Build the final report: REPORT.md -> DiveNet_звіт.docx.
+﻿"""Build the final report: REPORT.md -> DiveNet_звіт.docx.
 
 Run from this folder with the local venv (see README.md):
     .venv/Scripts/python build.py
@@ -48,13 +48,13 @@ HEADING_RPR = '<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:c
 
 STYLES = {
     "Normal": style("Normal", "Normal", based_on=""),
-    "BodyText": style("BodyText", "Body Text"),
+    "BodyText": style("BodyText", "Body Text", '<w:spacing w:after="120"/>'),
     "FirstParagraph": style("FirstParagraph", "First Paragraph", based_on="BodyText"),
-    "Compact": style("Compact", "Compact", based_on="BodyText"),
+    "Compact": style("Compact", "Compact", '<w:spacing w:after="60"/>', based_on="BodyText"),
     "Heading1": style(
         "Heading1",
         "heading 1",
-        '<w:keepNext/><w:pageBreakBefore/><w:spacing w:before="0" w:after="240"/>'
+        '<w:keepNext/><w:pageBreakBefore/><w:spacing w:before="0" w:after="480"/>'
         + FLAT
         + '<w:jc w:val="center"/><w:outlineLvl w:val="0"/>',
         HEADING_RPR + '<w:caps/><w:sz w:val="28"/>',
@@ -62,14 +62,14 @@ STYLES = {
     "Heading2": style(
         "Heading2",
         "heading 2",
-        '<w:keepNext/><w:spacing w:before="240" w:after="120"/><w:ind w:firstLine="709"/>'
+        '<w:keepNext/><w:spacing w:before="360" w:after="240"/><w:ind w:firstLine="709"/>'
         '<w:jc w:val="left"/><w:outlineLvl w:val="1"/>',
         HEADING_RPR + '<w:sz w:val="28"/>',
     ),
     "Heading3": style(
         "Heading3",
         "heading 3",
-        '<w:keepNext/><w:spacing w:before="200" w:after="80"/><w:ind w:firstLine="709"/>'
+        '<w:keepNext/><w:spacing w:before="280" w:after="160"/><w:ind w:firstLine="709"/>'
         '<w:jc w:val="left"/><w:outlineLvl w:val="2"/>',
         HEADING_RPR + '<w:sz w:val="28"/>',
     ),
@@ -110,11 +110,11 @@ STYLES = {
         '<w:pageBreakBefore/><w:spacing w:after="240"/>' + FLAT + '<w:jc w:val="center"/>',
         '<w:b/><w:bCs/><w:caps/>',
     ),
-    "TOC1": style("TOC1", "toc 1", FLAT + '<w:jc w:val="left"/><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9628"/></w:tabs>'),
+    "TOC1": style("TOC1", "toc 1", FLAT + '<w:jc w:val="left"/><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9921"/></w:tabs>'),
     "TOC2": style(
         "TOC2",
         "toc 2",
-        '<w:ind w:left="284" w:firstLine="0"/><w:jc w:val="left"/><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9628"/></w:tabs>',
+        '<w:ind w:left="284" w:firstLine="0"/><w:jc w:val="left"/><w:tabs><w:tab w:val="right" w:leader="dot" w:pos="9921"/></w:tabs>',
     ),
 }
 
@@ -150,7 +150,7 @@ def post_process(path: Path) -> None:
 
     section = document.sections[0]
     section.page_width, section.page_height = Cm(21.0), Cm(29.7)
-    section.left_margin, section.right_margin = Cm(3.0), Cm(1.5)
+    section.left_margin, section.right_margin = Cm(2.0), Cm(1.5)
     section.top_margin, section.bottom_margin = Cm(2.0), Cm(2.0)
 
     # Tables: 12 pt, single spacing, no first-line indent, visible borders.
