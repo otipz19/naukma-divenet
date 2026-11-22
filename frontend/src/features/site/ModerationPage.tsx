@@ -4,11 +4,13 @@ import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Badge } from "../../components/Badge/Badge";
 import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
 import { Button } from "../../components/Button/Button";
+import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { TextField } from "../../components/TextField/TextField";
 import { CertificateQueue, useCertificateQueue } from "../user/CertificateQueue";
 import { formatCoordinates } from "./SitePage";
@@ -30,6 +32,7 @@ export function useSiteQueue({ enabled = true }: { enabled?: boolean } = {}) {
 /** The moderation page at `/admin/moderation`: a tab for each queue (spec site/moderation). */
 export function ModerationPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("site.moderation.title"));
   const [params, setParams] = useSearchParams();
   const active: Tab = params.get("tab") === "certificates" ? "certificates" : "sites";
   const counts: Record<Tab, number | undefined> = {
@@ -99,6 +102,11 @@ function SiteQueue() {
         <Alert tone="danger" live>
           {t(failure === "conflict" ? "site.moderation.conflict" : "site.moderation.failure")}
         </Alert>
+      )}
+      {queue.isPending && (
+        <PagePlaceholder>
+          <CardRows count={3} />
+        </PagePlaceholder>
       )}
       {queue.isError && (
         <Alert tone="danger" live>

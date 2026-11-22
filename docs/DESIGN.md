@@ -17,7 +17,7 @@ and visual editing, so nobody needs a claude.ai account to use the design.
 | [design/system/README.md](../design/system/README.md) | Brand book: voice, colour, type, spacing, shape, layout, imagery, motion, icons | Read it first, before any UI work |
 | [design/system/tokens.json](../design/system/tokens.json) | **The tokens**: every colour (light and dark), type style, spacing, radius, shadow and layout value, each with a usage note | The single source of every visual value |
 | [design/system/tokens.css](../design/system/tokens.css) | CSS custom properties and type classes, generated from `tokens.json` | The front-end imports it |
-| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html`. Alert, AppHeader, Badge, Button, Chip (toggle and removable), Cover, Dialog (modal and confirmation), Rating, SiteCard, TextField, Toast | Before building or changing that component |
+| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html`. Alert, AppHeader, Badge, Button, Chip (toggle and removable), Cover, Dialog (modal and confirmation), Rating, SiteCard, Skeleton (loading placeholder), TextField, Toast | Before building or changing that component |
 | [design/system/components/bundle.css](../design/system/components/bundle.css) | Reference CSS for the components (`dn-*` classes), using only tokens | The exact paddings, sizes and states to reproduce |
 | [design/screens/](../design/screens/) | One HTML mockup per screen, desktop at 1280 px plus two phone screens | Before building or changing that page |
 | [design/build-tokens.mjs](../design/build-tokens.mjs), [design/build-canvas.mjs](../design/build-canvas.mjs), [design/serve.mjs](../design/serve.mjs) | Generate `tokens.css`; wrap the screens as Claude Design artboards; serve the mockups locally | When the design changes |
@@ -73,8 +73,11 @@ specs for data. Names, numbers and photos are sample content. A
    - The `dn-*` class names are a spec, not an API.
 3. **Themes.**
    - Light is the default.
-   - The app sets `data-theme="dark"` on `<html>` when
-     `prefers-color-scheme: dark` matches.
+   - The header and the phone drawer have a System / Light / Dark switch,
+     remembered per browser. System is the default.
+   - With System, the app sets `data-theme="dark"` on `<html>` when
+     `prefers-color-scheme: dark` matches, and `light` otherwise. Light or
+     Dark pins that value.
    - Components never branch on the theme.
 4. **Fonts.**
    - Manrope (headings), Golos Text (text) and JetBrains Mono (measured values),

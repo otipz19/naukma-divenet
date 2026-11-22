@@ -5,6 +5,7 @@ import { Link } from "react-router";
 import type { NavItem } from "../../app/navigation";
 import { LanguageSwitch } from "../LanguageSwitch/LanguageSwitch";
 import { NavDrawer } from "../NavDrawer/NavDrawer";
+import { ThemeSwitch } from "../ThemeSwitch/ThemeSwitch";
 import styles from "./AppHeader.module.css";
 import { NavLinks } from "./NavLinks";
 
@@ -12,8 +13,8 @@ import { NavLinks } from "./NavLinks";
 export type RenderAccount = (placement: "header" | "drawer", onNavigate?: () => void) => ReactNode;
 
 /**
- * The sticky navy bar: wordmark, main navigation, language switch and account area. Below 768px
- * a menu button replaces them and opens the drawer that holds all three. The app layer supplies
+ * The sticky navy bar: wordmark, main navigation, language and theme switches and account area.
+ * Below 768px a menu button replaces them and opens the drawer that holds them all. The app layer supplies
  * the navigation entries and the account area, so this component knows nothing about features or
  * roles (add-authentication D10).
  */
@@ -46,6 +47,7 @@ export function AppHeader({ navItems, account }: { navItems: NavItem[]; account?
       </nav>
       <span className={styles.spacer} />
       <LanguageSwitch className={styles.wide} />
+      <ThemeSwitch className={styles.wide} />
       {account && <div className={styles.wide}>{account("header")}</div>}
       {drawerOpen && (
         <NavDrawer id="nav-drawer" items={navItems} onClose={closeDrawer} account={account} />

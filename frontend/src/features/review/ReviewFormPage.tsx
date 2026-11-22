@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { DIFFICULTY_WORDS, difficultyWord, levelsOf } from "../../components/Badge/DifficultyBadge";
@@ -37,6 +38,7 @@ export function ReviewFormPage() {
     enabled: validId,
   });
   const mine = useMyReview(siteId, validId);
+  useDocumentTitle(t(mine.data ? "review.form.titleEdit" : "review.form.titleNew"));
 
   if (!validId || (site.error instanceof ApiError && site.error.status === 404)) {
     return (

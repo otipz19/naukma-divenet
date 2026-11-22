@@ -53,6 +53,25 @@
       "menu": "Account menu: {{name}}",
       "logOut": "Log out",
       "profile": "Your profile"
+    },
+    "loading": "Loading…",
+    "title": "{{page}} · DiveNet",
+    "pageTitle": {
+      "site": "Dive site",
+      "post": "Post",
+      "profile": "Diver profile"
+    },
+    "error": {
+      "heading": "Something went wrong",
+      "text": "This page could not be shown. Reload it, or go back to the map.",
+      "reload": "Reload page",
+      "home": "Go to the map"
+    },
+    "theme": {
+      "label": "Colour theme",
+      "system": "System theme",
+      "light": "Light theme",
+      "dark": "Dark theme"
     }
   },
   "auth": {

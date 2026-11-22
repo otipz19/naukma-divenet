@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import { ADMIN, MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import type { Profile } from "./api";
 
@@ -133,5 +134,16 @@ describe("auth: The admin has no profile in the web app", () => {
     await screen.findByRole("heading", { level: 1, name: "Oleh Kravets" });
     await screen.findByRole("button", { name: /Admin User/ });
     expect(screen.queryByRole("link", { name: "Edit profile" })).not.toBeInTheDocument();
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (profile)", () => {
+  it("shows a busy region until the profile arrives", async () => {
+    const held = heldResponse();
+    server.use(http.get(url(7), held.wait));
+    renderRoute("/users/7");
+
+    const status = await screen.findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 # F-06 Feed paging exists but the demo never shows it
 
 - **Area:** Feed (`/feed`)
-- **Status:** decided (owner, 2026-11-21: option 2, more seeded posts)
+- **Status:** done: polish-release (owner, 2026-11-21: option 2, more seeded posts)
 - **Delivered by:** `polish-release`
 
 ## Seen
@@ -24,5 +24,7 @@ in all). Region and site feeds then have enough posts to show filtering too.
 Update the `demo/seed` spec if it states counts, and keep
 `complete-demo-seed`'s rules: seed through the services, generated images, and
 text in the divers' own languages.
+
+Owner, 2026-11-22: the new posts may reuse the pictures the seed already has.
 
 Rejected: a smaller page size. It would show paging, but with a thin feed.

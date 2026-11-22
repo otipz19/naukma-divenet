@@ -6,11 +6,12 @@ done:
   - fix/ui-defects merged (PR #38): F-02, F-04, F-13
   - add-dialogs-and-toasts merged (PR #39): components/Dialog (Dialog, ConfirmDialog), components/Toast in AppLayout; fix/audit-animation-wait merged (PR #40): a11y scans wait for finite animations
   - rework-map-page merged (PR #41) (F-03, F-10..F-12): footer removed, first-visit disclaimer dialog (features/disclaimer), full-height map with collapsible filters, chips and fixed count, Add a site on the map, phone filters dialog and results sheet
-  - scope-admin-account applied and archived on change/scope-admin-account (F-18, F-19): web app only; useIsAdmin(), <RequireAuth diver> sends the admin to /admin/moderation, header Moderation entry with pending badge (useNavItems), admin has no Profile/diver actions; PR open
+  - scope-admin-account merged (PR #42) (F-18, F-19): web app only; useIsAdmin(), <RequireAuth diver> sends the admin to /admin/moderation, header Moderation entry with pending badge (useNavItems)
+  - polish-release applied and archived on change/polish-release (F-06, F-08; owner dropped the i18n audit and F-01): app/routes/ErrorPage via errorElement, components/Skeleton placeholders, app/documentTitle, components/ThemeSwitch + app/theme.ts choice, 45 published seed posts (round-robin, reused covers)
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: scope-admin-account PR open; waiting for CI (check, stack, e2e) and merge
+wip: polish-release PR open with auto-merge; waiting for CI (check, stack, e2e)
 blocked: null
-next: after the scope-admin-account PR merges, /opsx:propose polish-release (last M6 item). Optional fix/: Feed.test first findByRole times out under local load (green in CI)
+next: after the polish-release PR merges, M6 is complete; ask the owner what follows. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist. Optional fix/: Feed.test first findByRole times out under local load (green in CI)
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires

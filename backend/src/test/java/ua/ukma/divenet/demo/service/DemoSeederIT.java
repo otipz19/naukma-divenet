@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jayway.jsonpath.JsonPath;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ class DemoSeederIT {
         assertThat(count("SELECT count(*) FROM reviews")).isGreaterThanOrEqualTo(25);
         assertThat(count("SELECT count(*) FROM warnings")).isGreaterThanOrEqualTo(5);
         assertThat(count("SELECT count(*) FROM posts WHERE status = 'PUBLISHED'"))
-                .isGreaterThanOrEqualTo(8);
+                .isGreaterThanOrEqualTo(45);
         assertThat(count("SELECT count(*) FROM posts WHERE status = 'DRAFT'")).isGreaterThanOrEqualTo(2);
         assertThat(count("SELECT count(*) FROM sites WHERE status = 'PENDING'")).isEqualTo(2);
         assertThat(count("SELECT count(*) FROM certificates WHERE status = 'PENDING'"))
@@ -71,6 +72,36 @@ class DemoSeederIT {
         assertThat(count("SELECT count(*) FROM certificates WHERE status = 'REJECTED'"))
                 .isGreaterThanOrEqualTo(1);
         assertThat(count("SELECT count(*) FROM locker_items")).isGreaterThanOrEqualTo(8);
+    }
+
+    @Test
+    void feedPages() throws Exception {
+        String body = mvc.perform(get("/api/v1/posts"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        Integer totalPages = JsonPath.read(body, "$.page.totalPages");
+        assertThat(totalPages).isGreaterThanOrEqualTo(3);
+        // Created in turns, so the first page mixes the divers (polish-release design D6).
+        List<Integer> authors = JsonPath.read(body, "$.content[*].author.id");
+        assertThat(authors.stream().distinct().count()).isGreaterThanOrEqualTo(4);
+    }
+
+    @Test
+    void postsAreSpreadOut() {
+        // Every demo diver has a published post.
+        assertThat(count("SELECT count(*) FROM users u WHERE u." + DEMO
+                        + " AND NOT EXISTS (SELECT 1 FROM posts p"
+                        + " WHERE p.author_id = u.id AND p.status = 'PUBLISHED')"))
+                .isZero();
+        assertThat(count("SELECT count(DISTINCT site_id) FROM posts WHERE status = 'PUBLISHED'"))
+                .isGreaterThanOrEqualTo(8);
+        assertThat(count("""
+                SELECT count(DISTINCT coalesce(p.region_code, s.region_code))
+                FROM posts p LEFT JOIN sites s ON s.id = p.site_id
+                WHERE p.status = 'PUBLISHED'
+                """)).isGreaterThanOrEqualTo(5);
     }
 
     @Test

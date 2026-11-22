@@ -44,7 +44,11 @@
         { "title": "Мальта взимку", "text": "Вода 15 °C, туристів немає, а видимість 30 м. Сухий костюм — і всі печери Гозо ваші.", "status": "PUBLISHED", "site": "Blue Hole Gozo", "region": null, "photos": 2 },
         { "title": "Як я готуюся до глибоких занурень", "text": "Чекліст перед зануренням нижче 30 м: план газу, нітрокс і його межі, резервний ліхтар, SMB, перевірка напарника. Нічого нового, але саме на цьому економлять.", "status": "PUBLISHED", "site": null, "region": null, "photos": 0 },
         { "title": "Одеса: затоплені баржі", "text": "Наше море не тропіки, але затоплені баржі під Одесою — чудовий полігон для навігації та сухих костюмів.", "status": "PUBLISHED", "site": "Odesa Bay Wrecks", "region": null, "photos": 1 },
-        { "title": "Чернетка: Ельфінстон", "text": "Південне плато, дві акули…", "status": "DRAFT", "site": "Elphinstone Reef", "region": null, "photos": 0 }
+        { "title": "Чернетка: Ельфінстон", "text": "Південне плато, дві акули…", "status": "DRAFT", "site": "Elphinstone Reef", "region": null, "photos": 0 },
+        { "title": "Елфінстоун на світанку", "text": "Вийшли з Марса-Алам о п’ятій ранку, щоб бути на рифі першими. Течія з півночі, тож пірнали від північного плато вздовж східної стіни.\n\nНа 25 м біля плато кружляли дві білопері акули. Час на дні короткий, тому все планування — на поверхні.", "status": "PUBLISHED", "site": "Elphinstone Reef", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Печера Елефант на Криті", "text": "Сталактити під водою — це не казка. Вхід на 10 м, далі темний коридор, де без котушки робити нічого.\n\nУсередині знайшли кістки карликового слона. Гід каже, їм десятки тисяч років.", "status": "PUBLISHED", "site": "Elephant Cave", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Каньйон у Дахабі: вузько, але красиво", "text": "Зайшли в Каньйон з берега, спустились у щілину на 30 м. Світло падає згори смугами, як у соборі.\n\nПорада: тримайте плавність, бо мул піднімається миттєво і видимість зникає.", "status": "PUBLISHED", "site": "Canyon", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Блакитний грот на Бішеві", "text": "Найкраще світло опівдні, коли сонце заходить у грот під водою. Сам грот мілкий, але стіни навколо йдуть до 40 м.\n\nЛюдей багато, тож пірнайте зранку або восени.", "status": "PUBLISHED", "site": "Blue Grotto of Bisevo", "region": null, "photos": 0, "cover": "reuse" }
       ],
       "submissions": [
         { "name": "Odesa Lighthouse Breakwater", "region": "ua-odesa", "lat": 46.4951, "lng": 30.7651, "difficulty": 2, "minDepth": 4, "maxDepth": 14, "description": "A breakwater by the Vorontsov lighthouse. Boulders, mussel beds and gobies. Visibility depends on the wind, best after calm days in late summer.", "required": ["wetsuit", "compass"], "recommended": ["torch", "smb"], "status": "APPROVED", "reason": null }
@@ -84,7 +88,11 @@
       ],
       "posts": [
         { "title": "Baron Gautsch on nitrox", "text": "Forty metres, fourteen degrees and twelve metres of visibility. The Baron is not an easy wreck, but it is the most rewarding one in the Adriatic. We dived it twice with EAN28 and decompressed on EAN50.", "status": "PUBLISHED", "site": "Baron Gautsch", "region": null, "photos": 2 },
-        { "title": "Sardinia in October", "text": "Water still at 22 degrees, no crowds and the barracuda are back on Secca del Papa. October is the best month here.", "status": "PUBLISHED", "site": null, "region": "it-sardinia", "photos": 1 }
+        { "title": "Sardinia in October", "text": "Water still at 22 degrees, no crowds and the barracuda are back on Secca del Papa. October is the best month here.", "status": "PUBLISHED", "site": null, "region": "it-sardinia", "photos": 1 },
+        { "title": "Um El Faroud, a wreck with a story", "text": "The tanker sits upright at 36 metres off Wied iż-Żurrieq. The bridge is at 15 metres, so even a short dive shows a lot.\n\nPenetration is easy through the engine room, but bring a torch and watch the silt.", "status": "PUBLISHED", "site": "MV Um El Faroud", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Medes Islands: groupers everywhere", "text": "Twenty years of protection show. Groupers the size of a scooter swim right up to the mask.\n\nThe Dolphin tunnel is the highlight, about 15 metres long and wide enough for two divers.", "status": "PUBLISHED", "site": "Medes Islands", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Grotta dei Gamberi in winter", "text": "Sicily in February: 15 degrees in the water and nobody else on the boat. The cave entrance sits at 20 metres.\n\nInside, the ceiling is covered with red shrimp. Use a soft light so you do not scare them off.", "status": "PUBLISHED", "site": "Grotta dei Gamberi", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Why I plan deco on paper first", "text": "My computer is good, but I still write the plan on a slate before every deep dive. If the computer dies, the slate does not.\n\nTwo gases, two schedules, one backup table. Ten minutes on the boat saves a lot of stress at 40 metres.", "status": "PUBLISHED", "site": null, "region": "it-sardinia", "photos": 0, "cover": "reuse" }
       ],
       "submissions": [
         { "name": "Nereo Cave", "region": "it-sardinia", "lat": 40.5653, "lng": 8.1604, "difficulty": 4, "minDepth": 20, "maxDepth": 35, "description": "The largest underwater cave in the Mediterranean, at Capo Caccia. Several entrances, red coral on the ceilings. A torch is a must; stay within daylight unless you are cave-trained.", "required": ["torch", "dive-computer"], "recommended": ["smb", "compass"], "status": "PENDING", "reason": null }
@@ -123,7 +131,11 @@
       ],
       "warnings": [],
       "posts": [
-        { "title": "Twelve sites, five countries", "text": "Two years of diving across Southeast Asia, in one post. Indonesia for variety, Palau for sharks, the Philippines for threshers, Malaysia for the barracuda and the Similans for macro. Where would I go back first? Raja Ampat, without a doubt.", "status": "PUBLISHED", "site": null, "region": "id-raja-ampat", "photos": 3 }
+        { "title": "Twelve sites, five countries", "text": "Two years of diving across Southeast Asia, in one post. Indonesia for variety, Palau for sharks, the Philippines for threshers, Malaysia for the barracuda and the Similans for macro. Where would I go back first? Raja Ampat, without a doubt.", "status": "PUBLISHED", "site": null, "region": "id-raja-ampat", "photos": 3 },
+        { "title": "Liberty at night", "text": "The USAT Liberty is busy by day and magical by night. Parrotfish sleep in their mucus bubbles along the hull.\n\nWe saw a Spanish dancer on the stern. Bring a red light and move slowly.", "status": "PUBLISHED", "site": "USAT Liberty", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Mola season at Crystal Bay", "text": "August to October is the time. We waited at 30 metres on the cleaning station for twenty minutes, and then she came.\n\nThe water was 19 degrees with a thermocline. Bring a thicker suit than you think.", "status": "PUBLISHED", "site": "Crystal Bay", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Thresher sharks at Monad Shoal", "text": "Up at four, in the water at five. The threshers come to the cleaning stations at dawn.\n\nKneel on the rope line, no lights and no chasing. We saw six that morning.", "status": "PUBLISHED", "site": "Monad Shoal", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Richelieu Rock macro list", "text": "Seahorses, ghost pipefish, harlequin shrimp and a frogfish the size of a coin. The rock is small, so one tank covers it all.\n\nIf you are lucky, a whale shark passes by. We were not, but the macro was enough.", "status": "PUBLISHED", "site": "Richelieu Rock", "region": null, "photos": 0, "cover": "reuse" }
       ],
       "submissions": [],
       "locker": ["Sony A7 IV in Nauticam housing", "Two Inon Z-330 strobes", "Reef hook"]
@@ -157,7 +169,11 @@
       ],
       "posts": [
         { "title": "Чорне море: з чого почати", "text": "У нас холодніше й темніше, ніж у тропіках, але навчитися тут — означає потім пірнати будь-де. Кілька порад про костюми, ліхтарі й навігацію.", "status": "PUBLISHED", "site": null, "region": "ua-odesa", "photos": 1 },
-        { "title": "Блакитні озера (чернетка)", "text": "", "status": "DRAFT", "site": null, "region": "ua-kyiv", "photos": 0 }
+        { "title": "Блакитні озера (чернетка)", "text": "", "status": "DRAFT", "site": null, "region": "ua-kyiv", "photos": 0 },
+        { "title": "Зимове тренування на Київському морі", "text": "У лютому вода +3, видимість п’ять метрів. Тренувались з сухими костюмами й запасним регулятором.\n\nПісля занурення гарячий чай у машині — обов’язково.", "status": "PUBLISHED", "site": "Kyiv Reservoir Training Point", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Затонулі баржі в Одеській затоці", "text": "Дві баржі на 18 м, обросли мідіями повністю. Видимість улітку до восьми метрів, якщо немає вітру з півдня.\n\nБеріть котушку і буй: тут ходять катери.", "status": "PUBLISHED", "site": "Odesa Bay Wrecks", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Каньйон у Каші для новачків", "text": "Каш у Туреччині — спокійна вода й легкий берег. Каньйон починається з 15 м і йде до 30.\n\nДля першої поїздки за кордон із клубом — ідеальне місце.", "status": "PUBLISHED", "site": "Canyon Kas", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Абу-Рамада: коралові сади", "text": "Риф біля Хургади, мілко й барвисто. Риби-наполеони підпливають майже впритул.\n\nГарне місце, щоб показати новачкам Червоне море.", "status": "PUBLISHED", "site": "Abu Ramada", "region": null, "photos": 0, "cover": "reuse" }
       ],
       "submissions": [
         { "name": "Blue Lakes Quarry", "region": "ua-kyiv", "lat": 50.5310, "lng": 30.6200, "difficulty": 1, "minDepth": 3, "maxDepth": 16, "description": "A flooded sand quarry north of Kyiv. Clear water in spring, a sunken bus at 12 m used for training. Entry from the beach on the east side.", "required": ["wetsuit"], "recommended": ["compass", "torch"], "status": "PENDING", "reason": null }
@@ -194,7 +210,11 @@
         { "site": "Gordon Rocks", "type": "INCIDENT", "text": "A diver was swept off the site in a down-current last week and surfaced 1 km away. Carry an SMB and a whistle, and stay close to your guide." }
       ],
       "posts": [
-        { "title": "Galápagos liveaboard diary", "text": "Eight days, twenty dives and more hammerheads than I can count. Darwin and Wolf deserve their reputation, but the currents are serious: every dive started with a negative entry and ended with a long drift.", "status": "PUBLISHED", "site": "Darwin's Arch", "region": null, "photos": 2 }
+        { "title": "Galápagos liveaboard diary", "text": "Eight days, twenty dives and more hammerheads than I can count. Darwin and Wolf deserve their reputation, but the currents are serious: every dive started with a negative entry and ended with a long drift.", "status": "PUBLISHED", "site": "Darwin's Arch", "region": null, "photos": 2 },
+        { "title": "Dos Ojos: light in the cenote", "text": "The first cavern of Dos Ojos is lit by two sinkholes. Halocline at 9 metres makes the water shimmer like glass.\n\nStay on the line and respect the cave signs. The cavern zone is enough for an unforgettable dive.", "status": "PUBLISHED", "site": "Dos Ojos", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Palancar Reef drift", "text": "Cozumel's current carries you along coral towers taller than a house. Just relax and steer with your fins.\n\nWe saw two turtles and a nurse shark under a ledge.", "status": "PUBLISHED", "site": "Palancar Reef", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Gordon Rocks, the washing machine", "text": "Strong surge and a three-way current, but hammerheads in the channel. Stay low and hold the rocks when you need to.\n\nNot for a first Galapagos dive. Do a checkout dive before.", "status": "PUBLISHED", "site": "Gordon Rocks", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Mantas at Roca Partida", "text": "Five days of crossing to reach the Socorro islands, and it was worth every hour. Giant mantas came back again and again.\n\nThey seem to enjoy the bubbles. Stay still and let them choose the distance.", "status": "PUBLISHED", "site": "Roca Partida", "region": null, "photos": 0, "cover": "reuse" }
       ],
       "submissions": [
         { "name": "Cenote Angelita", "region": "mx-riviera-maya", "lat": 20.1373, "lng": -87.5773, "difficulty": 4, "minDepth": 10, "maxDepth": 60, "description": "A cenote with a hydrogen sulphide cloud at 30 m that looks like an underwater river.", "required": ["torch", "dive-computer"], "recommended": [], "status": "REJECTED", "reason": "The coordinates point to the jungle 3 km from the cenote. Please resubmit with the entrance location and add the depth of the cloud to the description." }
@@ -227,7 +247,13 @@
         { "site": "USS Spiegel Grove", "rating": 4, "difficulty": 3, "text": "Big wreck with currents on top. Penetration only with a guide.", "photos": 0 }
       ],
       "warnings": [],
-      "posts": [],
+      "posts": [
+        { "title": "Cod Hole, potato cod and friends", "text": "The cod at Cod Hole are not shy at all. One followed me for the whole dive like a puppy.\n\nThe reef top is at 15 metres, which makes it an easy dive with lots of light.", "status": "PUBLISHED", "site": "Cod Hole", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Osprey Reef wall", "text": "The wall drops to a thousand metres. We hung at 25 metres and watched grey reef sharks patrol.\n\nThe visibility was over 40 metres. Hard to beat anywhere.", "status": "PUBLISHED", "site": "Osprey Reef", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Navy Pier is a must", "text": "Exmouth's Navy Pier has more life per square metre than any place I know. Nudibranchs, frogfish and a wobbegong.\n\nYou need to book through the one licensed operator, so plan ahead.", "status": "PUBLISHED", "site": "Navy Pier", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Spiegel Grove for wreck fans", "text": "A 155-metre ship sitting upright at 40 metres off Key Largo. The deck is at 20 metres.\n\nThe current can be strong. Use the mooring line down and up.", "status": "PUBLISHED", "site": "USS Spiegel Grove", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Manta night dive in Kona", "text": "Lights on the bottom attract plankton, and the plankton attract mantas. They loop around inches from your head.\n\nKneel, keep your hands in and enjoy the show.", "status": "PUBLISHED", "site": "Manta Night Dive Kona", "region": null, "photos": 0, "cover": "reuse" }
+      ],
       "submissions": [],
       "locker": ["Mares Quantum BCD", "Torch with backup"]
     },
@@ -256,7 +282,13 @@
       "warnings": [
         { "site": "Silfra Fissure", "type": "CHANGED_CONDITIONS", "text": "The park now requires a dry suit certificate and 10 logged dry suit dives. Bring your log, the operators check it." }
       ],
-      "posts": [],
+      "posts": [
+        { "title": "Silfra between two continents", "text": "Two degrees and a hundred metres of visibility. You can touch America and Europe at the same time.\n\nDrysuit and dry gloves are a must. My hands still remember.", "status": "PUBLISHED", "site": "Silfra Fissure", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Princess Alice Bank and the mobulas", "text": "Two hours by boat from Pico, in the middle of the Atlantic. Mobulas came in a group of twenty.\n\nThe water was blue and 21 degrees. Very different from home.", "status": "PUBLISHED", "site": "Princess Alice Bank", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "El Bajón in winter", "text": "El Hierro's El Bajón is a volcanic pinnacle full of life. Barracuda schools circle the top.\n\nThe water is 18 degrees in winter, so a drysuit is welcome.", "status": "PUBLISHED", "site": "El Bajon", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Gozo Blue Hole with a drysuit", "text": "Everyone else was in a wetsuit, but my drysuit kept me warm for an hour. The arch at 15 metres is the best part.\n\nWatch out for waves at the entry on windy days.", "status": "PUBLISHED", "site": "Blue Hole Gozo", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Cold water, warm heart", "text": "People ask why I dive in four degrees. The answer: kelp, visibility and quiet.\n\nGood thermal protection is everything. Layer up and you will love it.", "status": "PUBLISHED", "site": null, "region": "is-thingvellir", "photos": 0, "cover": "reuse" }
+      ],
       "submissions": [],
       "locker": ["Drysuit with warm undersuit", "Dry gloves", "Hood 7 mm"]
     },
@@ -285,7 +317,13 @@
       "warnings": [
         { "site": "Aliwal Shoal Cathedral", "type": "MARINE_LIFE", "text": "Ragged-tooth sharks are resting in the Cathedral (June to November). Do not block the entrance and keep 3 m away." }
       ],
-      "posts": [],
+      "posts": [
+        { "title": "Aliwal Shoal Cathedral and the raggies", "text": "From July to November, ragged-tooth sharks gather in the Cathedral. They hover still, teeth out, but calm.\n\nKeep your distance and do not block the entrance.", "status": "PUBLISHED", "site": "Aliwal Shoal Cathedral", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Two Mile Reef in Sodwana", "text": "Easy, shallow and full of colour. A perfect reef for new divers.\n\nWe saw a potato bass and a turtle sleeping under a ledge.", "status": "PUBLISHED", "site": "Two Mile Reef", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Night sharks at Maaya Thila", "text": "Maaya Thila at night means white-tip sharks hunting in the torchlight. It is fast and exciting.\n\nStay with your buddy and keep the torch away from their eyes.", "status": "PUBLISHED", "site": "Maaya Thila", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Banana Reef, the Maldives classic", "text": "One of the oldest dive sites in the Maldives, and still beautiful. Caves, overhangs and a lot of fish.\n\nCurrent depends on the tide, so ask the guide.", "status": "PUBLISHED", "site": "Banana Reef", "region": null, "photos": 0, "cover": "reuse" },
+        { "title": "Why I love shark diving", "text": "Sharks are not monsters. They are careful, curious and important for the reef.\n\nEvery shark dive I do, I try to show people that.", "status": "PUBLISHED", "site": null, "region": "za-aliwal-shoal", "photos": 0, "cover": "reuse" }
+      ],
       "submissions": [],
       "locker": ["Wetsuit 5 mm", "Dive computer", "SMB"]
     }

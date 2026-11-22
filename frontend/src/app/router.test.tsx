@@ -1,7 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { ADMIN, startSignedIn } from "../test/auth";
 import { renderRoute } from "../test/render";
 import { server } from "../test/server";
@@ -136,5 +136,44 @@ describe("shared/app-shell: Navigation entries can be limited by role", () => {
 
     await nav().findByRole("link", { name: "Moderation" });
     expect(nav().queryByRole("link", { name: "Dive log" })).not.toBeInTheDocument();
+  });
+});
+
+function Boom(): never {
+  throw new Error("boom");
+}
+const crashing = [{ path: "crash", element: <Boom /> }];
+
+describe("shared/web-app: A page that crashes shows an error page", () => {
+  it("shows the error page inside the shell, without the error text", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    renderRoute("/crash", { extraRoutes: crashing });
+
+    expect(screen.getByRole("banner")).toBeInTheDocument();
+    const main = within(screen.getByRole("main"));
+    expect(await main.findByRole("heading", { name: "Something went wrong" })).toBeInTheDocument();
+    expect(main.getByRole("button", { name: "Reload page" })).toBeInTheDocument();
+    expect(main.getByRole("link", { name: "Go to the map" })).toHaveAttribute("href", "/");
+    expect(screen.queryByText(/boom/)).not.toBeInTheDocument();
+  });
+
+  it("leaves the error page through the header navigation", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    renderRoute("/crash", { extraRoutes: crashing });
+    await screen.findByRole("heading", { name: "Something went wrong" });
+
+    await userEvent.click(nav().getByRole("link", { name: "Feed" }));
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Feed" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Something went wrong" })).not.toBeInTheDocument();
+  });
+
+  it("uses the active locale", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    renderRoute("/crash", { extraRoutes: crashing, language: "uk" });
+
+    expect(await screen.findByRole("heading", { name: "Щось пішло не так" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Перезавантажити сторінку" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Перейти до мапи" })).toHaveAttribute("href", "/");
   });
 });

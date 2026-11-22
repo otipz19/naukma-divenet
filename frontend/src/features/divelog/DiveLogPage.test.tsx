@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { MIRA, authResponse, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import { formatDiveDate, formatDiveNumber, type DiveEntry } from "./api";
 
@@ -389,5 +390,28 @@ describe("divelog/log-page: The header offers to log a new dive", () => {
     expect(site).toHaveFocus();
     expect(within(form).getByLabelText("Max depth (m)")).toHaveValue("");
     expect(within(form).getByLabelText("Date")).not.toHaveValue("");
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (dive log)", () => {
+  it("shows a busy region and no empty message while the log loads", async () => {
+    startSignedIn();
+    const held = heldResponse();
+    server.use(http.get(logUrl, held.wait));
+    renderRoute("/dive-log");
+
+    const status = await screen.findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
+    expect(screen.queryByText("You have not logged a dive yet.")).not.toBeInTheDocument();
+  });
+});
+
+describe("shared/web-app: Every list has an empty state (dive log)", () => {
+  it("Empty list with an empty message", async () => {
+    startSignedIn();
+    serveLog();
+    renderRoute("/dive-log");
+
+    expect(await screen.findByText("You have not logged a dive yet.")).toBeInTheDocument();
   });
 });

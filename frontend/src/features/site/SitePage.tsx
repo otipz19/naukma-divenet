@@ -3,12 +3,14 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Badge } from "../../components/Badge/Badge";
 import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
 import { buttonClassName } from "../../components/Button/Button";
 import { Rating } from "../../components/Rating/Rating";
+import { PagePlaceholder, Skeleton } from "../../components/Skeleton/Skeleton";
 import { useMyReview } from "../review/api";
 import { SitePosts } from "../post/SitePosts";
 import { SiteReviews } from "../review/SiteReviews";
@@ -43,6 +45,7 @@ export function SitePage() {
     // Wait for the session, so an author reloading an unapproved site sends the token (design D5).
     enabled: validId && session.status !== "loading",
   });
+  useDocumentTitle(site.data?.name ?? t("shell.pageTitle.site"));
 
   if (!validId || (site.error instanceof ApiError && site.error.status === 404)) {
     return (
@@ -61,7 +64,30 @@ export function SitePage() {
       </div>
     );
   }
-  return <div className={styles.page}>{site.data && <SiteDetails site={site.data} />}</div>;
+  return (
+    <div className={styles.page}>
+      {site.data ? <SiteDetails site={site.data} /> : <SitePlaceholder />}
+    </div>
+  );
+}
+
+/** Title, meta line and the two columns while the site loads (spec shared/web-app). */
+function SitePlaceholder() {
+  return (
+    <PagePlaceholder>
+      <Skeleton width="30%" />
+      <Skeleton width="55%" height="var(--space-6)" />
+      <Skeleton width="40%" />
+      <div className={styles.columns}>
+        <div className={styles.content}>
+          <Skeleton height="calc(var(--space-8) * 3)" />
+        </div>
+        <div className={styles.aside}>
+          <Skeleton height="calc(var(--space-8) * 2)" />
+        </div>
+      </div>
+    </PagePlaceholder>
+  );
 }
 
 function SiteDetails({ site }: { site: Site }) {

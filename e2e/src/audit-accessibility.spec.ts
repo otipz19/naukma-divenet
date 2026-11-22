@@ -1,9 +1,9 @@
 // The accessibility audits (spec shared/accessibility): every routed page is
 // scanned against WCAG 2.1 A/AA in its rendered, data-carrying state. Pages are
 // reached through the same flows the journeys use. Both color themes come from
-// the system preference (frontend/src/app/theme.ts), so dark-theme scans run in
-// a colorScheme: "dark" context; the uk locale is scanned on pages whose chrome
-// translates.
+// the system preference by default (frontend/src/app/theme.ts), so dark-theme
+// scans run in a colorScheme: "dark" context, and the theme switch can pin a
+// theme; the uk locale is scanned on pages whose chrome translates.
 import {
   admin,
   DEMO_PASSWORD,
@@ -47,8 +47,9 @@ test("anonymous pages are accessible", async ({ page }) => {
 //    applies whenever the attribute does not pin the other theme, so the page
 //    is dark before (or without) any JavaScript;
 // 2. the explicit attribute: frontend/src/app/theme.ts mirrors the OS
-//    preference into <html data-theme> live, and an attribute pinning light
-//    beats an OS dark setting through the media block's :not() negation.
+//    preference into <html data-theme> live (theme choice "system"), and an
+//    attribute pinning light beats an OS dark setting through the media
+//    block's :not() negation.
 test("the theme respects both the system preference and the attribute", async ({ page }) => {
   await page.goto("/");
   const theme = () => page.locator("html").getAttribute("data-theme");
@@ -90,6 +91,26 @@ test("the theme respects both the system preference and the attribute", async ({
   expect(await scheme()).toBe("dark");
   await page.evaluate(() => document.documentElement.removeAttribute("data-theme"));
   expect(await scheme()).toBe("dark"); // media path, OS still dark
+});
+
+// The theme switch pins a theme over the OS preference and keeps it across a
+// reload (spec shared/app-shell: The header has a theme switch).
+test("the theme switch pins a theme across a reload", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  const dark = page
+    .getByRole("banner")
+    .getByRole("group", { name: "Colour theme" })
+    .getByRole("button", { name: "Dark theme" });
+
+  await dark.click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(dark).toHaveAttribute("aria-pressed", "true");
+
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(dark).toHaveAttribute("aria-pressed", "true");
+  await expectAccessible(page, "map (dark, pinned)");
 });
 
 test("anonymous pages are accessible in the dark theme", async ({ browser }) => {

@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { z } from "zod";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { Badge } from "../../components/Badge/Badge";
 import { Button } from "../../components/Button/Button";
@@ -42,6 +43,7 @@ export function PostEditorPage() {
   const postId = id === undefined ? undefined : Number(id);
   const post = usePost(postId ?? Number.NaN);
   const session = useSession();
+  useDocumentTitle(t(postId === undefined ? "post.editor.newTitle" : "post.editor.editTitle"));
 
   if (postId === undefined) return <PostForm key="new" post={null} />;
   const mine =

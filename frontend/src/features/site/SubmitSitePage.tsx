@@ -8,6 +8,7 @@ import { Link } from "react-router";
 import "leaflet/dist/leaflet.css";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { difficultyWord } from "../../components/Badge/DifficultyBadge";
 import { Button, buttonClassName } from "../../components/Button/Button";
@@ -51,6 +52,7 @@ function LocationClicks({ onPick }: { onPick: (lat: number, lng: number) => void
 /** The submission page at `/sites/new`, with the author's submissions (spec site/submission). */
 export function SubmitSitePage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("site.submit.title"));
   const queryClient = useQueryClient();
   const [required, setRequired] = useState<string[]>([]);
   const [recommended, setRecommended] = useState<string[]>([]);

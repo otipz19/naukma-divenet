@@ -14,7 +14,7 @@ When the `demo` profile is active and no demo diver exists, startup SHALL create
 
 - **WHEN** the application starts with the `demo` profile and no demo diver
 - **THEN** at least 8 demo divers exist, and each can log in with the demo password
-- **AND** at least 50 dives, 25 reviews, 5 warnings, 8 published posts and 2 drafts exist
+- **AND** at least 50 dives, 25 reviews, 5 warnings, 45 published posts and 2 drafts exist
 - **AND** the site moderation queue holds 2 pending submissions, and the certificate queue holds at least 1 pending certificate
 
 #### Scenario: Ratings come from the reviews
@@ -57,3 +57,18 @@ After the demo content is committed, the seeder SHALL evaluate the achievements 
 - **WHEN** the demo community has been seeded
 - **THEN** every demo diver with at least one dive has the `first-dive` award
 - **AND** at least one demo diver has an award for posts and one for an approved site
+
+### Requirement: The demo feed has several pages
+
+The seeded published posts SHALL fill at least three pages of the feed at its default page size, SHALL come from every demo diver, and SHALL be linked to at least 5 regions and at least 8 sites.
+
+#### Scenario: Feed pages
+
+- **WHEN** the demo community has been seeded and `GET /api/v1/posts` is called with the default page size
+- **THEN** the response reports at least 3 total pages
+
+#### Scenario: Posts are spread out
+
+- **WHEN** the demo community has been seeded
+- **THEN** every demo diver has at least one published post
+- **AND** the published posts are linked to at least 8 distinct sites, and to at least 5 distinct regions directly or through their site

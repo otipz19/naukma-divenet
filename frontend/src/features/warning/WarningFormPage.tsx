@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Button, buttonClassName } from "../../components/Button/Button";
@@ -38,6 +39,7 @@ export function WarningFormPage() {
   const validSiteId = /^\d+$/.test(id ?? "");
   const siteId = Number(id);
   const isEdit = warningId !== undefined;
+  useDocumentTitle(t(isEdit ? "warning.form.titleEdit" : "warning.form.titleNew"));
   const validWarningId = !isEdit || /^\d+$/.test(warningId);
   const numWarningId = Number(warningId);
   const session = useSession();

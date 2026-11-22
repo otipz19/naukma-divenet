@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { components } from "../../api/schema.gen";
 import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import { formatCoordinates } from "./SitePage";
 
@@ -342,5 +343,22 @@ describe("auth: The web app shows the admin no diver actions (site page)", () =>
     expect(await screen.findByRole("link", { name: "Log a dive here" })).toBeInTheDocument();
     expect(await screen.findByRole("link", { name: "Write a review" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Report a warning" })).toBeInTheDocument();
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (site page)", () => {
+  it("Site page while loading: a busy region, then the site", async () => {
+    const held = heldResponse();
+    server.use(http.get(siteUrl, held.wait));
+    renderRoute("/sites/7");
+
+    const status = await within(screen.getByRole("main")).findByText("Loading…");
+    expect(status).toHaveAttribute("role", "status");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
+
+    held.release(HttpResponse.json(blueHole()));
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Blue Hole" })).toBeInTheDocument();
+    expect(document.querySelector("[aria-busy='true']")).toBeNull();
   });
 });
