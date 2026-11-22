@@ -136,22 +136,15 @@ function AccountMenu({ user }: { user: SessionUser }) {
           <p className={`label ${styles.name}`} role="presentation">
             {user.displayName}
           </p>
-          <Link
-            to={`/users/${user.id}`}
-            role="menuitem"
-            className={`label ${styles.item}`}
-            onClick={() => close(false)}
-          >
-            {t("shell.account.profile")}
-          </Link>
-          {user.role === "ADMIN" && (
+          {/* The admin is a moderator only and has no profile (spec auth). */}
+          {user.role === "USER" && (
             <Link
-              to="/admin/moderation"
+              to={`/users/${user.id}`}
               role="menuitem"
               className={`label ${styles.item}`}
               onClick={() => close(false)}
             >
-              {t("shell.account.moderation")}
+              {t("shell.account.profile")}
             </Link>
           )}
           <button
@@ -176,12 +169,9 @@ function DrawerAccount({ user, onNavigate }: { user: SessionUser; onNavigate?: (
   return (
     <div className={styles.drawerLinks}>
       <p className={`label ${styles.drawerName}`}>{user.displayName}</p>
-      <Link to={`/users/${user.id}`} className={`label ${styles.link}`} onClick={onNavigate}>
-        {t("shell.account.profile")}
-      </Link>
-      {user.role === "ADMIN" && (
-        <Link to="/admin/moderation" className={`label ${styles.link}`} onClick={onNavigate}>
-          {t("shell.account.moderation")}
+      {user.role === "USER" && (
+        <Link to={`/users/${user.id}`} className={`label ${styles.link}`} onClick={onNavigate}>
+          {t("shell.account.profile")}
         </Link>
       )}
       <button

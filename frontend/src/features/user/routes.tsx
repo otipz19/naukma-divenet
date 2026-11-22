@@ -10,7 +10,7 @@ export const userRoutes: RouteObject[] = [
   {
     path: "profile/certificates",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <CertificatesPage />
       </RequireAuth>
     ),
@@ -18,7 +18,7 @@ export const userRoutes: RouteObject[] = [
   {
     path: "profile/edit",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <ProfileEditPage />
       </RequireAuth>
     ),

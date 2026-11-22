@@ -5,7 +5,8 @@ import { Alert } from "../../components/Alert/Alert";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { buttonClassName } from "../../components/Button/Button";
 import { initials } from "../auth/AccountArea";
-import { useSession } from "../auth/useSession";
+import { NotFoundPage } from "../../app/routes/NotFoundPage";
+import { useIsAdmin, useSession } from "../auth/useSession";
 import { ProfileAchievements } from "../achievement/ProfileAchievements";
 import { ProfileDives, ProfileStats } from "../divelog/ProfileDives";
 import { ProfilePosts } from "../post/ProfilePosts";
@@ -20,8 +21,17 @@ export function ProfilePage() {
   const { id } = useParams();
   const validId = /^\d+$/.test(id ?? "");
   const session = useSession();
-  const profile = useProfile(Number(id), validId);
+  const isAdmin = useIsAdmin();
+  // The admin is a moderator only and has no profile in the web app (spec auth, design D3). The
+  // query waits for the session, so the admin's own profile is never requested.
+  const ownAdminProfile =
+    isAdmin && session.status === "signedIn" && session.user.id === Number(id);
+  const profile = useProfile(
+    Number(id),
+    validId && session.status !== "loading" && !ownAdminProfile,
+  );
 
+  if (ownAdminProfile) return <NotFoundPage />;
   if (!validId || (profile.error instanceof ApiError && profile.error.status === 404)) {
     return (
       <div className={styles.page}>
@@ -69,7 +79,7 @@ export function ProfilePage() {
         <ProfileCertificates
           userId={profile.data.id}
           own={own}
-          admin={session.status === "signedIn" && session.user.role === "ADMIN"}
+          admin={isAdmin}
           showCertificates={profile.data.showCertificates}
         />
       )}

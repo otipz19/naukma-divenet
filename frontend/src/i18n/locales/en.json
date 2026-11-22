@@ -24,7 +24,12 @@
       "label": "Main",
       "map": "Map",
       "diveLog": "Dive log",
-      "feed": "Feed"
+      "feed": "Feed",
+      "moderation": "Moderation",
+      "pending_one": "{{label}}, {{count}} pending",
+      "pending_few": "{{label}}, {{count}} pending",
+      "pending_many": "{{label}}, {{count}} pending",
+      "pending_other": "{{label}}, {{count}} pending"
     },
     "menu": {
       "open": "Open menu",
@@ -47,7 +52,6 @@
       "signUp": "Sign up",
       "menu": "Account menu: {{name}}",
       "logOut": "Log out",
-      "moderation": "Moderation",
       "profile": "Your profile"
     }
   },

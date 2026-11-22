@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import { getSession } from "../../api/session";
-import { startSignedIn } from "../../test/auth";
+import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import { initials } from "./AccountArea";
@@ -152,5 +152,46 @@ describe("initials", () => {
     expect(initials("Mira Koval")).toBe("MK");
     expect(initials("  олена   іванівна петренко ", "uk")).toBe("ОІ");
     expect(initials("Mira")).toBe("M");
+  });
+});
+
+describe("shared/app-shell: The admin's account area holds only Log out", () => {
+  it("Admin account menu: the display name and Log out, no Profile or Moderation", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/");
+
+    await userEvent.click(await header().findByRole("button", { name: /Admin User/ }));
+
+    const menu = within(screen.getByRole("menu"));
+    expect(menu.getByText("Admin User")).toBeInTheDocument();
+    expect(menu.getAllByRole("menuitem").map((item) => item.textContent)).toEqual(["Log out"]);
+  });
+
+  it("Admin drawer: Moderation in the navigation, no Profile or Moderation account link", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/");
+    await header().findByRole("button", { name: /Admin User/ });
+
+    await userEvent.click(screen.getByRole("button", { name: "Open menu" }));
+
+    const dialog = screen.getByRole("dialog");
+    const navLinks = within(within(dialog).getByRole("navigation", { name: "Main" })).getAllByRole(
+      "link",
+    );
+    expect(navLinks.map((link) => link.textContent)).toContain("Moderation");
+    const accountLinks = within(dialog)
+      .getAllByRole("link")
+      .filter((link) => !navLinks.includes(link));
+    expect(accountLinks).toEqual([]);
+    expect(within(dialog).getByRole("button", { name: "Log out" })).toBeInTheDocument();
+  });
+
+  it("shows a USER the Profile item", async () => {
+    startSignedIn();
+    renderRoute("/");
+
+    await userEvent.click(await accountButton());
+
+    expect(screen.getByRole("menuitem", { name: "Your profile" })).toBeInTheDocument();
   });
 });

@@ -23,6 +23,7 @@ import {
   type SiteSearch,
 } from "./siteSearch";
 import { NARROW_MAP_QUERY, useMediaQuery } from "./useMediaQuery";
+import { useIsAdmin } from "../auth/useSession";
 import styles from "./MapPage.module.css";
 
 export type SiteMarker = components["schemas"]["SiteMarkerResponse"];
@@ -43,6 +44,7 @@ export function MapPage() {
   const [params, setParams] = useSearchParams();
   const search = parseSearch(params);
   const narrow = useMediaQuery(NARROW_MAP_QUERY);
+  const isAdmin = useIsAdmin();
 
   const update = (next: SiteSearch, options?: { replace: boolean }) =>
     setParams(toSearchParams(next), options);
@@ -157,7 +159,7 @@ export function MapPage() {
     </>
   );
 
-  const addSite = (
+  const addSite = !isAdmin && (
     <Link
       className={`${buttonClassName({ variant: "primary" })} ${styles.addSite}`}
       to="/sites/new"

@@ -1,9 +1,9 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { getSession } from "../../api/session";
-import { MIRA, startSignedIn } from "../../test/auth";
+import { getSession, signIn, signOut } from "../../api/session";
+import { ADMIN, MIRA, authResponse, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
-import { useSession } from "./useSession";
+import { useIsAdmin, useSession } from "./useSession";
 
 describe("auth: The web app keeps the session without storing the access token", () => {
   it("restores the session on load", async () => {
@@ -28,5 +28,21 @@ describe("auth: The web app keeps the session without storing the access token",
     renderRoute("/");
 
     await waitFor(() => expect(result.current.status).toBe("signedIn"));
+  });
+});
+
+describe("auth: useIsAdmin", () => {
+  it("is false while loading, signed out and for a USER, and true for an ADMIN", () => {
+    const { result } = renderHook(() => useIsAdmin());
+    expect(result.current).toBe(false);
+
+    act(() => signOut());
+    expect(result.current).toBe(false);
+
+    act(() => signIn(authResponse("token-1", MIRA)));
+    expect(result.current).toBe(false);
+
+    act(() => signIn(authResponse("token-2", ADMIN)));
+    expect(result.current).toBe(true);
   });
 });

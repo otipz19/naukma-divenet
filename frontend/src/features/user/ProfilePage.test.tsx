@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { MIRA, startSignedIn } from "../../test/auth";
+import { ADMIN, MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import type { Profile } from "./api";
@@ -106,5 +106,32 @@ describe("user/profile: Owners reach their edit page", () => {
       "href",
       `/users/${MIRA.id}`,
     );
+  });
+});
+
+describe("auth: The admin has no profile in the web app", () => {
+  it("Own profile: shows the not-found page and does not request the profile", async () => {
+    let requested = false;
+    server.use(
+      http.get(url(ADMIN.id), () => {
+        requested = true;
+        return HttpResponse.json(profile({ id: ADMIN.id, displayName: ADMIN.displayName }));
+      }),
+    );
+    startSignedIn(ADMIN);
+    renderRoute(`/users/${ADMIN.id}`);
+
+    expect(await screen.findByRole("heading", { name: "Page not found" })).toBeInTheDocument();
+    expect(requested).toBe(false);
+  });
+
+  it("Another diver's profile: shows it, with no Edit profile link", async () => {
+    startSignedIn(ADMIN);
+    serve(profile());
+    renderRoute("/users/21");
+
+    await screen.findByRole("heading", { level: 1, name: "Oleh Kravets" });
+    await screen.findByRole("button", { name: /Admin User/ });
+    expect(screen.queryByRole("link", { name: "Edit profile" })).not.toBeInTheDocument();
   });
 });

@@ -32,8 +32,8 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-15](F-15-dive-form-dialog.md) | Dive log | Edit is not obvious; create and edit move to a dialog | UX, spec change | done: add-dialogs-and-toasts |
 | [F-16](F-16-dive-delete-hidden.md) | Dive log | Delete is only inside the edit form; users cannot find it | UX, spec change | done: add-dialogs-and-toasts |
 | [F-17](F-17-certificate-form-dialog.md) | Certificates | Edit is unclear; create and edit move to a dialog | UX, spec change | done: add-dialogs-and-toasts |
-| [F-18](F-18-admin-is-not-a-diver.md) | Roles | The admin can log dives, write posts and has a profile; the admin should be a moderator only | product rule, spec change | decided |
-| [F-19](F-19-moderation-in-header.md) | Shell | Moderation link is in the account menu; move it to the header navigation | UX, spec change | decided |
+| [F-18](F-18-admin-is-not-a-diver.md) | Roles | The admin can log dives, write posts and has a profile; the admin should be a moderator only (web app only, owner 2026-11-22) | product rule, spec change | done: scope-admin-account |
+| [F-19](F-19-moderation-in-header.md) | Shell | Moderation link is in the account menu; move it to the header navigation | UX, spec change | done: scope-admin-account |
 
 ## Proposed grouping into changes
 
@@ -43,7 +43,7 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | `add-dialogs-and-toasts` (new roadmap item) | F-14, F-15, F-16, F-17 | One shared Dialog and Toast in the design system and the app shell, then the dive log and certificates moved onto them |
 | `rework-map-page` (new roadmap item) | F-03, F-10, F-11, F-12 | They all change one screen's layout, and F-03 changes the shell that screen sits in |
 | `polish-release` (planned) | F-01, F-06, F-08 | Release polish across pages |
-| `scope-admin-account` (new roadmap item) | F-18, F-19 | One role rule across UI, API and specs; the header entry is part of the admin's new shell |
+| `scope-admin-account` (new roadmap item) | F-18, F-19 | One role rule across the web app and specs (no API change, owner 2026-11-22); the header entry is part of the admin's new shell |
 
 The owner agreed to this grouping on 2026-11-21. `add-dialogs-and-toasts`,
 `scope-admin-account` and `rework-map-page` are rows in [ROADMAP.md](../ROADMAP.md)

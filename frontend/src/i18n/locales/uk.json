@@ -24,7 +24,12 @@
       "label": "Основна",
       "map": "Мапа",
       "diveLog": "Журнал занурень",
-      "feed": "Стрічка"
+      "feed": "Стрічка",
+      "moderation": "Модерація",
+      "pending_one": "{{label}}, {{count}} очікує розгляду",
+      "pending_few": "{{label}}, {{count}} очікують розгляду",
+      "pending_many": "{{label}}, {{count}} очікують розгляду",
+      "pending_other": "{{label}}, {{count}} очікують розгляду"
     },
     "menu": {
       "open": "Відкрити меню",
@@ -47,7 +52,6 @@
       "signUp": "Зареєструватися",
       "menu": "Меню облікового запису: {{name}}",
       "logOut": "Вийти",
-      "moderation": "Модерація",
       "profile": "Ваш профіль"
     }
   },

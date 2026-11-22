@@ -5,7 +5,7 @@ import { api } from "../../api/client";
 import { Alert } from "../../components/Alert/Alert";
 import { buttonClassName } from "../../components/Button/Button";
 import { SelectField } from "../../components/SelectField/SelectField";
-import { useSession } from "../auth/useSession";
+import { useIsAdmin, useSession } from "../auth/useSession";
 import { useDrafts, useFeed } from "./api";
 import { DraftList } from "./DraftList";
 import { PostCard } from "./PostCard";
@@ -30,8 +30,10 @@ export function FeedPage() {
     siteId,
     page,
   });
-  const signedIn = session.status === "signedIn";
-  const drafts = useDrafts(signedIn);
+  const isAdmin = useIsAdmin();
+  // The admin writes no posts, so it gets neither the button nor the drafts (spec auth).
+  const canWrite = session.status === "signedIn" && !isAdmin;
+  const drafts = useDrafts(canWrite);
   const countries = useQuery({
     queryKey: ["countries"],
     queryFn: async () => (await api.GET("/api/v1/countries")).data ?? [],
@@ -98,7 +100,7 @@ export function FeedPage() {
               </optgroup>
             ))}
           </SelectField>
-          {signedIn && (
+          {canWrite && (
             <Link className={buttonClassName({ variant: "primary" })} to="/posts/new">
               {t("post.profile.write")}
             </Link>
@@ -128,7 +130,7 @@ export function FeedPage() {
           ))}
           <PostPager page={page} totalPages={feed.data?.page?.totalPages ?? 0} onChange={goTo} />
         </section>
-        {signedIn && (drafts.data?.content?.length ?? 0) > 0 && (
+        {canWrite && (drafts.data?.content?.length ?? 0) > 0 && (
           <aside className={styles.draftsAside}>
             <DraftList drafts={drafts.data?.content ?? []} />
           </aside>

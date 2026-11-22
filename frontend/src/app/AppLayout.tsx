@@ -7,6 +7,7 @@ import { AccountArea } from "../features/auth/AccountArea";
 import { DisclaimerDialog } from "../features/disclaimer/DisclaimerDialog";
 import { restoreSession } from "../api/session";
 import styles from "./AppLayout.module.css";
+import { useNavItems } from "./navigation";
 
 const renderAccount: RenderAccount = (placement, onNavigate) => (
   <AccountArea placement={placement} onNavigate={onNavigate} />
@@ -16,6 +17,7 @@ const renderAccount: RenderAccount = (placement, onNavigate) => (
 export function AppLayout() {
   const { t } = useTranslation();
   const main = useRef<HTMLElement>(null);
+  const navItems = useNavItems();
   // Once per page load: the access token lives only in memory, so a reload starts signed out.
   useEffect(() => {
     void restoreSession();
@@ -33,7 +35,7 @@ export function AppLayout() {
         >
           {t("shell.skipToContent")}
         </a>
-        <AppHeader account={renderAccount} />
+        <AppHeader navItems={navItems} account={renderAccount} />
         <main id="main" ref={main} tabIndex={-1} className={styles.main}>
           <Outlet />
         </main>

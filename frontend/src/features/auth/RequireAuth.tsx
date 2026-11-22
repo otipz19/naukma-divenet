@@ -7,8 +7,17 @@ import { useSession } from "./useSession";
 /**
  * Renders its page for a signed-in user. A signed-out visitor goes to the login page, which returns
  * here; with `admin`, anyone else sees the not-found page, so the page's existence stays unadvertised.
+ * With `diver`, an admin is sent to the moderation page before the page mounts (spec auth).
  */
-export function RequireAuth({ admin = false, children }: { admin?: boolean; children: ReactNode }) {
+export function RequireAuth({
+  admin = false,
+  diver = false,
+  children,
+}: {
+  admin?: boolean;
+  diver?: boolean;
+  children: ReactNode;
+}) {
   const session = useSession();
   const location = useLocation();
   if (session.status === "loading") return null;
@@ -17,5 +26,6 @@ export function RequireAuth({ admin = false, children }: { admin?: boolean; chil
     return <Navigate to="/login" state={state} replace />;
   }
   if (admin && session.user.role !== "ADMIN") return <NotFoundPage />;
+  if (diver && session.user.role === "ADMIN") return <Navigate to="/admin/moderation" replace />;
   return children;
 }

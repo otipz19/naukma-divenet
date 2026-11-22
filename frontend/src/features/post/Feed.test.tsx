@@ -2,7 +2,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
-import { startSignedIn } from "../../test/auth";
+import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import type { PostSummary } from "./api";
@@ -233,6 +233,19 @@ describe("post/feed: Signed-in users write from the feed and see their drafts", 
       "href",
       "/posts/9/edit",
     );
+  });
+
+  it("Feed for an admin: shows neither and requests no drafts", async () => {
+    startSignedIn(ADMIN);
+    serveFeed();
+    const state = serveDrafts();
+    renderRoute("/feed");
+
+    await screen.findByRole("link", { name: "Night dive" });
+    await screen.findByRole("button", { name: /Admin User/ });
+    expect(screen.queryByRole("link", { name: "Write a post" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("complementary")).not.toBeInTheDocument();
+    expect(state.requested).toBe(false);
   });
 
   it("shows neither and requests no drafts when signed out", async () => {

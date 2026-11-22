@@ -1,7 +1,13 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
+import { ADMIN, startSignedIn } from "../test/auth";
 import { renderRoute } from "../test/render";
+import { server } from "../test/server";
+
+const header = () => within(screen.getByRole("banner"));
+const nav = () => within(header().getByRole("navigation", { name: "Main" }));
 
 describe("shared/web-app: Unknown paths show a not-found page", () => {
   it("shows the not-found message and a link home", () => {
@@ -65,5 +71,70 @@ describe("shared/app-shell: A skip link leads past the header", () => {
     await userEvent.tab();
 
     expect(screen.getByRole("link", { name: "Перейти до вмісту" })).toHaveFocus();
+  });
+});
+
+describe("auth: Diver pages send the admin to moderation (routes)", () => {
+  it("Admin opens the dive log: the moderation page is shown and the dive log is not requested", async () => {
+    const diveLogRequests: string[] = [];
+    server.use(
+      http.get("*/api/v1/users/:id/dive-log", ({ request }) => {
+        diveLogRequests.push(request.url);
+        return HttpResponse.json({ content: [], page: {} });
+      }),
+    );
+    startSignedIn(ADMIN);
+    renderRoute("/dive-log");
+
+    expect(await screen.findByRole("heading", { name: "Moderation" })).toBeInTheDocument();
+    expect(nav().getByRole("link", { name: "Moderation" })).toHaveAttribute("aria-current", "page");
+    expect(screen.queryByRole("heading", { name: "Dive log" })).not.toBeInTheDocument();
+    expect(diveLogRequests).toHaveLength(0);
+  });
+
+  it("Admin opens the post editor: the moderation page is shown", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/posts/new");
+
+    expect(await screen.findByRole("heading", { name: "Moderation" })).toBeInTheDocument();
+    expect(nav().getByRole("link", { name: "Moderation" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("Diver opens the dive log: the dive log page is shown", async () => {
+    startSignedIn();
+    renderRoute("/dive-log");
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Dive log" })).toBeInTheDocument();
+  });
+});
+
+describe("shared/app-shell: Navigation entries can be limited by role", () => {
+  const labels = () =>
+    nav()
+      .getAllByRole("link")
+      .map((link) => link.textContent);
+
+  it("Admin navigation: Map, Feed and Moderation, with no Dive log", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/");
+
+    await nav().findByRole("link", { name: "Moderation" });
+    expect(labels()).toEqual(["Map", "Feed", "Moderation"]);
+  });
+
+  it("Diver navigation: Map, Feed and Dive log, with no Moderation", async () => {
+    startSignedIn();
+    renderRoute("/");
+
+    await header().findByRole("button", { name: /Mira Koval/ });
+    expect(labels()).toEqual(["Map", "Feed", "Dive log"]);
+  });
+
+  it("No entry for the admin: no Dive log link", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/feed");
+
+    await nav().findByRole("link", { name: "Moderation" });
+    expect(nav().queryByRole("link", { name: "Dive log" })).not.toBeInTheDocument();
   });
 });

@@ -2,6 +2,7 @@ import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import type { SiteMarker } from "./MapPage";
@@ -496,5 +497,18 @@ describe("site/search: Phones show filters in a dialog and results in a sheet", 
       "true",
     );
     expect(within(sheet).getAllByRole("link")).toHaveLength(3);
+  });
+});
+
+describe("auth: The web app shows the admin no diver actions (map)", () => {
+  it("Map for an admin: no Add a site link", async () => {
+    recordMarkers();
+    startSignedIn(ADMIN);
+    renderRoute("/");
+
+    await screen.findByRole("button", { name: /Admin User/ });
+    const map = screen.getByRole("region", { name: "Map of dive sites" });
+    expect(within(map).queryByRole("link", { name: "Add a site" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Add a site" })).not.toBeInTheDocument();
   });
 });

@@ -7,7 +7,7 @@ export const reviewRoutes: RouteObject[] = [
   {
     path: "sites/:id/review",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <ReviewFormPage />
       </RequireAuth>
     ),

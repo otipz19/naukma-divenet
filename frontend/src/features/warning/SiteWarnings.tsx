@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { Alert } from "../../components/Alert/Alert";
 import { Button, buttonClassName } from "../../components/Button/Button";
-import { useSession } from "../auth/useSession";
+import { useIsAdmin, useSession } from "../auth/useSession";
 import {
   deleteWarning,
   fetchWarnings,
@@ -22,7 +22,7 @@ export function SiteWarnings({ siteId }: { siteId: number }) {
   const { t } = useTranslation();
   const session = useSession();
   const viewerId = session.status === "signedIn" ? session.user.id : undefined;
-  const isAdmin = session.status === "signedIn" && session.user.role === "ADMIN";
+  const isAdmin = useIsAdmin();
   const [expanded, setExpanded] = useState(false);
 
   const warnings = useInfiniteQuery({
@@ -53,12 +53,14 @@ export function SiteWarnings({ siteId }: { siteId: number }) {
         <h2 id="warnings-title" className={`h2 ${styles.flush}`}>
           {t("warning.title")}
         </h2>
-        <Link
-          className={buttonClassName({ variant: "ghost", size: "sm" })}
-          to={`/sites/${siteId}/warnings/new`}
-        >
-          {t("warning.report")}
-        </Link>
+        {!isAdmin && (
+          <Link
+            className={buttonClassName({ variant: "ghost", size: "sm" })}
+            to={`/sites/${siteId}/warnings/new`}
+          >
+            {t("warning.report")}
+          </Link>
+        )}
       </div>
       {warnings.isError && (
         <Alert tone="danger" live>

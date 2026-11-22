@@ -1,8 +1,8 @@
 # F-18 The admin account acts as a diver
 
 - **Area:** Roles (whole app)
-- **Status:** decided (owner, 2026-11-21: the admin is a moderator only, with no diver features)
-- **Delivered by:** `scope-admin-account` (proposed roadmap item, see the index)
+- **Status:** done: scope-admin-account (decided: owner, 2026-11-21: the admin is a moderator only, with no diver features; narrowed 2026-11-22 to the web app)
+- **Delivered by:** `scope-admin-account`
 
 ## Seen
 Signed in as admin, the owner can log dives and write posts, and the admin has a
@@ -43,6 +43,15 @@ visitor, and moderates. It has none of the diver features:
   feature spec. **PRODUCT.md:** add the rule under "Domain decisions → Roles".
 - **Seed and bootstrap:** the admin gets no profile content. A demo database that
   already holds admin-authored content is not expected; the seed creates none.
+
+## Scope narrowed to the web app (owner, 2026-11-22)
+The project only has to be demonstrated, so it is enough that the admin never *sees* a
+diver feature. `scope-admin-account` changes the web app only. The **API** bullet above
+is dropped: diver endpoints do not answer `403` for an admin, and there is no back-end,
+OpenAPI, migration or seed change. A hand-made request can still create diver content as
+the admin; this is an accepted demo-only gap, and a later change can add the `403`s.
+Hiding the admin's profile from other visitors is also out of scope: nothing links to it,
+because the seed creates no admin content.
 
 ## Warnings (owner, 2026-11-21)
 An admin cannot post a warning. Admins hide warnings, but they do not write content.

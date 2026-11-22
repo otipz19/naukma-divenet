@@ -10,7 +10,7 @@ export const postRoutes: RouteObject[] = [
   {
     path: "posts/new",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <PostEditorPage />
       </RequireAuth>
     ),
@@ -19,7 +19,7 @@ export const postRoutes: RouteObject[] = [
   {
     path: "posts/:id/edit",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <PostEditorPage />
       </RequireAuth>
     ),

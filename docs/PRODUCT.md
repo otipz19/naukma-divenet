@@ -84,6 +84,11 @@ community feed in one place.
   a number and an optional photo. An admin marks a certificate as verified. The
   platform never contacts an agency.
 - **Roles.** `USER` and `ADMIN`. Anonymous visitors can read all public content.
+  The admin is a moderator only: it reads public content like a visitor, moderates
+  sites and certificates and hides warnings, and has no diver features (no dive log,
+  posts, reviews, warnings, site submission, certificates or own profile). The web app
+  enforces this: it hides those entry points and sends the admin from diver pages to
+  moderation. The API does not refuse an admin (owner, 2026-11-22: enough for the demo).
 - **Achievements.** About eight hard-coded rules (for example: first logged dive,
   10 sites visited, 5 published posts, first approved site). Each rule exposes
   its progress.
