@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — owner's second review (F-20..F-24) as polish-second-review
+goal: M6 (Release readiness) — demo-readiness walkthrough findings F-25..F-31 as polish-demo-walkthrough
 done:
   - M0-M5 and Stretch merged and archived (PRs #1-#26); specs in openspec/specs/, history in git and openspec/changes/archive/
   - M6 archived and merged: apply-ui-design (#27), complete-demo-seed, add-e2e-suite, fix-proxy-keepalive (#31), measure-performance (#32), harden-security (#33), audit-accessibility (#34), audit-modern-web (#35)
@@ -9,11 +9,12 @@ done:
   - scope-admin-account merged (PR #42) (F-18, F-19): web app only; useIsAdmin(), <RequireAuth diver> sends the admin to /admin/moderation, header Moderation entry with pending badge (useNavItems)
   - polish-release applied and archived on change/polish-release (F-06, F-08; owner dropped the i18n audit and F-01): app/routes/ErrorPage via errorElement, components/Skeleton placeholders, app/documentTitle, components/ThemeSwitch + app/theme.ts choice, 45 published seed posts (round-robin, reused covers)
   - polish-release merged (PR #43)
-  - polish-second-review applied and archived (F-20..F-24): phone map isolation, desktop filters in place of the toggle with Hide filters, no phone chips, TOAST_MS 10 s, dive log actions header
+  - polish-second-review merged (PR #44) (F-20..F-24): phone map isolation, desktop filters in place of the toggle with Hide filters, no phone chips, TOAST_MS 10 s, dive log actions header
+  - Demo walkthrough 2026-11-22: docs/review-findings/walkthrough-2026-11-22.md (W-01..W-17); owner kept F-25..F-31, declined the rest
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: polish-second-review PR open; waiting for CI (check, stack, e2e incl. new drawer test)
+wip: polish-demo-walkthrough proposed on change/polish-demo-walkthrough (committed, not pushed); waiting for owner review
 blocked: null
-next: after the polish-second-review PR merges, ask the owner what follows. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist
+next: after the owner approves the proposal, /opsx:apply polish-demo-walkthrough; task 4.1 needs the owner's approval of the seed photo list before any download. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
