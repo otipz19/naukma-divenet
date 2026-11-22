@@ -49,11 +49,17 @@
   border-bottom: 1px solid var(--border);
 }
 
+/* Many chips scroll inside the capped head instead of being cut off; the padding keeps the
+   focus ring (2 px outline, 2 px offset) inside the scroll box. */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
+  min-height: 0;
+  overflow-y: auto;
+  margin: calc(-1 * var(--space-1));
+  padding: var(--space-1);
 }
 
 .body {
