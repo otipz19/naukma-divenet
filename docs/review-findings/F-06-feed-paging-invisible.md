@@ -25,4 +25,6 @@ Update the `demo/seed` spec if it states counts, and keep
 `complete-demo-seed`'s rules: seed through the services, generated images, and
 text in the divers' own languages.
 
+Owner, 2026-11-22: the new posts may reuse the pictures the seed already has.
+
 Rejected: a smaller page size. It would show paging, but with a thin feed.

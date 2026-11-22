@@ -15,7 +15,7 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 
 | ID | Area | Finding | Kind | Status |
 | --- | --- | --- | --- | --- |
-| [F-01](F-01-refresh-401.md) | Auth | Signed-out visit logs a 401 from `/auth/refresh` | cosmetic | decided |
+| [F-01](F-01-refresh-401.md) | Auth | Signed-out visit logs a 401 from `/auth/refresh` | cosmetic | declined |
 | [F-02](F-02-font-csp.md) | Fonts / CSP | Inlined font subsets blocked by the CSP; `ґ` and `₴` in headings fall back to a system font | bug | done: PR #38 |
 | [F-03](F-03-footer-modal.md) | Shell | Footer makes the map page scroll; owner decided: remove the footer, show the disclaimer in a first-visit modal | spec change | done: rework-map-page |
 | [F-04](F-04-password-width.md) | Auth UI | Password field narrower than the email field | bug | done: PR #38 |
@@ -42,7 +42,7 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | `fix/ui-defects` (no behaviour change) | F-02, F-04, F-13 | Small CSS and build fixes |
 | `add-dialogs-and-toasts` (new roadmap item) | F-14, F-15, F-16, F-17 | One shared Dialog and Toast in the design system and the app shell, then the dive log and certificates moved onto them |
 | `rework-map-page` (new roadmap item) | F-03, F-10, F-11, F-12 | They all change one screen's layout, and F-03 changes the shell that screen sits in |
-| `polish-release` (planned) | F-01, F-06, F-08 | Release polish across pages |
+| `polish-release` (proposed) | F-06, F-08 (F-01 declined 2026-11-22) | Release polish across pages |
 | `scope-admin-account` (new roadmap item) | F-18, F-19 | One role rule across the web app and specs (no API change, owner 2026-11-22); the header entry is part of the admin's new shell |
 
 The owner agreed to this grouping on 2026-11-21. `add-dialogs-and-toasts`,
