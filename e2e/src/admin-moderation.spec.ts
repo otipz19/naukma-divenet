@@ -28,9 +28,7 @@ test("an admin approves a submitted site", async ({ page }) => {
   await page.getByLabel("Region").selectOption({ label: "Great Barrier Reef" });
   await page.getByLabel("Min depth (m)").fill("5");
   await page.getByLabel("Max depth (m)").fill("25");
-  await page
-    .getByLabel("Difficulty")
-    .selectOption({ label: "2 · Intermediate" });
+  await page.getByLabel("Difficulty").selectOption({ label: "Intermediate" });
   await page
     .getByLabel("Description")
     .fill("A small inshore reef submitted by the E2E suite.");
@@ -58,6 +56,8 @@ test("an admin approves a submitted site", async ({ page }) => {
   await expect(card).toBeVisible();
   await card.getByRole("button", { name: "Approve" }).click();
   await expect(card).toHaveCount(0);
+  // A toast confirms the decision (spec site/moderation).
+  await expect(page.getByText(`${siteName} approved`)).toBeVisible();
 
   // The approved site is now public on the map.
   await logout(page);

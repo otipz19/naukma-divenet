@@ -34,6 +34,19 @@ test("anonymous pages are accessible", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Reviews" })).toBeVisible();
   await expectAccessible(page, "site details");
 
+  // A visitor's diver action opens the log-in prompt (spec auth).
+  await page.getByRole("link", { name: "Write a review" }).click();
+  await expect(page.getByRole("dialog", { name: "Log in to continue" })).toBeVisible();
+  await expectAccessible(page, "log-in prompt dialog");
+
+  // A review photo opens the overlay viewer (spec media/photo-viewer).
+  await page.goto("/");
+  await page.getByLabel("Search sites").fill("Thistlegorm");
+  await page.getByRole("link", { name: /SS Thistlegorm/ }).click();
+  await page.getByRole("img", { name: /^Photo 1 by / }).click();
+  await expect(page.getByRole("dialog", { name: "Photo viewer" })).toBeVisible();
+  await expectAccessible(page, "photo viewer");
+
   await page.goto("/login");
   await expectAccessible(page, "login");
 

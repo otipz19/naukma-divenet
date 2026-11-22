@@ -113,7 +113,18 @@
       }
     },
     "showPassword": "Show password",
-    "hidePassword": "Hide password"
+    "hidePassword": "Hide password",
+    "loginPrompt": {
+      "title": "Log in to continue",
+      "login": "Log in",
+      "cancel": "Cancel",
+      "actions": {
+        "logDive": "Log in to log a dive at this site.",
+        "review": "Log in to write a review.",
+        "warning": "Log in to report a warning.",
+        "addSite": "Log in to add a dive site."
+      }
+    }
   },
   "geo": {
     "countries": {
@@ -332,7 +343,15 @@
         "verify": "Verify",
         "empty": "No certificates are waiting.",
         "conflict": "This certificate has already been moderated.",
-        "photo": "Photo of {{name}}"
+        "photo": "Photo of {{name}}",
+        "toast": {
+          "verified": "Verified {{certificate}} for {{holder}}",
+          "rejected": "Rejected {{certificate}} for {{holder}}"
+        }
+      },
+      "toast": {
+        "approved": "{{name}} approved",
+        "rejected": "{{name}} rejected"
       }
     }
   },
@@ -372,6 +391,16 @@
         "wrongType": "{{name}} is not an MP4 or WebM video.",
         "failed": "{{name}} could not be uploaded. Please try again."
       }
+    },
+    "viewer": {
+      "close": "Close photo",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "label": "Photo viewer",
+      "carousel": "Photos",
+      "slide": "Photo",
+      "gallery": "Photos",
+      "position": "Photo {index} of {total}"
     }
   },
   "rating": {
@@ -484,7 +513,7 @@
       "bio": "Bio",
       "bioTooLong": "Use at most 500 characters.",
       "privacy": "Privacy",
-      "privacyHint": "These apply as dive logs and certificates are added to profiles.",
+      "privacyHint": "Choose what other divers see on your profile.",
       "showDiveLog": "Show my dive log",
       "showStatistics": "Show my statistics",
       "showCertificates": "Show my certificates",

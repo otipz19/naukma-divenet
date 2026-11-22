@@ -1,7 +1,7 @@
 # F-31 A visitor's action jumps to Log in without a reason
 
 - **Area:** Auth UX
-- **Status:** taken: polish-demo-walkthrough (owner decided 2026-11-22)
+- **Status:** done: polish-demo-walkthrough (owner decided 2026-11-22)
 - **Delivered by:** `polish-demo-walkthrough` (see the index)
 
 ## Seen

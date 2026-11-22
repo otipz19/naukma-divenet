@@ -1,7 +1,7 @@
 # F-27 The map does not zoom to the search results
 
 - **Area:** Map
-- **Status:** taken: polish-demo-walkthrough (owner decided 2026-11-22)
+- **Status:** done: polish-demo-walkthrough (owner decided 2026-11-22)
 - **Delivered by:** `polish-demo-walkthrough` (see the index)
 
 ## Seen

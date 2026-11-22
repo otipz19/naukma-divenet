@@ -39,13 +39,13 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-22](F-22-phone-chips-stack.md) | Map | On a phone the active-filter chips wrap into many rows and cover the map; hide them on a phone | UX, spec change | done: polish-second-review |
 | [F-23](F-23-toast-too-short.md) | Achievements | Achievement toasts close after 6 s, too fast to read; 10 s for every toast | UX, spec change | done: polish-second-review |
 | [F-24](F-24-divelog-header-gap.md) | Dive log | Table header has no background above the Edit/Delete column | bug | done: polish-second-review |
-| [F-25](F-25-photos-leave-the-app.md) | Media | A photo opens the raw image file and leaves the app; use an overlay photo viewer library | UX | taken: polish-demo-walkthrough |
-| [F-26](F-26-difficulty-two-intermediates.md) | Site submission | Difficulty select lists "Intermediate" for levels 2 and 3; offer the four words as elsewhere | UX | taken: polish-demo-walkthrough |
-| [F-27](F-27-map-does-not-zoom-to-results.md) | Map | The map does not zoom to the search results | UX, spec change | taken: polish-demo-walkthrough |
-| [F-28](F-28-seed-photos-are-drawn.md) | Demo seed | Seed pictures are drawn placeholders; use real, freely licensed underwater photos | demo gap | taken: polish-demo-walkthrough |
-| [F-29](F-29-moderation-gives-no-feedback.md) | Moderation | Approve, reject and verify give no feedback; show a toast | UX, spec change | taken: polish-demo-walkthrough |
-| [F-30](F-30-stale-privacy-hint.md) | Profile | Outdated privacy hint on Edit profile | copy | taken: polish-demo-walkthrough |
-| [F-31](F-31-guest-action-without-reason.md) | Auth UX | A visitor's action jumps to Log in without a reason; ask in a dialog | UX, spec change | taken: polish-demo-walkthrough |
+| [F-25](F-25-photos-leave-the-app.md) | Media | A photo opens the raw image file and leaves the app; use an overlay photo viewer library | UX | done: polish-demo-walkthrough |
+| [F-26](F-26-difficulty-two-intermediates.md) | Site submission | Difficulty select lists "Intermediate" for levels 2 and 3; offer the four words as elsewhere | UX | done: polish-demo-walkthrough |
+| [F-27](F-27-map-does-not-zoom-to-results.md) | Map | The map does not zoom to the search results | UX, spec change | done: polish-demo-walkthrough |
+| [F-28](F-28-seed-photos-are-drawn.md) | Demo seed | Seed pictures are drawn placeholders; use real, freely licensed underwater photos | demo gap | done: polish-demo-walkthrough |
+| [F-29](F-29-moderation-gives-no-feedback.md) | Moderation | Approve, reject and verify give no feedback; show a toast | UX, spec change | done: polish-demo-walkthrough |
+| [F-30](F-30-stale-privacy-hint.md) | Profile | Outdated privacy hint on Edit profile | copy | done: polish-demo-walkthrough |
+| [F-31](F-31-guest-action-without-reason.md) | Auth UX | A visitor's action jumps to Log in without a reason; ask in a dialog | UX, spec change | done: polish-demo-walkthrough |
 
 ## Proposed grouping into changes
 

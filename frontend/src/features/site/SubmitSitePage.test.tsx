@@ -46,7 +46,7 @@ async function fillForm(user: ReturnType<typeof userEvent.setup>) {
   await user.selectOptions(screen.getByLabelText("Region"), "eg-dahab");
   await user.type(screen.getByLabelText("Min depth (m)"), "5");
   await user.type(screen.getByLabelText("Max depth (m)"), "20");
-  await user.selectOptions(screen.getByLabelText("Difficulty"), "3");
+  await user.selectOptions(screen.getByLabelText("Difficulty"), "Intermediate");
   await user.type(screen.getByLabelText("Description"), "A reef.");
 }
 
@@ -173,7 +173,7 @@ describe("site/submission: The submission page sends a site", () => {
       regionCode: "eg-dahab",
       lat: 28.5,
       lng: 34.5,
-      difficulty: 3,
+      difficulty: 2,
       minDepth: 5,
       maxDepth: 20,
       description: "A reef.",
@@ -184,6 +184,32 @@ describe("site/submission: The submission page sends a site", () => {
     const link = await screen.findByRole("link", { name: "New Reef" });
     expect(link).toHaveAttribute("href", "/sites/9");
     expect(within(link.parentElement!).getByText("Pending")).toBeInTheDocument();
+  });
+
+  it("offers the difficulty as the four words", async () => {
+    reference();
+    startSignedIn();
+    renderRoute("/sites/new");
+    const select = await screen.findByLabelText("Difficulty");
+
+    const options = within(select)
+      .getAllByRole("option")
+      .map((option) => option.textContent);
+    expect(options).toEqual(["Choose…", "Beginner", "Intermediate", "Advanced", "Technical"]);
+    expect(options.join(" ")).not.toMatch(/[0-9]/);
+  });
+
+  it("sends the lowest level of the chosen word", async () => {
+    reference();
+    startSignedIn();
+    renderRoute("/sites/new");
+    const select = await screen.findByLabelText("Difficulty");
+
+    const values = within(select)
+      .getAllByRole("option")
+      .slice(1)
+      .map((option) => (option as HTMLOptionElement).value);
+    expect(values).toEqual(["1", "2", "4", "5"]);
   });
 
   it("moves a gear item between required and recommended", async () => {

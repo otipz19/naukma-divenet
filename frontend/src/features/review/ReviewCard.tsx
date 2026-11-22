@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Badge } from "../../components/Badge/Badge";
 import { Button, buttonClassName } from "../../components/Button/Button";
+import { usePhotoViewer } from "../../components/PhotoViewer/PhotoViewer";
 import { Rating } from "../../components/Rating/Rating";
 import { initials } from "../auth/AccountArea";
 import type { Review } from "./api";
@@ -32,6 +33,15 @@ export function ReviewCard({
   const { t, i18n } = useTranslation();
   const [confirming, setConfirming] = useState(false);
   const name = review.author.displayName;
+  const photoAlt = (index: number) => t("review.photo", { position: index + 1, name });
+  const { open, viewer } = usePhotoViewer(
+    review.photos.map((photo, index) => ({
+      url: photo.url,
+      alt: photoAlt(index),
+      width: photo.width,
+      height: photo.height,
+    })),
+  );
   return (
     <article className={styles.card}>
       <div className={styles.cardHead}>
@@ -96,15 +106,16 @@ export function ReviewCard({
       {review.photos.length > 0 && (
         <div className={styles.photos}>
           {review.photos.map((photo, index) => (
-            <a key={photo.id} href={photo.url} className={styles.photo}>
+            <a key={photo.id} href={photo.url} className={styles.photo} onClick={open(index)}>
               <img
                 src={photo.thumbnailUrl}
-                alt={t("review.photo", { position: index + 1, name })}
+                alt={photoAlt(index)}
                 width={photo.width}
                 height={photo.height}
               />
             </a>
           ))}
+          {viewer}
         </div>
       )}
       {review.videos.map((video, index) => (

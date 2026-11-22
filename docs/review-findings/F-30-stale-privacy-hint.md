@@ -1,7 +1,7 @@
 # F-30 Edit profile has an outdated privacy hint
 
 - **Area:** Profile
-- **Status:** taken: polish-demo-walkthrough (owner decided 2026-11-22)
+- **Status:** done: polish-demo-walkthrough (owner decided 2026-11-22)
 - **Delivered by:** `polish-demo-walkthrough` (see the index)
 
 ## Seen

@@ -1,7 +1,7 @@
 # F-25 A photo opens the raw image file and leaves the app
 
 - **Area:** Reviews, posts, moderation
-- **Status:** taken: polish-demo-walkthrough (owner decided 2026-11-22)
+- **Status:** done: polish-demo-walkthrough (owner decided 2026-11-22)
 - **Delivered by:** `polish-demo-walkthrough` (see the index)
 
 ## Seen

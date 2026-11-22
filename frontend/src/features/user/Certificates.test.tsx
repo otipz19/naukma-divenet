@@ -308,6 +308,28 @@ describe("user/certificate-verification: The Certificates tab works through the 
     expect(card.getByRole("img")).toHaveAttribute("src", "/media/p1/thumb");
   });
 
+  it("opens the certificate photo in the viewer (spec media/photo-viewer)", async () => {
+    startSignedIn(ADMIN);
+    serveQueue();
+    openTab();
+
+    const card = within(
+      (await screen.findByRole("heading", { name: "PADI Open Water" })).closest("article")!,
+    );
+    const thumbnail = card.getByRole("img");
+    expect(thumbnail.closest("a")).toHaveAttribute("href", "/media/p1");
+    expect(thumbnail.closest("a")).not.toHaveAttribute("target");
+    await userEvent.click(thumbnail);
+
+    await waitFor(() =>
+      expect(document.querySelector(".yarl__slide_current img")).toHaveAttribute(
+        "src",
+        "/media/p1",
+      ),
+    );
+    expect(screen.queryByRole("button", { name: "Next photo" })).toBeNull();
+  });
+
   it("verifies, and the card leaves the queue", async () => {
     startSignedIn(ADMIN);
     const state = serveQueue();
@@ -322,6 +344,9 @@ describe("user/certificate-verification: The Certificates tab works through the 
     await userEvent.click(await screen.findByRole("button", { name: "Verify" }));
 
     expect(await screen.findByText("No certificates are waiting.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Verified PADI Open Water for Oleh Kravets"),
+    ).toBeInTheDocument();
   });
 
   it("needs a reason to reject", async () => {
@@ -332,6 +357,7 @@ describe("user/certificate-verification: The Certificates tab works through the 
     await userEvent.click(await screen.findByRole("button", { name: "Reject" }));
 
     expect(await screen.findByText("Enter a reason to reject.")).toBeInTheDocument();
+    expect(screen.queryByText(/^Rejected /)).not.toBeInTheDocument();
   });
 
   it("sends the reason, and the card leaves the queue", async () => {
@@ -353,6 +379,9 @@ describe("user/certificate-verification: The Certificates tab works through the 
 
     expect(await screen.findByText("No certificates are waiting.")).toBeInTheDocument();
     expect(body).toEqual({ reason: "Unreadable" });
+    expect(
+      await screen.findByText("Rejected PADI Open Water for Oleh Kravets"),
+    ).toBeInTheDocument();
   });
 
   it("shows an alert and reloads on a conflict", async () => {
@@ -373,6 +402,7 @@ describe("user/certificate-verification: The Certificates tab works through the 
 
     expect(await screen.findByRole("alert")).toHaveTextContent("already been moderated");
     expect(await screen.findByText("No certificates are waiting.")).toBeInTheDocument();
+    expect(screen.queryByText(/^Verified /)).not.toBeInTheDocument();
   });
 
   it("shows the empty-queue text", async () => {

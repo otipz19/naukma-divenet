@@ -1,7 +1,7 @@
 # F-26 The submit-site form lists "Intermediate" twice
 
 - **Area:** Site submission
-- **Status:** taken: polish-demo-walkthrough (owner decided 2026-11-22, option A)
+- **Status:** done: polish-demo-walkthrough (owner decided 2026-11-22, option A)
 - **Delivered by:** `polish-demo-walkthrough` (see the index)
 
 ## Seen

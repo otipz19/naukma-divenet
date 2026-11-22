@@ -9,4 +9,5 @@ A modal window over the page for a short task: logging or editing a dive, adding
 - **Width:** `reading-max` at most on a desktop. Below `bp-md` it fills the screen with no radius; the title row and the actions row stay in place while the body scrolls.
 - **Confirmation dialog:** a small dialog whose title is the question and names the item ("Delete the dive at SS Thistlegorm on 12 May 2026?"), with Cancel and a `danger` button. Focus starts on Cancel, so Enter never deletes by accident.
 - **Motion:** a 150 ms fade in, none under `prefers-reduced-motion`.
+- **Log-in prompt:** a small dialog for a visitor who presses an action that needs an account ("Write a review", "Log a dive here", "Report a warning", "Add a site"): the title "Log in to continue", a line naming the action, and Cancel and a `primary` Log in. Log in goes to the log-in page, which returns to the action.
 - **Consumer provides:** the title, the body, the actions, and whether the form has unsaved changes.

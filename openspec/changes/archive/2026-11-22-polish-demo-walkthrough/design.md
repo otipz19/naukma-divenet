@@ -76,7 +76,7 @@ seeded data and shows as Intermediate, as before.
 ### D3 Map fit: fit on a new search key once its markers arrive
 `MapPage` passes `SiteClusterLayer` a `fitKey`: the URL's search and filter parameters,
 without `sort`. When the markers for a new non-empty `fitKey` arrive and are not empty,
-the layer calls `map.fitBounds(bounds, { maxZoom: 9, padding })`. On a phone the padding
+the layer calls `map.invalidateSize()` and then `map.fitBounds(bounds, { maxZoom: 9, padding, animate: false })`. The map jumps rather than animates: during apply, an animated zoom on a page opened from a shared link was cut short while the page was still loading, and Leaflet's cached size can be stale at that moment. On a phone the padding
 also covers the results sheet's peek height, so markers are not hidden under the sheet.
 An empty key (no search and no filters, which includes "Clear all") and an empty result
 leave the view alone. Changing only the sort changes nothing. A key is fitted once, so

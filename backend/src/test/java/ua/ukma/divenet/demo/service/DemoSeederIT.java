@@ -7,7 +7,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import tools.jackson.databind.json.JsonMapper;
 import ua.ukma.divenet.TestcontainersConfiguration;
 import ua.ukma.divenet.media.MediaTestSupport;
 
@@ -131,6 +135,40 @@ class DemoSeederIT {
         for (UUID id : images) {
             mvc.perform(get("/media/" + id)).andExpect(status().isOk());
         }
+    }
+
+    /** The seeded post covers, post images and review photos (spec demo/seed). */
+    private List<UUID> seededPictures() {
+        return jdbc.queryForList("""
+                SELECT cover_id FROM posts WHERE status = 'PUBLISHED' AND cover_id IS NOT NULL
+                UNION ALL SELECT media_id FROM post_media
+                UNION ALL SELECT media_id FROM review_media
+                """, UUID.class);
+    }
+
+    @Test
+    void picturesComeFromThePhotoSet() throws Exception {
+        List<byte[]> photos = DemoPhotos.load(JsonMapper.builder().build());
+        Set<Integer> used = new HashSet<>();
+        List<UUID> pictures = seededPictures();
+        assertThat(pictures).isNotEmpty();
+        for (UUID id : pictures) {
+            byte[] served = mvc.perform(get("/media/" + id))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsByteArray();
+            int match = -1;
+            for (int i = 0; i < photos.size(); i++) {
+                if (Arrays.equals(photos.get(i), served)) {
+                    match = i;
+                }
+            }
+            assertThat(match).as("picture %s is a photo of the set", id).isNotNegative();
+            used.add(match);
+        }
+        // The set covers the seed.
+        assertThat(used).hasSizeGreaterThanOrEqualTo(15);
     }
 
     @Test

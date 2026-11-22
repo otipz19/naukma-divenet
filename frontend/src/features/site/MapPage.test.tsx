@@ -1,7 +1,8 @@
+import L from "leaflet";
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { heldResponse } from "../../test/pending";
@@ -596,5 +597,96 @@ describe("shared/web-app: Main pages show a loading placeholder (map results)", 
 
     expect(await screen.findByText(/Nothing found/)).toBeInTheDocument();
     expect(document.querySelector("[aria-busy='true']")).toBeNull();
+  });
+});
+
+describe("site/search: The map fits the matching sites", () => {
+  let fitBounds: { mock: { calls: unknown[][] } };
+  const fits = () => fitBounds.mock.calls;
+  const twoSites = (url: URL) =>
+    url.searchParams.has("difficulty") || url.searchParams.has("q")
+      ? [site({ id: 1, name: "Easy Reef" }), site({ id: 2, name: "Wall", lat: 28.9, lng: 34.6 })]
+      : [
+          site({ id: 1, name: "Easy Reef" }),
+          site({ id: 2, name: "Wall", lat: 28.9, lng: 34.6 }),
+          site({ id: 3, name: "Far Reef", lat: -14, lng: 145 }),
+        ];
+
+  beforeEach(() => {
+    fitBounds = vi.spyOn(L.Map.prototype, "fitBounds");
+  });
+  afterEach(() => vi.restoreAllMocks());
+
+  it("fits the sites a filter leaves", async () => {
+    recordMarkers(twoSites);
+    renderRoute("/");
+    expect(await screen.findByText("Sites found: 3")).toBeInTheDocument();
+    expect(fits()).toHaveLength(0);
+    await openFilters();
+
+    await userEvent.click(screen.getByRole("button", { name: "Beginner" }));
+
+    await waitFor(() => expect(fits()).toHaveLength(1));
+    const [bounds, options] = fits()[0]!;
+    const fitted = bounds as L.LatLngBounds;
+    expect(fitted.getSouth()).toBeCloseTo(28.5);
+    expect(fitted.getNorth()).toBeCloseTo(28.9);
+    expect(options).toMatchObject({ maxZoom: 9 });
+  });
+
+  it("does not zoom past a regional view for one site", async () => {
+    recordMarkers(() => [site({})]);
+    renderRoute("/?q=lighthouse");
+
+    await waitFor(() => expect(fits()).toHaveLength(1));
+    expect(fits()[0]![1]).toMatchObject({ maxZoom: 9, animate: false });
+  });
+
+  it("fits a shared link's results when it opens", async () => {
+    recordMarkers(twoSites);
+    renderRoute("/?difficulty=beginner");
+
+    await waitFor(() => expect(fits()).toHaveLength(1));
+  });
+
+  it("keeps the view when the filters are cleared", async () => {
+    recordMarkers(twoSites);
+    renderRoute("/?difficulty=beginner");
+    await waitFor(() => expect(fits()).toHaveLength(1));
+    await openFilters();
+
+    await userEvent.click(screen.getByRole("button", { name: "Clear all" }));
+
+    expect(await screen.findByText("Sites found: 3")).toBeInTheDocument();
+    expect(fits()).toHaveLength(1);
+  });
+
+  it("keeps the view when nothing is found", async () => {
+    recordMarkers(() => []);
+    renderRoute("/?q=nowhere");
+
+    expect(await screen.findByText(/Nothing found/)).toBeInTheDocument();
+    expect(fits()).toHaveLength(0);
+  });
+
+  it("does not move on the first load without a search", async () => {
+    recordMarkers(twoSites);
+    renderRoute("/");
+
+    expect(await screen.findByText("Sites found: 3")).toBeInTheDocument();
+    expect(fits()).toHaveLength(0);
+  });
+
+  it("does not move when only the sort changes", async () => {
+    const urls = recordMarkers(twoSites);
+    renderRoute("/?difficulty=beginner");
+    await waitFor(() => expect(fits()).toHaveLength(1));
+    await openFilters();
+
+    await userEvent.selectOptions(screen.getByLabelText("Sort by"), "Name (A–Z)");
+
+    await waitFor(() => expect(lastUrl(urls).searchParams.get("sort")).toBe("name"));
+    await waitFor(() => expect(screen.getByText("Sites found: 2")).toBeInTheDocument());
+    expect(fits()).toHaveLength(1);
   });
 });

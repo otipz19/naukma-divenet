@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
+import { DiverActionLink } from "../auth/DiverActionLink";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
 import { useDocumentTitle } from "../../app/documentTitle";
@@ -118,12 +119,13 @@ function SiteDetails({ site }: { site: Site }) {
             </div>
             {site.status === "APPROVED" && !isAdmin && (
               <span className={styles.titleActions}>
-                <Link
+                <DiverActionLink
+                  action="logDive"
                   className={buttonClassName({ variant: "secondary" })}
                   to={`/dive-log?site=${site.id}`}
                 >
                   {t("site.details.logDive")}
-                </Link>
+                </DiverActionLink>
                 <ReviewLink siteId={site.id} />
               </span>
             )}
@@ -178,9 +180,13 @@ function ReviewLink({ siteId }: { siteId: number }) {
   const { t } = useTranslation();
   const mine = useMyReview(siteId);
   return (
-    <Link className={buttonClassName({ variant: "primary" })} to={`/sites/${siteId}/review`}>
+    <DiverActionLink
+      action="review"
+      className={buttonClassName({ variant: "primary" })}
+      to={`/sites/${siteId}/review`}
+    >
       {t(mine.data ? "site.details.editReview" : "site.details.writeReview")}
-    </Link>
+    </DiverActionLink>
   );
 }
 
