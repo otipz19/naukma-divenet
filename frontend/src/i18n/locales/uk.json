@@ -34,11 +34,13 @@
     "language": {
       "label": "Мова"
     },
-    "footer": {
+    "disclaimer": {
+      "title": "Перед зануренням",
       "safetyLead": "Безпека:",
       "disclaimer": "інформація на DiveNet має довідковий характер і не замінює планування занурення за стандартами вашої агенції.",
       "project": "DiveNet · курсовий проєкт НаУКМА",
-      "mapData": "Дані мапи © учасники OpenStreetMap"
+      "dontShowAgain": "Більше не показувати",
+      "gotIt": "Зрозуміло"
     },
     "account": {
       "logIn": "Увійти",
@@ -177,7 +179,8 @@
       "title": "Мапа місць для занурень",
       "region": "Мапа місць для занурень",
       "loadError": "Не вдалося завантажити місця для занурень. Спробуйте пізніше.",
-      "attribution": "&copy; учасники <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
+      "attribution": "&copy; учасники <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a>",
+      "addSite": "Додати місце"
     },
     "difficulty": {
       "beginner": "Початковий",
@@ -224,14 +227,24 @@
       "maxDepth": "Макс. глибина (м)",
       "found": "Знайдено місць: {{n}}",
       "nothingFound": "Нічого не знайдено. Спробуйте інший запит або менше фільтрів.",
-      "showList": "Показати список",
-      "hideList": "Сховати список",
       "minRating": "Мін. оцінка",
       "anyRating": "Будь-яка оцінка",
       "minRatingOption": "Від {{value}} зірок",
       "sort": "Сортувати за",
       "sortRating": "Найвищою оцінкою",
-      "sortName": "Назвою (А–Я)"
+      "sortName": "Назвою (А–Я)",
+      "removeFilter": "Прибрати фільтр: {{name}}",
+      "chip": {
+        "minDepth": "Від {{n}} м",
+        "maxDepth": "До {{n}} м",
+        "minRating": "Оцінка {{value}}+"
+      },
+      "showSites_one": "Показати {{count}} місце",
+      "showSites_few": "Показати {{count}} місця",
+      "showSites_many": "Показати {{count}} місць",
+      "showSites_other": "Показати {{count}} місця",
+      "sheetExpand": "Показати всі",
+      "sheetCollapse": "Згорнути"
     },
     "status": {
       "PENDING": "На перевірці",
@@ -239,7 +252,6 @@
       "REJECTED": "Відхилено"
     },
     "submit": {
-      "link": "Додати місце",
       "title": "Додати місце для занурень",
       "hint": "Лише ви бачитимете його, доки адміністратор не схвалить.",
       "name": "Назва місця",

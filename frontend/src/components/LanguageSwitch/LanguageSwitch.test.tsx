@@ -29,7 +29,7 @@ describe("shared/app-shell: The header has a language switch", () => {
     const header = screen.getByRole("banner");
     expect(within(header).getByRole("navigation", { name: "Основна" })).toBeInTheDocument();
     expect(within(header).getByRole("link", { name: "Мапа" })).toBeInTheDocument();
-    expect(within(screen.getByRole("contentinfo")).getByText("Безпека:")).toBeInTheDocument();
+    expect(within(header).getByRole("link", { name: "Увійти" })).toBeInTheDocument();
     expect(headerSwitch().getByRole("button", { name: "UK" })).toHaveAttribute(
       "aria-pressed",
       "true",

@@ -1,7 +1,7 @@
 # F-10 Desktop map panel: filters crowd out the results
 
 - **Area:** Map (`/`), desktop
-- **Status:** decided (owner, 2026-11-21)
+- **Status:** done: rework-map-page (decided: owner, 2026-11-21)
 - **Delivered by:** `rework-map-page`
 
 ## Seen

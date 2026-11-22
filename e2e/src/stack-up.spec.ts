@@ -1,5 +1,5 @@
 // The stack is up and serves the app (used to verify scripts/run-e2e.mjs).
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./support";
 
 test("the app loads", async ({ page }) => {
   await page.goto("/");

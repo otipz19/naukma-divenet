@@ -1,7 +1,9 @@
+/* The shell is at least one viewport tall; the map page fills exactly the part below the header. */
 .layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .main {

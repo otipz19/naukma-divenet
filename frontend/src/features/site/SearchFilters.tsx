@@ -12,7 +12,10 @@ import styles from "./MapPage.module.css";
 const toggled = <T,>(values: T[], value: T) =>
   values.includes(value) ? values.filter((v) => v !== value) : [...values, value];
 
-/** The filters of spec site/search. `onChange` carries the whole next search. */
+/**
+ * The filters of spec site/search. `onChange` carries the whole next search. With `onClear`, they
+ * have their own heading and "Clear all"; the phone's filters dialog supplies both itself.
+ */
 export function SearchFilters({
   search,
   onChange,
@@ -20,7 +23,7 @@ export function SearchFilters({
 }: {
   search: SiteSearch;
   onChange: (next: SiteSearch, options?: { replace: boolean }) => void;
-  onClear: () => void;
+  onClear?: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const countries = useQuery({
@@ -53,12 +56,14 @@ export function SearchFilters({
 
   return (
     <div className={styles.filters}>
-      <div className={styles.filtersHead}>
-        <h2 className={`h3 ${styles.flush}`}>{t("site.search.filters")}</h2>
-        <Button variant="ghost" size="sm" onClick={onClear}>
-          {t("site.search.clearAll")}
-        </Button>
-      </div>
+      {onClear && (
+        <div className={styles.filtersHead}>
+          <h2 className={`h3 ${styles.flush}`}>{t("site.search.filters")}</h2>
+          <Button variant="ghost" size="sm" onClick={onClear}>
+            {t("site.search.clearAll")}
+          </Button>
+        </div>
+      )}
       <fieldset className={styles.group}>
         <legend className="label">{t("site.search.difficulty")}</legend>
         <div className={styles.chips}>

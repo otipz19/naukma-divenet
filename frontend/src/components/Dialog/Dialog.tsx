@@ -74,7 +74,9 @@ export function Dialog({
     // A browser may still close the dialog after a vetoed Escape (close watcher rules): reopen it
     // and ask, or treat it as a close.
     const onNativeClose = () => {
-      if (unmounting) return;
+      // `close` fires as a task: one queued by an earlier cleanup (React's development double mount)
+      // can arrive after the dialog was opened again, and is then not a close.
+      if (unmounting || dialog.open) return;
       if (dirtyRef.current) {
         dialog.showModal();
         setAsking(true);

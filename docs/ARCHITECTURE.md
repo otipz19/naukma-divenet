@@ -44,7 +44,7 @@ backend/                 Maven project (mvnw), Spring Boot app
 frontend/                Vite app, pnpm workspace member (@divenet/frontend)
   src/app/                           App root, router, layout route, navigation entries, theme, query client
   src/api/                           typed client, ApiError, generated schema.gen.ts
-  src/components/<Name>/             shared UI: <Name>.tsx + <Name>.module.css (AppHeader, AppFooter, ...)
+  src/components/<Name>/             shared UI: <Name>.tsx + <Name>.module.css (AppHeader, Dialog, ...)
   src/styles/                        global base styles and self-hosted font imports
   src/i18n/locales/{en,uk}.json
   src/features/<feature>/            feature folders mirroring backend feature packages
@@ -260,12 +260,13 @@ Each change that adds tables updates this diagram.
   `design/system/tokens.css`, components as specified in `design/system/components/`,
   and pages laid out as in `design/screens/`. The gate rejects literal colours, px
   other than 1-2px hairlines and redefined tokens in `frontend/src/**/*.css`.
-- Every route renders inside the app shell (`src/app/AppLayout.tsx`): header,
-  one `main` landmark, footer. Feature changes add routes to `routes` in
+- Every route renders inside the app shell (`src/app/AppLayout.tsx`): header and
+  one `main` landmark (no footer). Feature changes add routes to `routes` in
   `src/app/router.tsx` and menu entries to `src/app/navigation.ts`.
 - The theme follows the system `prefers-color-scheme` (`data-theme` on `<html>`);
   there is no manual toggle.
-- Every site page and the page footer show the safety disclaimer.
+- Every site page shows the safety disclaimer in a box that cannot be dismissed, and
+  the shell opens it in a first-visit dialog (`src/features/disclaimer/`).
 
 ## Testing strategy
 

@@ -31,11 +31,16 @@ difficulty and gear names SHALL use the active language.
 
 ### Requirement: The site page shows the safety disclaimer
 The site page SHALL show the safety disclaimer of the active language in a box of its
-own, in addition to the footer, and the box SHALL NOT be dismissible.
+own, and the box SHALL NOT be dismissible. It is shown on every visit, whether or not
+the first-visit disclaimer dialog was dismissed.
 
 #### Scenario: Disclaimer box
 - **WHEN** a user opens a site page
 - **THEN** the main content holds an alert with the disclaimer text and no dismiss control
+
+#### Scenario: Shown after the dialog was dismissed
+- **WHEN** the user chose "Don't show again" in the disclaimer dialog and opens a site page
+- **THEN** the main content still holds the disclaimer alert
 
 ### Requirement: The site page links back to the map
 The site page SHALL show a breadcrumb with a link to `/`, followed by the country,
@@ -154,7 +159,7 @@ The page of an approved site SHALL show up to 3 of the newest published posts li
 
 ### Requirement: The disclaimer box reads as a sentence
 
-The site page's disclaimer box SHALL start with a capital letter in every language, even where the footer shows the same text after a label.
+The site page's disclaimer box SHALL start with a capital letter in every language.
 
 #### Scenario: Ukrainian
 - **WHEN** a visitor opens a site page in `uk`

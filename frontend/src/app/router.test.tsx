@@ -24,12 +24,12 @@ describe("shared/web-app: Unknown paths show a not-found page", () => {
 });
 
 describe("shared/app-shell: Every page renders inside the app shell", () => {
-  it("gives the home page one banner, main and contentinfo landmark", () => {
+  it("gives the home page one banner and one main landmark, and no footer", () => {
     renderRoute("/");
 
     expect(screen.getAllByRole("banner")).toHaveLength(1);
     expect(screen.getAllByRole("main")).toHaveLength(1);
-    expect(screen.getAllByRole("contentinfo")).toHaveLength(1);
+    expect(screen.queryByRole("contentinfo")).not.toBeInTheDocument();
     expect(
       within(screen.getByRole("main")).getByRole("heading", { name: "Dive-site map" }),
     ).toBeVisible();
@@ -39,7 +39,7 @@ describe("shared/app-shell: Every page renders inside the app shell", () => {
     renderRoute("/no-such-page");
 
     expect(screen.getByRole("banner")).toBeInTheDocument();
-    expect(screen.getByRole("contentinfo")).toBeInTheDocument();
+    expect(screen.getByRole("main")).toBeInTheDocument();
     expect(
       within(screen.getByRole("main")).getByRole("heading", { name: "Page not found" }),
     ).toBeInTheDocument();

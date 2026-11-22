@@ -159,6 +159,19 @@ select.dn-input {
   border-color: var(--accent);
   color: var(--accent-strong);
 }
+/* A removable chip: one active filter; the x removes it (not a toggle, so no aria-pressed). */
+.dn-chip--remove {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+.dn-chip--remove svg {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
 
 /* Badge */
 .dn-badge {
@@ -374,35 +387,6 @@ select.dn-input {
   font: 600 14px/20px var(--font-sans);
 }
 
-/* App footer */
-.dn-footer {
-  margin-top: var(--space-7);
-  padding: var(--space-6);
-  background: var(--brand);
-  color: var(--on-brand);
-  font: 400 14px/20px var(--font-sans);
-}
-.dn-footer :focus-visible {
-  outline-color: var(--focus-inverse);
-}
-.dn-footer__inner {
-  max-width: var(--content-max);
-  margin: 0 auto;
-  display: grid;
-  gap: var(--space-3);
-}
-.dn-footer__disclaimer {
-  max-width: var(--reading-max);
-}
-.dn-footer__disclaimer strong {
-  font-weight: 600;
-}
-.dn-footer__meta {
-  opacity: 0.85;
-  font-size: 12px;
-  line-height: 16px;
-}
-
 /* Dialog (native <dialog> with showModal(); the backdrop is the scrim) */
 .dn-dialog {
   display: grid;
@@ -535,8 +519,5 @@ select.dn-input {
   }
   .dn-header__nav {
     display: none;
-  }
-  .dn-footer {
-    padding: var(--space-5) var(--space-4);
   }
 }

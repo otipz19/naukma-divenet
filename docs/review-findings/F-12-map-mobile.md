@@ -1,7 +1,7 @@
 # F-12 Phone map page scrolls and the form covers the map
 
 - **Area:** Map (`/`), below 1100 px
-- **Status:** decided (owner, 2026-11-21: build the layout as written below)
+- **Status:** done: rework-map-page (decided: owner, 2026-11-21: build the layout as written below)
 - **Delivered by:** `rework-map-page`
 
 ## Seen

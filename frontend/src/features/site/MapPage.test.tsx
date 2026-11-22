@@ -1,7 +1,7 @@
 import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import type { SiteMarker } from "./MapPage";
@@ -133,6 +133,10 @@ function recordMarkers(answer: (url: URL) => SiteMarker[] = () => [site({})]) {
 
 const lastUrl = (urls: URL[]) => urls[urls.length - 1]!;
 
+/** Filters are collapsed when the page opens (design D4); this expands them. */
+const openFilters = async () =>
+  userEvent.click(await screen.findByRole("button", { name: /^Filters/ }));
+
 describe("site/search: The map page searches and filters", () => {
   it("applies a chip to the request, the map and the list", async () => {
     const urls = recordMarkers((url) =>
@@ -145,6 +149,7 @@ describe("site/search: The map page searches and filters", () => {
     );
     renderRoute("/");
     await waitFor(() => expect(pins()).toHaveLength(2));
+    await openFilters();
 
     await userEvent.click(screen.getByRole("button", { name: "Beginner" }));
 
@@ -158,6 +163,7 @@ describe("site/search: The map page searches and filters", () => {
   it("offers only the chosen country's regions and clears the region on a change", async () => {
     recordMarkers();
     renderRoute("/");
+    await openFilters();
     const country = await screen.findByLabelText("Country");
     await screen.findByRole("option", { name: "Egypt" });
 
@@ -175,6 +181,7 @@ describe("site/search: The map page searches and filters", () => {
     const urls = recordMarkers();
     renderRoute("/?q=reef&difficulty=beginner&minRating=4");
     expect(await screen.findByLabelText("Search sites")).toHaveValue("reef");
+    await openFilters();
 
     await userEvent.click(screen.getByRole("button", { name: "Clear all" }));
 
@@ -190,6 +197,7 @@ describe("site/search: The map page searches and filters", () => {
   it("applies a minimum rating and counts it", async () => {
     const urls = recordMarkers();
     renderRoute("/");
+    await openFilters();
 
     await userEvent.selectOptions(await screen.findByLabelText("Min rating"), "4 stars and up");
 
@@ -201,6 +209,7 @@ describe("site/search: The map page searches and filters", () => {
     const urls = recordMarkers();
     renderRoute("/");
     await waitFor(() => expect(lastUrl(urls).searchParams.get("sort")).toBe("rating"));
+    await openFilters();
 
     await userEvent.selectOptions(screen.getByLabelText("Sort by"), "Name (A–Z)");
 
@@ -236,6 +245,7 @@ describe("site/search: The map page searches and filters", () => {
     await waitFor(() => expect(pins()).toHaveLength(1));
     fireEvent.click(pins()[0]!);
     await popupLink();
+    await openFilters();
 
     await userEvent.click(screen.getByRole("button", { name: "Beginner" }));
 
@@ -258,6 +268,7 @@ describe("site/search: The URL holds the search and filters", () => {
     renderRoute("/?q=reef&difficulty=beginner&gear=torch");
 
     expect(await screen.findByLabelText("Search sites")).toHaveValue("reef");
+    await openFilters();
     expect(screen.getByRole("button", { name: "Beginner" })).toHaveAttribute(
       "aria-pressed",
       "true",
@@ -276,6 +287,7 @@ describe("site/search: The URL holds the rating filter and the sort", () => {
   it("restores a URL with rating and sort", async () => {
     const urls = recordMarkers();
     renderRoute("/?minRating=4.5&sort=name");
+    await openFilters();
 
     expect(await screen.findByLabelText("Min rating")).toHaveDisplayValue("4.5 stars and up");
     expect(screen.getByLabelText("Sort by")).toHaveDisplayValue("Name (A–Z)");
@@ -293,7 +305,18 @@ describe("site/search: The URL holds the rating filter and the sort", () => {
   });
 });
 
-describe("site/search: Narrow screens show a filters toggle and a results sheet", () => {
+describe("site/search: Filters sit behind a toggle at every width", () => {
+  it("starts collapsed", async () => {
+    recordMarkers();
+    renderRoute("/");
+
+    expect(await screen.findByRole("button", { name: "Filters" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+    expect(screen.queryByRole("button", { name: "Beginner" })).not.toBeInTheDocument();
+  });
+
   it("reports the count and the expanded state", async () => {
     recordMarkers();
     renderRoute("/?difficulty=beginner");
@@ -303,5 +326,175 @@ describe("site/search: Narrow screens show a filters toggle and a results sheet"
     await userEvent.click(toggle);
 
     expect(toggle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("button", { name: "Beginner" })).toBeInTheDocument();
+  });
+});
+
+describe("site/search: Active filters show as removable chips", () => {
+  it("shows a chip per active filter while the filters are collapsed", async () => {
+    recordMarkers();
+    renderRoute("/?difficulty=beginner&gear=torch");
+
+    const panel = await screen.findByRole("region", { name: "Search and filters" });
+    expect(
+      within(panel).getByRole("button", { name: "Remove filter: Beginner" }),
+    ).toHaveTextContent("Beginner");
+    expect(within(panel).getByRole("button", { name: "Remove filter: Torch" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Filters/ })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("removes only its own filter", async () => {
+    const urls = recordMarkers();
+    renderRoute("/?difficulty=beginner&gear=torch");
+
+    await userEvent.click(await screen.findByRole("button", { name: "Remove filter: Beginner" }));
+
+    await waitFor(() => expect(lastUrl(urls).searchParams.has("difficulty")).toBe(false));
+    expect(lastUrl(urls).searchParams.getAll("gear")).toEqual(["torch"]);
+    expect(
+      screen.queryByRole("button", { name: "Remove filter: Beginner" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Filters · 1" })).toBeInTheDocument();
+  });
+
+  it("names the chips in the active language", async () => {
+    recordMarkers();
+    renderRoute("/?difficulty=beginner&minDepth=10", { language: "uk" });
+
+    expect(
+      await screen.findByRole("button", { name: "Прибрати фільтр: Початковий" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Прибрати фільтр: Від 10 м" })).toBeInTheDocument();
+  });
+});
+
+describe("site/search: The result count stays in view", () => {
+  it("keeps the count in the panel head, outside the scrolling body", async () => {
+    recordMarkers();
+    renderRoute("/");
+
+    const panel = await screen.findByRole("region", { name: "Search and filters" });
+    expect(
+      await within(panel).findByRole("heading", { name: "Sites found: 1" }),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("region", { name: "Results" })).queryByRole("heading", {
+        name: /Sites found/,
+      }),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("site/map: The map offers adding a site", () => {
+  it("puts the link on the map, not in the search panel", async () => {
+    recordMarkers();
+    renderRoute("/");
+
+    const map = await screen.findByRole("region", { name: "Map of dive sites" });
+    expect(within(map).getByRole("link", { name: "Add a site" })).toHaveAttribute(
+      "href",
+      "/sites/new",
+    );
+    const panel = screen.getByRole("region", { name: "Search and filters" });
+    expect(
+      within(panel)
+        .queryAllByRole("link")
+        .some((link) => link.getAttribute("href") === "/sites/new"),
+    ).toBe(false);
+  });
+
+  it("uses the active language", async () => {
+    recordMarkers();
+    renderRoute("/", { language: "uk" });
+
+    expect(await screen.findByRole("link", { name: "Додати місце" })).toHaveAttribute(
+      "href",
+      "/sites/new",
+    );
+  });
+});
+
+/** The phone layout: `matchMedia` matches the map's narrow query (design D3). */
+function onPhone() {
+  vi.spyOn(window, "matchMedia").mockImplementation((query: string) =>
+    Object.assign(new EventTarget(), {
+      matches: query === "(max-width: 1099px)",
+      media: query,
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+    }),
+  );
+}
+
+describe("site/search: Phones show filters in a dialog and results in a sheet", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("opens the filters in a dialog that applies at once and closes on Show", async () => {
+    onPhone();
+    const urls = recordMarkers((url) =>
+      url.searchParams.has("difficulty")
+        ? [site({ id: 1 })]
+        : [site({ id: 1 }), site({ id: 2, name: "Deep Wall", lat: -14, lng: 145 })],
+    );
+    renderRoute("/");
+    const toggle = await screen.findByRole("button", { name: "Filters" });
+
+    await userEvent.click(toggle);
+
+    const dialog = screen.getByRole("dialog", { name: "Filters" });
+    expect(within(dialog).getByRole("button", { name: "Clear all" })).toBeInTheDocument();
+    expect(await within(dialog).findByRole("button", { name: "Show 2 sites" })).toBeInTheDocument();
+    await userEvent.click(within(dialog).getByRole("button", { name: "Beginner" }));
+    await waitFor(() => expect(lastUrl(urls).searchParams.getAll("difficulty")).toEqual(["1"]));
+
+    await userEvent.click(await within(dialog).findByRole("button", { name: "Show 1 site" }));
+
+    expect(screen.queryByRole("dialog", { name: "Filters" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Filters · 1" })).toHaveFocus();
+  });
+
+  it("clears every filter from the dialog", async () => {
+    onPhone();
+    const urls = recordMarkers();
+    renderRoute("/?difficulty=beginner");
+
+    await userEvent.click(await screen.findByRole("button", { name: "Filters · 1" }));
+    await userEvent.click(
+      within(screen.getByRole("dialog", { name: "Filters" })).getByRole("button", {
+        name: "Clear all",
+      }),
+    );
+
+    await waitFor(() => expect(lastUrl(urls).search).toBe("?sort=rating"));
+  });
+
+  it("peeks with the count and one card, and expands to every card", async () => {
+    onPhone();
+    recordMarkers(() => [
+      site({ id: 1, name: "Reef A" }),
+      site({ id: 2, name: "Reef B", lat: -14, lng: 145 }),
+      site({ id: 3, name: "Reef C", lat: 20, lng: -87 }),
+    ]);
+    renderRoute("/");
+
+    const sheet = screen.getByRole("region", { name: "Results" });
+    expect(
+      await within(sheet).findByRole("heading", { name: "Sites found: 3" }),
+    ).toBeInTheDocument();
+    expect(within(sheet).getAllByRole("link")).toHaveLength(1);
+    const expand = within(sheet).getByRole("button", { name: "Show all" });
+    expect(expand).toHaveAttribute("aria-expanded", "false");
+
+    await userEvent.click(expand);
+
+    expect(within(sheet).getByRole("button", { name: "Show less" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+    expect(within(sheet).getAllByRole("link")).toHaveLength(3);
   });
 });

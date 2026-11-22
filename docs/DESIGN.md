@@ -17,7 +17,7 @@ and visual editing, so nobody needs a claude.ai account to use the design.
 | [design/system/README.md](../design/system/README.md) | Brand book: voice, colour, type, spacing, shape, layout, imagery, motion, icons | Read it first, before any UI work |
 | [design/system/tokens.json](../design/system/tokens.json) | **The tokens**: every colour (light and dark), type style, spacing, radius, shadow and layout value, each with a usage note | The single source of every visual value |
 | [design/system/tokens.css](../design/system/tokens.css) | CSS custom properties and type classes, generated from `tokens.json` | The front-end imports it |
-| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html`. Alert, AppFooter, AppHeader, Badge, Button, Chip, Cover, Dialog (modal and confirmation), Rating, SiteCard, TextField, Toast | Before building or changing that component |
+| [design/system/components/](../design/system/components/) | One folder per component: `README.md` (when to use it, states, what the consumer provides) and `preview.html`. Alert, AppHeader, Badge, Button, Chip (toggle and removable), Cover, Dialog (modal and confirmation), Rating, SiteCard, TextField, Toast | Before building or changing that component |
 | [design/system/components/bundle.css](../design/system/components/bundle.css) | Reference CSS for the components (`dn-*` classes), using only tokens | The exact paddings, sizes and states to reproduce |
 | [design/screens/](../design/screens/) | One HTML mockup per screen, desktop at 1280 px plus two phone screens | Before building or changing that page |
 | [design/build-tokens.mjs](../design/build-tokens.mjs), [design/build-canvas.mjs](../design/build-canvas.mjs), [design/serve.mjs](../design/serve.mjs) | Generate `tokens.css`; wrap the screens as Claude Design artboards; serve the mockups locally | When the design changes |
@@ -37,8 +37,8 @@ files above.
 
 | Screen file | What it shows | Built by (roadmap) |
 | --- | --- | --- |
-| `Map.html` | Header, search, combinable filters, result list, map with clusters, markers and a popup, disclaimer strip | `add-app-shell` (header), `add-dive-site-catalog`, `add-site-search-and-filters` |
-| `Site.html` | Photos, facts card, required and recommended gear, disclaimer box, recent warnings, description, reviews (own review with edit and delete), linked posts, footer | `add-dive-site-catalog`, `add-site-reviews`, `add-site-warnings`, M5 site feed |
+| `Map.html` | The full-height map page: a panel head with search, the collapsed Filters toggle, active-filter chips and the count over a scrolling list, "Add a site" on the map; then the filters expanded; then the first-visit disclaimer dialog | `add-app-shell` (header), `add-dive-site-catalog`, `add-site-search-and-filters`, `rework-map-page` |
+| `Site.html` | Photos, facts card, required and recommended gear, disclaimer box, recent warnings, description, reviews (own review with edit and delete), linked posts | `add-dive-site-catalog`, `add-site-reviews`, `add-site-warnings`, M5 site feed |
 | `ReviewForm.html` | Rating input with "No rating", community difficulty, text, photos | `add-site-reviews`, `add-media-uploads` |
 | `Auth.html` | Log in with a failed-login banner, sign up with a field error | `add-authentication` |
 | `SubmitSite.html` | Site submission with a location picker, plus the author's submissions with their statuses | `add-site-submission-and-moderation` |
@@ -48,7 +48,7 @@ files above.
 | `Feed.html` | Feed with country and region filters, post cards, pagination, drafts | M5 posts and feeds |
 | `PostEditor.html` | Title, cover, text, region and site links, publish, save draft, delete | M5 posts |
 | `Moderation.html` | Admin queues (sites, certificates, warnings), approve or reject with a reason | `add-site-submission-and-moderation`, certificate verification |
-| `MobileMap.html` | Phone: map with the search bar, filter button and a results bottom sheet | Every map change |
+| `MobileMap.html` | Phone: full-screen map with the floating search bar and Filters button and the results sheet peeking, then the Filters dialog, then the sheet expanded | Every map change |
 | `MobileSite.html` | Phone: site page in the **dark theme** and **Ukrainian** | Every site-page change |
 
 The screens show layout, hierarchy, states and copy tone. They are not pixel
@@ -96,13 +96,16 @@ specs for data. Names, numbers and photos are sample content. A
    - Ukrainian runs 15–25% longer, so never size controls to the English text.
      `MobileSite.html` shows the Ukrainian layout.
 8. **Safety disclaimer.**
-   - It appears in the footer of every page. On the map page, which has no
-     footer, it is the strip under the results.
-   - The site page also has it in a box.
-   - It is never dismissible.
+   - There is no footer. On a first visit the shell opens the disclaimer in a
+     small dialog with "Don't show again" (stored per browser).
+   - The site page always shows it in a box that cannot be dismissed.
 9. **Responsive.**
    - Below `bp-md` (768 px): one column, navigation in a drawer.
-   - Below `bp-lg` (1100 px) the map's side panel becomes a bottom sheet.
+   - The map page fills the viewport below the header and never scrolls. On a
+     desktop only the side panel's list scrolls, under a fixed head.
+   - Below `bp-lg` (1100 px) the search and Filters float over the map, the
+     filters open in a dialog, and the results are a bottom sheet (peek and
+     expanded), as in `MobileMap.html`.
 
 ## Accepted differences
 

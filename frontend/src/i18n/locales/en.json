@@ -34,11 +34,13 @@
     "language": {
       "label": "Language"
     },
-    "footer": {
+    "disclaimer": {
+      "title": "Before you dive",
       "safetyLead": "Safety:",
       "disclaimer": "Information on DiveNet is for reference only and does not replace dive planning according to your agency's standards.",
       "project": "DiveNet · NaUKMA course project",
-      "mapData": "Map data © OpenStreetMap contributors"
+      "dontShowAgain": "Don't show again",
+      "gotIt": "Got it"
     },
     "account": {
       "logIn": "Log in",
@@ -177,7 +179,8 @@
       "title": "Dive-site map",
       "region": "Map of dive sites",
       "loadError": "The dive sites could not be loaded. Please try again later.",
-      "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors"
+      "attribution": "&copy; <a href=\"https://www.openstreetmap.org/copyright\">OpenStreetMap</a> contributors",
+      "addSite": "Add a site"
     },
     "difficulty": {
       "beginner": "Beginner",
@@ -224,14 +227,24 @@
       "maxDepth": "Max depth (m)",
       "found": "Sites found: {{n}}",
       "nothingFound": "Nothing found. Try another search or fewer filters.",
-      "showList": "Show list",
-      "hideList": "Hide list",
       "minRating": "Min rating",
       "anyRating": "Any rating",
       "minRatingOption": "{{value}} stars and up",
       "sort": "Sort by",
       "sortRating": "Highest rated",
-      "sortName": "Name (A–Z)"
+      "sortName": "Name (A–Z)",
+      "removeFilter": "Remove filter: {{name}}",
+      "chip": {
+        "minDepth": "From {{n}} m",
+        "maxDepth": "To {{n}} m",
+        "minRating": "{{value}}+ stars"
+      },
+      "showSites_one": "Show {{count}} site",
+      "showSites_few": "Show {{count}} sites",
+      "showSites_many": "Show {{count}} sites",
+      "showSites_other": "Show {{count}} sites",
+      "sheetExpand": "Show all",
+      "sheetCollapse": "Show less"
     },
     "status": {
       "PENDING": "Pending",
@@ -239,7 +252,6 @@
       "REJECTED": "Rejected"
     },
     "submit": {
-      "link": "Submit a site",
       "title": "Submit a dive site",
       "hint": "Only you can see it until an admin approves it.",
       "name": "Site name",
