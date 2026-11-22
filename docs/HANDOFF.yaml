@@ -1,4 +1,4 @@
-goal: M6 (Release readiness) — owner's second review (F-20..F-24) as polish-second-review
+goal: M6 (Release readiness) — demo polish; polish-demo-walkthrough (F-25..F-31) archived, PR open
 done:
   - M0-M5 and Stretch merged and archived (PRs #1-#26); specs in openspec/specs/, history in git and openspec/changes/archive/
   - M6 archived and merged: apply-ui-design (#27), complete-demo-seed, add-e2e-suite, fix-proxy-keepalive (#31), measure-performance (#32), harden-security (#33), audit-accessibility (#34), audit-modern-web (#35)
@@ -9,11 +9,12 @@ done:
   - scope-admin-account merged (PR #42) (F-18, F-19): web app only; useIsAdmin(), <RequireAuth diver> sends the admin to /admin/moderation, header Moderation entry with pending badge (useNavItems)
   - polish-release applied and archived on change/polish-release (F-06, F-08; owner dropped the i18n audit and F-01): app/routes/ErrorPage via errorElement, components/Skeleton placeholders, app/documentTitle, components/ThemeSwitch + app/theme.ts choice, 45 published seed posts (round-robin, reused covers)
   - polish-release merged (PR #43)
-  - polish-second-review applied and archived (F-20..F-24): phone map isolation, desktop filters in place of the toggle with Hide filters, no phone chips, TOAST_MS 10 s, dive log actions header
+  - polish-second-review merged (PR #44) (F-20..F-24): phone map isolation, desktop filters in place of the toggle with Hide filters, no phone chips, TOAST_MS 10 s, dive log actions header
+  - polish-demo-walkthrough applied and archived (F-25..F-31): components/PhotoViewer (yet-another-react-lightbox 3.33.0), features/auth/DiverActionLink log-in prompt, map fitBounds per search key (SiteClusterLayer), moderation toasts, seed photos in backend seed/photos + credits.json (DemoPhotos)
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: polish-second-review PR open; waiting for CI (check, stack, e2e incl. new drawer test)
+wip: polish-demo-walkthrough PR open from change/polish-demo-walkthrough; waiting for CI and merge
 blocked: null
-next: after the polish-second-review PR merges, ask the owner what follows. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist
+next: after the PR merges, pick the next roadmap item. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist. Local stack: review project divenet-review runs on :8080; the main project divenet is stopped with its volume kept
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
@@ -27,7 +28,7 @@ decisions:
 refs: [AGENTS.md, docs/ROADMAP.md, docs/review-findings/README.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-22 on Windows (polish-second-review), full gate green; E2E runs in CI
+  last: pass 2026-11-22 on Windows (polish-demo-walkthrough), full gate green; E2E runs in CI
   ci: PRs #1-#36 green on ubuntu-latest; jobs check, stack, e2e (with a11y audits), perf, security
   run_tests: E2E and perf run in CI only (owner, 2026-11-22); locally pnpm test:e2e (18081), test:perf (18082, needs npm ci in perf/), smoke:stack
   demo: docker compose up --build on :8080; demo divers <name>@demo.divenet.test / divenet-demo; admin from ADMIN_EMAIL/ADMIN_PASSWORD

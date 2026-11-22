@@ -1,7 +1,7 @@
 // Journey: an anonymous visitor browses the seeded map and a site's details,
 // and switches the UI language (spec shared/e2e, "Anonymous visitor browses a site").
 // Nothing here waits on OpenStreetMap tiles (design D5): the result list is the oracle.
-import { expect, test, type Page } from "./support";
+import { DEMO_PASSWORD, demoDiver, expect, test, type Page } from "./support";
 
 test("an anonymous visitor browses a seeded site", async ({ page }) => {
   await page.goto("/");
@@ -120,6 +120,12 @@ test("the open menu covers the phone map controls", async ({ page }) => {
   await page.getByRole("button", { name: "Open menu" }).click();
   const drawer = page.getByRole("dialog", { name: "Menu" });
   await expect(drawer).toBeVisible();
+  // Measure the panel where it comes to rest, not partway through its slide-in.
+  await drawer.evaluate((panel) =>
+    Promise.all(
+      panel.getAnimations().map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
   const drawerBox = (await drawer.boundingBox())!;
   // A point of the search box that the drawer's panel overlaps.
   const x = Math.min(box.x + box.width / 2, drawerBox.x + drawerBox.width - 10);
@@ -130,4 +136,56 @@ test("the open menu covers the phone map controls", async ({ page }) => {
     [x, y],
   );
   expect(onTop).toBe(true);
+});
+
+// Spec auth "Diver actions ask a visitor to log in" and "Logging in from the
+// dialog returns to the action", with a seeded diver who has no review there.
+test("a visitor's Write a review asks to log in, then opens the form", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Search sites").fill("Osprey");
+  await page.getByRole("link", { name: /Osprey Reef/ }).click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Osprey Reef" }),
+  ).toBeVisible();
+
+  await page.getByRole("link", { name: "Write a review" }).click();
+  const prompt = page.getByRole("dialog", { name: "Log in to continue" });
+  await expect(prompt).toBeVisible();
+  await expect(prompt).toContainText("Log in to write a review.");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Osprey Reef" }),
+  ).toBeVisible();
+
+  await prompt.getByRole("button", { name: "Log in" }).click();
+  await page.getByLabel("Email").fill(demoDiver.aiko);
+  await page.getByLabel("Password").fill(DEMO_PASSWORD);
+  await page.getByRole("button", { name: "Log in" }).click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Write a review" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/sites\/\d+\/review$/);
+});
+
+// Spec media/photo-viewer: a seeded review photo opens in the overlay viewer.
+test("a review photo opens in the viewer and closes on Escape", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByLabel("Search sites").fill("Thistlegorm");
+  await page.getByRole("link", { name: /SS Thistlegorm/ }).click();
+  const thumbnail = page.getByRole("img", { name: /^Photo 1 by / });
+  await thumbnail.click();
+
+  const viewer = page.getByRole("dialog", { name: "Photo viewer" });
+  await expect(viewer).toBeVisible();
+  await expect(
+    viewer.getByRole("button", { name: "Next photo" }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(viewer).toBeHidden();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "SS Thistlegorm" }),
+  ).toBeVisible();
 });

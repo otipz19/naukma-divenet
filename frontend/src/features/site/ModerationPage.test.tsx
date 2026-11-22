@@ -222,6 +222,23 @@ describe("site/moderation: The moderation page approves and rejects", () => {
 
     expect(await screen.findByText("Nothing is waiting for review.")).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "New Reef" })).not.toBeInTheDocument();
+    expect(await screen.findByText("New Reef approved")).toBeInTheDocument();
+  });
+
+  it("confirms the decision with a toast in Ukrainian", async () => {
+    const state = queue();
+    server.use(
+      http.post(`${queueUrl}/9/approve`, () => {
+        state.moderated = true;
+        return HttpResponse.json(item.site);
+      }),
+    );
+    startSignedIn(ADMIN);
+    renderRoute("/admin/moderation", { language: "uk" });
+
+    await userEvent.click(await screen.findByRole("button", { name: "Схвалити" }));
+
+    expect(await screen.findByText("New Reef: схвалено")).toBeInTheDocument();
   });
 
   it("needs a reason to reject", async () => {
@@ -240,6 +257,7 @@ describe("site/moderation: The moderation page approves and rejects", () => {
 
     expect(await screen.findByText("Enter a reason to reject.")).toBeInTheDocument();
     expect(sent).toBe(false);
+    expect(screen.queryByText("New Reef rejected")).not.toBeInTheDocument();
   });
 
   it("sends the reason, and the card leaves the queue", async () => {
@@ -261,6 +279,7 @@ describe("site/moderation: The moderation page approves and rejects", () => {
 
     await waitFor(() => expect(body).toEqual({ reason: "Duplicate" }));
     expect(await screen.findByText("Nothing is waiting for review.")).toBeInTheDocument();
+    expect(await screen.findByText("New Reef rejected")).toBeInTheDocument();
   });
 
   it("shows the empty-queue text", async () => {
@@ -290,6 +309,7 @@ describe("site/moderation: The moderation page approves and rejects", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("already been moderated");
     expect(await screen.findByText("Nothing is waiting for review.")).toBeInTheDocument();
+    expect(screen.queryByText("New Reef approved")).not.toBeInTheDocument();
   });
 });
 

@@ -7,8 +7,10 @@ import { api } from "../../api/client";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
+import { usePhotoViewer } from "../../components/PhotoViewer/PhotoViewer";
 import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { TextField } from "../../components/TextField/TextField";
+import { useToast } from "../../components/Toast/Toast";
 import styles from "../site/ModerationPage.module.css";
 import { certificateTitle } from "./certificates";
 
@@ -72,13 +74,21 @@ function CertificateCard({
   const [reasonMissing, setReasonMissing] = useState(false);
   const [busy, setBusy] = useState(false);
   const { certificate, holderId, holderName } = item;
+  const toast = useToast();
+  const names = { certificate: certificateTitle(certificate), holder: holderName };
   const path = { params: { path: { id: certificate.id } } };
+  const photoAlt = t("site.moderation.certificates.photo", { name: certificateTitle(certificate) });
+  const { open, viewer } = usePhotoViewer(
+    certificate.photo ? [{ url: certificate.photo.url, alt: photoAlt }] : [],
+  );
 
-  const act = async (request: () => Promise<unknown>) => {
+  // A decision that went through is confirmed with a toast; a failure shows the alert instead.
+  const act = async (request: () => Promise<unknown>, done: string) => {
     onFailure(undefined);
     setBusy(true);
     try {
       await request();
+      toast.show({ title: done });
     } catch (error) {
       onFailure(error instanceof ApiError && error.status === 409 ? "conflict" : "generic");
     } finally {
@@ -90,8 +100,10 @@ function CertificateCard({
     const trimmed = reason.trim();
     setReasonMissing(!trimmed);
     if (!trimmed) return;
-    void act(() =>
-      api.POST("/api/v1/admin/certificates/{id}/reject", { ...path, body: { reason: trimmed } }),
+    void act(
+      () =>
+        api.POST("/api/v1/admin/certificates/{id}/reject", { ...path, body: { reason: trimmed } }),
+      t("site.moderation.certificates.toast.rejected", names),
     );
   };
 
@@ -105,16 +117,15 @@ function CertificateCard({
           <Link to={`/users/${holderId}`}>{holderName}</Link>
         </span>
         {certificate.photo && (
-          <a href={certificate.photo.url} target="_blank" rel="noreferrer">
+          <a href={certificate.photo.url} onClick={open(0)}>
             <img
               className={styles.certificatePhoto}
               src={certificate.photo.thumbnailUrl}
-              alt={t("site.moderation.certificates.photo", {
-                name: certificateTitle(certificate),
-              })}
+              alt={photoAlt}
             />
           </a>
         )}
+        {viewer}
       </div>
       <div className={styles.actions}>
         <TextField
@@ -131,7 +142,12 @@ function CertificateCard({
           <Button
             size="sm"
             disabled={busy}
-            onClick={() => void act(() => api.POST("/api/v1/admin/certificates/{id}/verify", path))}
+            onClick={() =>
+              void act(
+                () => api.POST("/api/v1/admin/certificates/{id}/verify", path),
+                t("site.moderation.certificates.toast.verified", names),
+              )
+            }
           >
             {t("site.moderation.certificates.verify")}
           </Button>

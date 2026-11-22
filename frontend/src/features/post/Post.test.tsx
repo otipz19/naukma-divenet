@@ -66,6 +66,31 @@ describe("post/pages: The post page shows a post", () => {
     expect(screen.getByRole("img", { name: /Night dive/ })).toHaveAttribute("src", "/media/p");
   });
 
+  it("opens post images in the viewer, but not the cover (spec media/photo-viewer)", async () => {
+    const photo = (id: string) => ({
+      id,
+      url: `/media/${id}`,
+      thumbnailUrl: `/media/${id}/thumb`,
+      width: 4,
+      height: 3,
+    });
+    servePost(post({ cover: photo("c"), photos: [photo("a"), photo("b")] }));
+    const { container } = renderRoute("/posts/5");
+
+    const images = await screen.findAllByRole("img", { name: /Night dive/ });
+    const first = images.find((image) => image.getAttribute("src") === "/media/a")!;
+    const cover = container.querySelector('img[src="/media/c"]')!;
+    expect(cover.closest("a")).toBeNull();
+    expect(first.closest("a")).toHaveAttribute("href", "/media/a");
+    expect(first.closest("a")).not.toHaveAttribute("target");
+
+    await userEvent.click(first);
+    const current = () => document.querySelector(".yarl__slide_current img");
+    await waitFor(() => expect(current()).toHaveAttribute("src", "/media/a"));
+    await userEvent.click(screen.getByRole("button", { name: "Next photo" }));
+    await waitFor(() => expect(current()).toHaveAttribute("src", "/media/b"));
+  });
+
   it("names the region in the active language", async () => {
     servePost(post({ regionCode: "eg-dahab" }));
     renderRoute("/posts/5", { language: "uk" });

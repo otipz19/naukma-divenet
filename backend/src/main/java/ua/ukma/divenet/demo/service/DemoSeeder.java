@@ -96,8 +96,9 @@ public class DemoSeeder implements ApplicationRunner {
     record SeedWarning(String site, String type, String text) {}
 
     /**
-     * {@code status} is DRAFT or PUBLISHED; a site sets the region. {@code cover} {@code "reuse"} gives
-     * the post a copy of an existing post-cover picture instead of a new one (polish-release design D6).
+     * {@code status} is DRAFT or PUBLISHED; a site sets the region. {@code cover} is ignored: it once
+     * marked a post that reused another post's cover, and every cover now comes from the photo set
+     * round-robin (polish-demo-walkthrough design D4). It stays so that {@code demo.json} does not churn.
      */
     record SeedPost(
             String title,
@@ -106,16 +107,10 @@ public class DemoSeeder implements ApplicationRunner {
             @Nullable String site,
             @Nullable String region,
             int photos,
-            @Nullable String cover) {
+            @Nullable String cover) {}
 
-        boolean reusesCover() {
-            return "reuse".equals(cover);
-        }
-    }
-
-    /** A post waiting for the round-robin pass; its pictures are uploaded already unless it reuses a cover. */
-    private record PendingPost(
-            long author, SeedPost post, @Nullable UUID cover, List<UUID> photos) {}
+    /** A post waiting for the round-robin pass; its pictures are uploaded already. */
+    private record PendingPost(long author, SeedPost post, UUID cover, List<UUID> photos) {}
 
     /** {@code status} is APPROVED, PENDING or REJECTED. */
     record SeedSubmission(
@@ -205,7 +200,7 @@ public class DemoSeeder implements ApplicationRunner {
             Map<String, Long> siteIds = sites.findAll().stream()
                     .filter(site -> site.getStatus() == SiteStatus.APPROVED)
                     .collect(Collectors.toMap(Site::getName, Site::getId, (a, b) -> a));
-            Images images = new Images();
+            Images images = new Images(DemoPhotos.load(jsonMapper));
             List<Long> seeded = new ArrayList<>();
             List<List<PendingPost>> pending = new ArrayList<>();
             for (SeedDiver diver : seed.divers()) {
@@ -213,7 +208,7 @@ public class DemoSeeder implements ApplicationRunner {
                 seeded.add(diver(diver, seed.password(), siteIds, images, own));
                 pending.add(own);
             }
-            createPosts(pending, siteIds, images);
+            createPosts(pending, siteIds);
             return seeded;
         });
         ids.forEach(achievements::evaluate);
@@ -231,7 +226,7 @@ public class DemoSeeder implements ApplicationRunner {
                 id,
                 new ProfileService.ProfileEdit(
                         diver.bio(),
-                        images.upload(id, 256, 256),
+                        images.avatar(id),
                         diver.showDiveLog(),
                         diver.showStatistics(),
                         diver.showCertificates()));
@@ -275,12 +270,7 @@ public class DemoSeeder implements ApplicationRunner {
         }
         // The pictures are uploaded here, in seed order, so each diver's content keeps its pictures.
         for (SeedPost post : diver.posts()) {
-            if (post.reusesCover()) {
-                pendingPosts.add(new PendingPost(id, post, null, images.uploadAll(id, post.photos())));
-            } else {
-                pendingPosts.add(
-                        new PendingPost(id, post, images.uploadCover(id), images.uploadAll(id, post.photos())));
-            }
+            pendingPosts.add(new PendingPost(id, post, images.photo(id), images.uploadAll(id, post.photos())));
         }
         for (SeedSubmission seed : diver.submissions()) {
             long site = catalog.submit(
@@ -312,7 +302,7 @@ public class DemoSeeder implements ApplicationRunner {
      * Creates the posts one diver at a time in turn (each diver's first post, then each second one), so
      * the newest-first feed mixes the divers instead of showing one diver per page (design D6).
      */
-    private void createPosts(List<List<PendingPost>> pending, Map<String, Long> siteIds, Images images) {
+    private void createPosts(List<List<PendingPost>> pending, Map<String, Long> siteIds) {
         int rounds = pending.stream().mapToInt(List::size).max().orElse(0);
         for (int round = 0; round < rounds; round++) {
             for (List<PendingPost> own : pending) {
@@ -321,14 +311,13 @@ public class DemoSeeder implements ApplicationRunner {
                 }
                 PendingPost next = own.get(round);
                 SeedPost post = next.post();
-                UUID cover = next.cover() != null ? next.cover() : images.reuseCover(next.author());
                 posts.create(
                         next.author(),
                         new PostService.Content(
                                 post.title(),
                                 post.text(),
                                 post.status(),
-                                cover,
+                                next.cover(),
                                 next.photos(),
                                 List.of(),
                                 post.region(),
@@ -352,42 +341,36 @@ public class DemoSeeder implements ApplicationRunner {
         return reason;
     }
 
-    /** Uploads generated pictures, each from the next seed number, so a run is reproducible. */
+    /**
+     * Uploads the seed's pictures. Avatars are generated, each from the next seed number, so a run is
+     * reproducible. Post covers, post images and review photos are the photo set, round-robin (design D4):
+     * each one is a new upload, because an upload can be attached only once.
+     */
     private final class Images {
-        private static final int COVER_WIDTH = 640;
-        private static final int COVER_HEIGHT = 480;
+        private final List<byte[]> photos;
+        private long nextAvatar = 1;
+        private int nextPhoto;
 
-        private long next = 1;
-        private final List<Long> coverSeeds = new ArrayList<>();
-        private int reused;
-
-        UUID upload(long userId, int width, int height) {
-            return media.upload(userId, DemoImages.jpeg(next++, width, height)).id();
-        }
-
-        /** A new post-cover picture; its seed number is kept so later posts can reuse the picture. */
-        UUID uploadCover(long userId) {
-            coverSeeds.add(next);
-            return upload(userId, COVER_WIDTH, COVER_HEIGHT);
-        }
-
-        /**
-         * A copy of an existing post-cover picture, round-robin over the covers uploaded so far. It is a new
-         * upload, because an upload can be attached only once; no new picture is drawn.
-         */
-        UUID reuseCover(long userId) {
-            if (coverSeeds.isEmpty()) {
-                throw new IllegalStateException("The demo seed reuses a cover before any post has one");
+        Images(List<byte[]> photos) {
+            if (photos.isEmpty()) {
+                throw new IllegalStateException("The demo seed has no photos");
             }
-            long seed = coverSeeds.get(reused++ % coverSeeds.size());
-            return media.upload(userId, DemoImages.jpeg(seed, COVER_WIDTH, COVER_HEIGHT))
-                    .id();
+            this.photos = photos;
+        }
+
+        UUID avatar(long userId) {
+            return media.upload(userId, DemoImages.jpeg(nextAvatar++, 256, 256)).id();
+        }
+
+        /** The next photo of the set, as a new upload. */
+        UUID photo(long userId) {
+            return media.upload(userId, photos.get(nextPhoto++ % photos.size())).id();
         }
 
         List<UUID> uploadAll(long userId, int count) {
             List<UUID> ids = new ArrayList<>();
             for (int i = 0; i < count; i++) {
-                ids.add(upload(userId, 640, 480));
+                ids.add(photo(userId));
             }
             return ids;
         }

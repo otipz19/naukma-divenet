@@ -10,7 +10,7 @@ import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
 import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
-import { difficultyWord } from "../../components/Badge/DifficultyBadge";
+import { DIFFICULTY_WORDS, levelsOf } from "../../components/Badge/DifficultyBadge";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { Chip } from "../../components/Chip/Chip";
 import { SelectField } from "../../components/SelectField/SelectField";
@@ -32,7 +32,6 @@ const EMPTY: SubmitValues = {
   difficulty: "",
   description: "",
 };
-const LEVELS = [1, 2, 3, 4, 5];
 const SERVER_FIELDS = [
   "name",
   "lat",
@@ -247,9 +246,10 @@ export function SubmitSitePage() {
           {...register("difficulty")}
         >
           <option value="">{t("site.submit.choose")}</option>
-          {LEVELS.map((level) => (
-            <option key={level} value={level}>
-              {`${level} · ${t(`site.difficulty.${difficultyWord(level)}`)}`}
+          {/* The four words, each sending the lowest level it stands for (design D2). */}
+          {DIFFICULTY_WORDS.map((word) => (
+            <option key={word} value={levelsOf(word)[0]}>
+              {t(`site.difficulty.${word}`)}
             </option>
           ))}
         </SelectField>

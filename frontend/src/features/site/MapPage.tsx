@@ -3,7 +3,8 @@ import { Plus, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { MapContainer, Popup, TileLayer } from "react-leaflet";
-import { Link, useSearchParams } from "react-router";
+import { useSearchParams } from "react-router";
+import { DiverActionLink } from "../auth/DiverActionLink";
 import "leaflet/dist/leaflet.css";
 import { api } from "../../api/client";
 import { useDocumentTitle } from "../../app/documentTitle";
@@ -80,6 +81,8 @@ export function MapPage() {
     placeholderData: keepPreviousData,
   });
   const sites = markers.data ?? NO_SITES;
+  // The search and filters without the sort: a new one fits the map once its sites arrive.
+  const fitKey = toSearchParams({ ...search, sort: "rating" }).toString();
 
   const [selectedId, setSelectedId] = useState<number>();
   // Derived, so a popup closes by itself when its site leaves the results.
@@ -105,6 +108,14 @@ export function MapPage() {
     if (!bar || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(() => setTopBarHeight(bar.offsetHeight));
     observer.observe(bar);
+    return () => observer.disconnect();
+  }, []);
+  // On a phone the Add a site button and the results sheet cover the bottom of the map.
+  const [bottomStackHeight, setBottomStackHeight] = useState(0);
+  const measureBottomStack = useCallback((stack: HTMLElement | null) => {
+    if (!stack || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => setBottomStackHeight(stack.offsetHeight));
+    observer.observe(stack);
     return () => observer.disconnect();
   }, []);
   const filterCount = activeFilters(search);
@@ -183,13 +194,14 @@ export function MapPage() {
   );
 
   const addSite = !isAdmin && (
-    <Link
+    <DiverActionLink
+      action="addSite"
       className={`${buttonClassName({ variant: "primary" })} ${styles.addSite}`}
       to="/sites/new"
     >
       <Plus size={20} aria-hidden="true" />
       {t("site.map.addSite")}
-    </Link>
+    </DiverActionLink>
   );
 
   const map = (
@@ -199,7 +211,12 @@ export function MapPage() {
         url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution={t("site.map.attribution")}
       />
-      <SiteClusterLayer sites={sites} onSelect={setSelectedId} />
+      <SiteClusterLayer
+        sites={sites}
+        onSelect={setSelectedId}
+        fitKey={markers.isSuccess && !markers.isPlaceholderData ? fitKey : undefined}
+        cover={narrow ? { top: topBarHeight, bottom: bottomStackHeight } : undefined}
+      />
       {selected && (
         <Popup
           key={selected.id}
@@ -234,7 +251,7 @@ export function MapPage() {
               {filtersToggle}
             </div>
           </section>
-          <div className={styles.bottomStack}>
+          <div ref={measureBottomStack} className={styles.bottomStack}>
             {addSite}
             <section
               className={`${styles.sheet} ${sheetExpanded ? styles.sheetExpanded : ""}`}

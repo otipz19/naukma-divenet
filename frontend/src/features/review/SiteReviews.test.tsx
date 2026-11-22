@@ -103,6 +103,31 @@ describe("review/site-reviews: The site page lists the site's reviews", () => {
     expect(screen.getByRole("heading", { name: /Reviews/ })).toHaveTextContent("Reviews1");
   });
 
+  it("opens a photo in the viewer (spec media/photo-viewer)", async () => {
+    const photo = (n: number) => ({
+      id: `00000000-0000-4000-8000-00000000000${n}`,
+      url: `/media/full-${n}`,
+      thumbnailUrl: `/media/thumb-${n}`,
+      width: 1200,
+      height: 800,
+    });
+    serve(() => page([review({ photos: [photo(1), photo(2)] })]));
+    renderRoute("/sites/7");
+
+    const article = within(await card("Oleh Kravets"));
+    const thumbnail = article.getByRole("img", { name: "Photo 2 by Oleh Kravets" });
+    expect(thumbnail.closest("a")).toHaveAttribute("href", "/media/full-2");
+    await userEvent.click(thumbnail);
+
+    await waitFor(() =>
+      expect(document.querySelector(".yarl__slide_current img")).toHaveAttribute(
+        "src",
+        "/media/full-2",
+      ),
+    );
+    expect(screen.getByRole("button", { name: "Close photo" })).toBeInTheDocument();
+  });
+
   it("shows no rating on a text-only review", async () => {
     serve(() => page([review({ rating: undefined })]));
     renderRoute("/sites/7");

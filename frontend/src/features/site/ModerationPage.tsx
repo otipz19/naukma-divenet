@@ -12,6 +12,7 @@ import { DifficultyBadge } from "../../components/Badge/DifficultyBadge";
 import { Button } from "../../components/Button/Button";
 import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { TextField } from "../../components/TextField/TextField";
+import { useToast } from "../../components/Toast/Toast";
 import { CertificateQueue, useCertificateQueue } from "../user/CertificateQueue";
 import { formatCoordinates } from "./SitePage";
 import styles from "./ModerationPage.module.css";
@@ -136,12 +137,15 @@ function QueueCard({
   const [reasonMissing, setReasonMissing] = useState(false);
   const [busy, setBusy] = useState(false);
   const { site, authorName } = item;
+  const toast = useToast();
 
-  const act = async (request: () => Promise<unknown>) => {
+  // A decision that went through is confirmed with a toast; a failure shows the alert instead.
+  const act = async (request: () => Promise<unknown>, done: string) => {
     onFailure(undefined);
     setBusy(true);
     try {
       await request();
+      toast.show({ title: done });
     } catch (error) {
       onFailure(error instanceof ApiError && error.status === 409 ? "conflict" : "generic");
     } finally {
@@ -150,13 +154,18 @@ function QueueCard({
     }
   };
   const path = { params: { path: { id: site.id } } };
-  const approve = () => act(() => api.POST("/api/v1/admin/sites/{id}/approve", path));
+  const approve = () =>
+    act(
+      () => api.POST("/api/v1/admin/sites/{id}/approve", path),
+      t("site.moderation.toast.approved", { name: site.name }),
+    );
   const reject = () => {
     const trimmed = reason.trim();
     setReasonMissing(!trimmed);
     if (!trimmed) return;
-    void act(() =>
-      api.POST("/api/v1/admin/sites/{id}/reject", { ...path, body: { reason: trimmed } }),
+    void act(
+      () => api.POST("/api/v1/admin/sites/{id}/reject", { ...path, body: { reason: trimmed } }),
+      t("site.moderation.toast.rejected", { name: site.name }),
     );
   };
 

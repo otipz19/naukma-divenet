@@ -1,7 +1,7 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { DiverActionLink } from "../auth/DiverActionLink";
 import { Alert } from "../../components/Alert/Alert";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { useIsAdmin, useSession } from "../auth/useSession";
@@ -54,12 +54,13 @@ export function SiteWarnings({ siteId }: { siteId: number }) {
           {t("warning.title")}
         </h2>
         {!isAdmin && (
-          <Link
+          <DiverActionLink
+            action="warning"
             className={buttonClassName({ variant: "ghost", size: "sm" })}
             to={`/sites/${siteId}/warnings/new`}
           >
             {t("warning.report")}
-          </Link>
+          </DiverActionLink>
         )}
       </div>
       {warnings.isError && (

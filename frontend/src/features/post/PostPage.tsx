@@ -5,6 +5,7 @@ import { Alert } from "../../components/Alert/Alert";
 import { useDocumentTitle } from "../../app/documentTitle";
 import { Badge } from "../../components/Badge/Badge";
 import { buttonClassName } from "../../components/Button/Button";
+import { usePhotoViewer } from "../../components/PhotoViewer/PhotoViewer";
 import { PagePlaceholder, Skeleton } from "../../components/Skeleton/Skeleton";
 import { useSession } from "../auth/useSession";
 import { formatReviewDate } from "../review/ReviewCard";
@@ -18,6 +19,11 @@ export function PostPage() {
   const post = usePost(Number(id));
   const session = useSession();
   useDocumentTitle(post.data?.title ?? t("shell.pageTitle.post"));
+  const imageAlt = t("post.image", { title: post.data?.title ?? "" });
+  // Post images open in the viewer; the cover does not (spec media/photo-viewer).
+  const { open, viewer } = usePhotoViewer(
+    (post.data?.photos ?? []).map((photo) => ({ url: photo.url, alt: imageAlt })),
+  );
 
   if (post.isError || !Number.isInteger(Number(id))) {
     const missing =
@@ -86,15 +92,12 @@ export function PostPage() {
               {paragraph}
             </p>
           ))}
-        {data.photos.map((photo) => (
-          <a key={photo.id} href={photo.url} target="_blank" rel="noreferrer">
-            <img
-              className={styles.image}
-              src={photo.url}
-              alt={t("post.image", { title: data.title })}
-            />
+        {data.photos.map((photo, index) => (
+          <a key={photo.id} href={photo.url} onClick={open(index)}>
+            <img className={styles.image} src={photo.url} alt={imageAlt} />
           </a>
         ))}
+        {viewer}
         {data.videos.map((video, index) => (
           <video
             key={video.id}
