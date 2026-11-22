@@ -1,7 +1,7 @@
 // Journey: an anonymous visitor browses the seeded map and a site's details,
 // and switches the UI language (spec shared/e2e, "Anonymous visitor browses a site").
 // Nothing here waits on OpenStreetMap tiles (design D5): the result list is the oracle.
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "./support";
 
 test("an anonymous visitor browses a seeded site", async ({ page }) => {
   await page.goto("/");
@@ -28,4 +28,64 @@ test("an anonymous visitor browses a seeded site", async ({ page }) => {
   await expect(
     page.getByRole("navigation", { name: "Основна" }).getByRole("link", { name: "Мапа" }),
   ).toBeVisible();
+});
+
+// Spec shared/disclaimer: a plain context is a first visit (the shared fixture
+// would pre-dismiss the dialog).
+test("a first visit shows the safety disclaimer until it is dismissed for good", async ({
+  browser,
+}) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const disclaimer = page.getByRole("dialog", { name: "Before you dive" });
+
+  await page.goto("/");
+  await expect(disclaimer).toBeVisible();
+  await expect(disclaimer).toContainText("does not replace dive planning");
+  await page.keyboard.press("Escape");
+  await expect(disclaimer).toBeHidden();
+  await expect(page.getByRole("main")).toBeFocused();
+
+  // Closed without "Don't show again": the next load shows it again.
+  await page.reload();
+  await expect(disclaimer).toBeVisible();
+  await disclaimer.getByRole("checkbox", { name: "Don't show again" }).check();
+  await disclaimer.getByRole("button", { name: "Got it" }).click();
+  await expect(disclaimer).toBeHidden();
+
+  await page.reload();
+  await expect(page.getByText(/^Sites found: /)).toBeVisible();
+  await expect(disclaimer).toBeHidden();
+  await context.close();
+});
+
+/** The document's scroll height and the viewport's height. */
+const heights = (page: Page) =>
+  page.evaluate(() => [document.documentElement.scrollHeight, window.innerHeight]);
+
+// Spec site/map "The map fills the viewport below the header" and site/search
+// "The result count stays in view", with the seeded sites.
+test("the map page fills the viewport and never scrolls", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  const results = page.getByRole("region", { name: "Results" });
+  await expect(results.getByRole("link").first()).toBeVisible();
+  const [scroll, viewport] = await heights(page);
+  expect(scroll).toBe(viewport);
+  const map = await page.getByRole("region", { name: "Map of dive sites" }).boundingBox();
+  expect(Math.round(map!.y + map!.height)).toBe(viewport);
+
+  // The list scrolls inside the panel; the count stays where it was.
+  const count = page.getByRole("heading", { name: /^Sites found: / });
+  const before = await count.boundingBox();
+  await results.getByRole("link").last().scrollIntoViewIfNeeded();
+  const after = await count.boundingBox();
+  expect(after!.y).toBe(before!.y);
+  await expect(count).toBeInViewport();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.getByRole("button", { name: "Show all" })).toBeVisible();
+  expect(await heights(page)).toEqual([844, 844]);
+  await page.getByRole("button", { name: "Show all" }).click();
+  expect(await heights(page)).toEqual([844, 844]);
 });

@@ -1,7 +1,7 @@
 # F-03 Remove the footer; disclaimer in a first-visit modal
 
 - **Area:** App shell
-- **Status:** decided (owner: remove the footer, add a modal)
+- **Status:** done: rework-map-page (decided: owner: remove the footer, add a modal)
 - **Delivered by:** `rework-map-page`
 
 ## Seen

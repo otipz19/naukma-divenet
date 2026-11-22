@@ -77,7 +77,7 @@ describe("site/submission: The submission page needs a signed-in user", () => {
   it("is linked from the map", async () => {
     renderRoute("/");
 
-    expect(await screen.findByRole("link", { name: "Submit a site" })).toHaveAttribute(
+    expect(await screen.findByRole("link", { name: "Add a site" })).toHaveAttribute(
       "href",
       "/sites/new",
     );

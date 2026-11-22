@@ -74,6 +74,7 @@
 .body {
   display: grid;
   flex: 1 1 auto;
+  align-content: start;
   gap: var(--space-4);
   min-height: 0;
   padding: var(--space-5);

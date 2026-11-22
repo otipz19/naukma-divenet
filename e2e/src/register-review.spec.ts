@@ -1,8 +1,7 @@
 // Journey: a brand-new user registers, opens a seeded site and publishes a
 // review with a photo (spec shared/e2e, "A new user registers, logs in and
 // reviews a site").
-import { expect, test, type Page } from "@playwright/test";
-import { uniqueEmail } from "./support";
+import { expect, type Page, test, uniqueEmail } from "./support";
 
 /** The number of ratings in the site facts, from the rating image's accessible
  * label ("Rated 4.6 out of 5, 12 ratings"). */

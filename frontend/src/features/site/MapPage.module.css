@@ -1,7 +1,7 @@
-/* The negative margin closes the footer's top margin, so the map meets the footer. */
+/* design/screens/Map.html and MobileMap.html. The page fills the viewport below the header and
+   never scrolls itself (spec site/map; rework-map-page design D2). */
 .page {
   position: relative;
-  margin-bottom: calc(-1 * var(--space-7));
 }
 
 /* The map is the page's content; the heading is for screen readers. */
@@ -21,32 +21,54 @@
   padding: var(--space-6) var(--space-4);
 }
 
-/* A side panel of controls over results beside the map; below 1100px, a sheet over the map. */
+/* Desktop: a side panel beside the map, exactly the height left under the header. */
 .layout {
   display: grid;
   grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr);
-  height: 90vh;
+  height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
 }
 
-/* Scrolls as one, as in Map.html. */
+/* A fixed head over a body that scrolls on its own, so the count stays in view (design D4). */
 .side {
-  overflow-y: auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
   background: var(--surface-1);
   border-right: 1px solid var(--border);
 }
 
-.controls {
+.head {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.body {
   display: grid;
   gap: var(--space-4);
+  align-content: start;
   padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.filtersBox {
+  padding: var(--space-4);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
 }
 
 .filters {
   display: grid;
   gap: var(--space-4);
-  padding: var(--space-4);
-  background: var(--surface-2);
-  border-radius: var(--radius-md);
 }
 
 .filtersHead,
@@ -81,28 +103,44 @@
   gap: var(--space-3);
 }
 
-.results {
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: var(--space-3);
-  padding: 0 var(--space-4) var(--space-4);
-  background: var(--surface-1);
-}
-
 .list {
   display: grid;
   gap: var(--space-3);
   align-content: start;
 }
 
-.filtersToggle,
-.listToggle {
-  display: none;
+/* design/system/components/Chip, removable variant: one active filter (design D5). */
+.activeChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.removeChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--space-6);
+  padding: 0 var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-full);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  cursor: pointer;
+}
+
+.removeChip:hover {
+  border-color: var(--accent-strong);
 }
 
 /* isolation keeps Leaflet's high z-indexes below the header and the drawer. */
 .mapSection {
+  position: relative;
   isolation: isolate;
+  min-width: 0;
 }
 
 .map {
@@ -110,52 +148,112 @@
   background: var(--info-soft);
 }
 
-@media (max-width: 1099px) {
-  .layout {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto 70vh;
-    grid-template-areas:
-      "controls"
-      "map";
-    height: auto;
-  }
+/* Above Leaflet's panes and controls, inside the isolated map section (design D7). */
+.addSite {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  z-index: 1000;
+  box-shadow: var(--shadow-2);
+}
 
-  /* Its children join the layout's grid, so the results can lie over the map. */
-  .side {
-    display: contents;
-  }
+/* Phone (below bp-lg): everything floats over a map that fills the space (design D6). */
+.phone {
+  position: relative;
+  height: calc(100vh - var(--header-height));
+  height: calc(100dvh - var(--header-height));
+  overflow: hidden;
+}
 
-  .controls {
-    grid-area: controls;
-    background: var(--surface-1);
-  }
+.phone .mapSection {
+  position: absolute;
+  inset: 0;
+}
 
-  .mapSection {
-    grid-area: map;
-  }
+.topBar {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  left: var(--space-4);
+  z-index: 1000;
+  display: grid;
+  gap: var(--space-2);
+}
 
-  .results {
-    grid-area: map;
-    z-index: 1;
-    align-self: end;
-    max-height: 60%;
-    padding-top: var(--space-3);
-    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    box-shadow: var(--shadow-2);
-  }
+.topRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 
-  .list {
-    overflow-y: auto;
-  }
+.topRow > :first-child {
+  flex: 1;
+}
 
-  .filtersToggle,
-  .listToggle {
-    display: block;
-  }
+.topBar input,
+.topBar button {
+  box-shadow: var(--shadow-2);
+}
 
-  .closedOnNarrow {
-    display: none;
-  }
+/* The label stays for assistive tech; the box shows it as its placeholder, as in MobileMap.html. */
+.topBar label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Leaflet's zoom control moves below the floating search bar, whose height MapPage measures. */
+.phone :global(.leaflet-top) {
+  top: calc(var(--top-bar-height, var(--touch-target)) + var(--space-5));
+}
+
+/* The link and the sheet stack at the bottom; the gaps around them still pan the map. */
+.bottomStack {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-3);
+  max-height: 100%;
+  pointer-events: none;
+}
+
+.bottomStack > * {
+  pointer-events: auto;
+}
+
+.phone .addSite {
+  position: static;
+  margin-right: var(--space-4);
+}
+
+.sheet {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--space-3);
+  align-self: stretch;
+  min-height: 0;
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  background: var(--surface-1);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-2);
+}
+
+.sheetExpanded {
+  height: calc((100vh - var(--header-height)) * 0.7);
+  height: calc((100dvh - var(--header-height)) * 0.7);
+}
+
+.sheet .list {
+  overflow-y: auto;
 }
 
 .pin {
@@ -194,17 +292,16 @@
   border-color: var(--border);
 }
 
-.map :global(.leaflet-control-attribution) {
-  background: var(--surface-1);
-  color: var(--ink-muted);
-}
-
 /* Leaflet's zoom buttons are not ours: they get the phone touch target here (docs/DESIGN.md rule 6). */
 @media (max-width: 767px) {
   .map :global(.leaflet-bar a) {
     width: var(--touch-target);
     height: var(--touch-target);
     line-height: var(--touch-target);
+  }
+
+  .removeChip {
+    min-height: var(--touch-target);
   }
 }
 

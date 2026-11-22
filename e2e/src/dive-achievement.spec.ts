@@ -4,8 +4,7 @@
 // second entry of this journey is her tenth dive and her tenth distinct site:
 // the toasts for "Ten dives" and "Site collector" must appear after that save.
 // Each dive is logged in the Log a dive dialog (spec shared/dialogs).
-import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, demoDiver, login } from "./support";
+import { DEMO_PASSWORD, demoDiver, expect, login, test } from "./support";
 
 test("a demo diver logs a dive and earns an achievement", async ({ page }) => {
   await login(page, demoDiver.sofia, DEMO_PASSWORD, "Sofia Alvarez");

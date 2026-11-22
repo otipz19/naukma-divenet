@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
-import { AppFooter } from "../components/AppFooter/AppFooter";
 import { AppHeader, type RenderAccount } from "../components/AppHeader/AppHeader";
 import { ToastProvider, ToastRegion } from "../components/Toast/Toast";
 import { AccountArea } from "../features/auth/AccountArea";
+import { DisclaimerDialog } from "../features/disclaimer/DisclaimerDialog";
 import { restoreSession } from "../api/session";
 import styles from "./AppLayout.module.css";
 
@@ -12,7 +12,7 @@ const renderAccount: RenderAccount = (placement, onNavigate) => (
   <AccountArea placement={placement} onNavigate={onNavigate} />
 );
 
-/** The frame around every route: skip link, header, the single main landmark, the footer and the toast region. */
+/** The frame around every route: skip link, header, the single main landmark, the first-visit disclaimer and the toast region. */
 export function AppLayout() {
   const { t } = useTranslation();
   const main = useRef<HTMLElement>(null);
@@ -37,7 +37,7 @@ export function AppLayout() {
         <main id="main" ref={main} tabIndex={-1} className={styles.main}>
           <Outlet />
         </main>
-        <AppFooter />
+        <DisclaimerDialog />
         <ToastRegion />
       </div>
     </ToastProvider>

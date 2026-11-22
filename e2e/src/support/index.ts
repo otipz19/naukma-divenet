@@ -1,5 +1,31 @@
 // Shared helpers for the E2E journeys (spec shared/e2e). Journeys drive the
 // real UI with role-based selectors only; no test ids exist in the app.
+import { test as base, type BrowserContext, type Page } from "@playwright/test";
+
+/** The storage key of "Don't show again" (frontend/src/features/disclaimer). */
+export const DISCLAIMER_STORAGE_KEY = "divenet.disclaimer";
+
+/**
+ * Makes every page of `context` start as a returning visitor who dismissed the
+ * first-visit disclaimer (spec shared/disclaimer), so it does not cover the
+ * page a journey drives. Contexts a spec builds itself call this directly.
+ */
+export async function dismissDisclaimer(context: BrowserContext) {
+  await context.addInitScript(
+    (key) => localStorage.setItem(key, "dismissed"),
+    DISCLAIMER_STORAGE_KEY,
+  );
+}
+
+/** Playwright's `test`, with the disclaimer already dismissed (rework-map-page design D8). */
+export const test = base.extend({
+  context: async ({ context }, use) => {
+    await dismissDisclaimer(context);
+    await use(context);
+  },
+});
+
+export { expect, type Page } from "@playwright/test";
 
 /** The demo password every seeded diver uses (spec demo/seed). */
 export const DEMO_PASSWORD = "divenet-demo";
@@ -26,8 +52,6 @@ export const admin = {
 export function uniqueEmail(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.com`;
 }
-
-import type { Page } from "@playwright/test";
 
 /** Logs in through the login page, and waits until the account menu shows the name. */
 export async function login(page: Page, email: string, password: string, name: string) {

@@ -1,8 +1,7 @@
 // Journey: a signed-in diver writes and publishes a post linked to a region,
 // and it reaches the global feed (spec shared/e2e, "A published post reaches
 // the global feed").
-import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, demoDiver, login } from "./support";
+import { DEMO_PASSWORD, demoDiver, expect, login, test } from "./support";
 
 test("a published post reaches the global feed", async ({ page }) => {
   const title = `E2E journey post ${Date.now()}`;

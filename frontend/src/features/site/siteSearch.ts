@@ -72,6 +72,50 @@ export function activeFilters(search: SiteSearch): number {
   );
 }
 
+export interface FilterChip {
+  key: string;
+  label: string;
+  /** The search with only this filter removed. */
+  without: SiteSearch;
+}
+
+/** Translates a locale key, as i18next's `t` does. */
+type Translate = (key: string, options?: Record<string, unknown>) => string;
+
+/**
+ * One removable chip per active filter, in the order the filters are shown (rework-map-page
+ * design D5). There is one chip per counted filter, so the chips always match `activeFilters`.
+ */
+export function activeFilterChips(search: SiteSearch, t: Translate): FilterChip[] {
+  const chips: FilterChip[] = [];
+  for (const word of search.difficulties) {
+    chips.push({
+      key: `difficulty:${word}`,
+      label: t(`site.difficulty.${word}`),
+      without: { ...search, difficulties: search.difficulties.filter((w) => w !== word) },
+    });
+  }
+  for (const code of search.gear) {
+    chips.push({
+      key: `gear:${code}`,
+      label: t(`gear.${code}`),
+      without: { ...search, gear: search.gear.filter((c) => c !== code) },
+    });
+  }
+  const single = (
+    key: "country" | "region" | "minDepth" | "maxDepth" | "minRating",
+    label: string,
+  ) => {
+    if (search[key]) chips.push({ key, label, without: { ...search, [key]: "" } });
+  };
+  single("country", t(`geo.countries.${search.country}`));
+  single("region", t(`geo.regions.${search.region}`));
+  single("minDepth", t("site.search.chip.minDepth", { n: search.minDepth }));
+  single("maxDepth", t("site.search.chip.maxDepth", { n: search.maxDepth }));
+  single("minRating", t("site.search.chip.minRating", { value: search.minRating }));
+  return chips;
+}
+
 /** The codes whose name in the active language contains the text, ignoring case (design D3). */
 export function matchingCodes(text: string, names: Record<string, string>): string[] {
   const needle = text.trim().toLocaleLowerCase();

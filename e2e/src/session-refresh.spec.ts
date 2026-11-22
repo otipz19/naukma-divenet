@@ -3,8 +3,7 @@
 // reload drops the token, so the next authenticated request must silently
 // refresh through the HttpOnly refresh cookie (design D3): the same code path
 // as a real 15-minute expiry, in seconds.
-import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, demoDiver, login } from "./support";
+import { DEMO_PASSWORD, demoDiver, expect, login, test } from "./support";
 
 test("a session survives an expired access token", async ({ page }) => {
   const name = "Marco Rossi";

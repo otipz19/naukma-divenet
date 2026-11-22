@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  activeFilterChips,
   activeFilters,
   matchingCodes,
   parseSearch,
@@ -84,5 +85,52 @@ describe("site/search: Search works with names in the active language", () => {
   it("matches a part of a name, ignoring case", () => {
     expect(matchingCodes("ХОРВ", names.countries)).toEqual(["HR"]);
     expect(matchingCodes("  ", names.countries)).toEqual([]);
+  });
+});
+
+/** A stand-in for i18next: the key, then its options. */
+const fakeT = (key: string, options?: Record<string, unknown>) =>
+  options ? `${key} ${JSON.stringify(options)}` : key;
+
+describe("site/search: Active filters show as removable chips", () => {
+  const all =
+    "q=reef&difficulty=beginner&difficulty=advanced&gear=torch&country=EG&region=eg-dahab&minDepth=5&maxDepth=30&minRating=4&sort=name";
+
+  it("gives one labelled chip per active filter, in the order of the filters", () => {
+    const chips = activeFilterChips(parseSearch(new URLSearchParams(all)), fakeT);
+
+    expect(chips.map((chip) => chip.label)).toEqual([
+      "site.difficulty.beginner",
+      "site.difficulty.advanced",
+      "gear.torch",
+      "geo.countries.EG",
+      "geo.regions.eg-dahab",
+      'site.search.chip.minDepth {"n":"5"}',
+      'site.search.chip.maxDepth {"n":"30"}',
+      'site.search.chip.minRating {"value":"4"}',
+    ]);
+  });
+
+  it("has as many chips as the toggle counts", () => {
+    for (const query of [all, "", "gear=torch&gear=drysuit", "minRating=4.5"]) {
+      const search = parseSearch(new URLSearchParams(query));
+      expect(activeFilterChips(search, fakeT)).toHaveLength(activeFilters(search));
+    }
+  });
+
+  it("removes only its own filter and keeps the search and sort", () => {
+    const search = parseSearch(new URLSearchParams(all));
+    const chips = activeFilterChips(search, fakeT);
+    const without = (key: string) =>
+      toSearchParams(chips.find((chip) => chip.key === key)!.without);
+
+    expect(without("difficulty:beginner").getAll("difficulty")).toEqual(["advanced"]);
+    expect(without("gear:torch").has("gear")).toBe(false);
+    expect(without("country").has("country")).toBe(false);
+    expect(without("country").get("region")).toBe("eg-dahab");
+    expect(without("minRating").has("minRating")).toBe(false);
+    expect(without("minRating").get("q")).toBe("reef");
+    expect(without("minRating").get("sort")).toBe("name");
+    expect(without("maxDepth").get("minDepth")).toBe("5");
   });
 });

@@ -4,8 +4,15 @@
 // the system preference (frontend/src/app/theme.ts), so dark-theme scans run in
 // a colorScheme: "dark" context; the uk locale is scanned on pages whose chrome
 // translates.
-import { expect, test } from "@playwright/test";
-import { DEMO_PASSWORD, admin, demoDiver, login } from "./support";
+import {
+  admin,
+  DEMO_PASSWORD,
+  demoDiver,
+  dismissDisclaimer,
+  expect,
+  login,
+  test,
+} from "./support";
 import { expectAccessible } from "./support/audit";
 
 // A seeded site with reviews and warnings, used by the perf suite too.
@@ -87,6 +94,7 @@ test("the theme respects both the system preference and the attribute", async ({
 
 test("anonymous pages are accessible in the dark theme", async ({ browser }) => {
   const context = await browser.newContext({ colorScheme: "dark" });
+  await dismissDisclaimer(context);
   const page = await context.newPage();
   await page.goto("/");
   await expectAccessible(page, "map (dark)");
@@ -157,6 +165,7 @@ test("the certificates page is accessible", async ({ page }) => {
 
 test("the certificate dialog is accessible in the dark theme", async ({ browser }) => {
   const context = await browser.newContext({ colorScheme: "dark" });
+  await dismissDisclaimer(context);
   const page = await context.newPage();
   await login(page, demoDiver.bohdan, DEMO_PASSWORD, "Богдан Лиманець");
   await page.goto("/profile/certificates");
@@ -170,4 +179,37 @@ test("the admin moderation page is accessible", async ({ page }) => {
   await login(page, admin.email, admin.password, "Admin");
   await page.goto("/admin/moderation");
   await expectAccessible(page, "admin moderation");
+});
+
+// Spec shared/accessibility "The disclaimer dialog is audited": a context
+// without the shared fixture is a first visit, so the dialog is open on load.
+for (const [label, options, uk] of [
+  ["disclaimer dialog", {}, false],
+  ["disclaimer dialog (dark)", { colorScheme: "dark" }, false],
+  ["disclaimer dialog (uk)", { locale: "uk-UA" }, true],
+] as const) {
+  test(`the ${label} is accessible`, async ({ browser }) => {
+    const context = await browser.newContext(options);
+    const page = await context.newPage();
+    await page.goto("/");
+    const name = uk ? "Перед зануренням" : "Before you dive";
+    await expect(page.getByRole("dialog", { name })).toBeVisible();
+    await expectAccessible(page, label);
+    await context.close();
+  });
+}
+
+// Spec shared/accessibility "The phone map is audited".
+test("the phone map is accessible with the sheet expanded and the filters open", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Show all" }).click();
+  await expect(page.getByRole("button", { name: "Show less" })).toBeVisible();
+  await expectAccessible(page, "phone map, sheet expanded");
+
+  await page.getByRole("button", { name: /^Filters/ }).click();
+  await expect(page.getByRole("dialog", { name: "Filters" })).toBeVisible();
+  await expectAccessible(page, "phone map, filters dialog");
 });

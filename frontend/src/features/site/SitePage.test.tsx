@@ -84,6 +84,18 @@ describe("site/details: The site page shows the safety disclaimer", () => {
     expect(main.getByText(/does not replace dive planning/)).toBeInTheDocument();
     expect(main.queryByRole("button")).not.toBeInTheDocument();
   });
+
+  it("still shows it after the visitor chose not to see the disclaimer dialog again", async () => {
+    siteReturns();
+    // renderRoute starts as a visitor who dismissed the first-visit dialog for good.
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { level: 1, name: "Blue Hole" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(
+      within(screen.getByRole("main")).getByText(/does not replace dive planning/),
+    ).toBeInTheDocument();
+  });
 });
 
 describe("site/details: The site page links back to the map", () => {

@@ -117,7 +117,7 @@ in the head still tells the user how many sites match. The old "Show list" toggl
 
 ### D5. Active filter chips
 
-`activeFilterChips(search, names)` is a pure function in `siteSearch.ts`:
+`activeFilterChips(search, t)` is a pure function in `siteSearch.ts`. It takes the translate function, so the labels come from the locale files:
 
 - It returns `{ key, label, without: SiteSearch }[]`, one entry per active value, in the
   order difficulty, gear, country, region, depths, rating.
@@ -158,9 +158,10 @@ positioning inside a `position: relative` container that fills the height from D
     add tab stops.
   - **Expanded:** `max-height: 70%` of the map area, with the list scrolling inside it.
   - The empty and error messages show in the peek state.
-- **Leaflet controls:** the zoom control moves to `bottomright` on phones, above the sheet,
-  so the top bar does not cover it. This uses the `position` prop on a
-  `ZoomControl`, with the default control off.
+- **Leaflet controls:** the zoom control stays top-left but moves down below the floating top
+  bar. The top bar grows with the active-filter chips, so `MapPage` measures it (a
+  `ResizeObserver`) and sets `--top-bar-height` for the offset.
+- **"Add a site"** sits in a stack with the sheet at the bottom, right-aligned just above it.
 
 Rejected: a drag gesture for the sheet. It needs pointer handling that cannot be reached from
 the keyboard or tested in jsdom, and the mockup's handle is decoration. A button covers both
@@ -234,6 +235,16 @@ There is no new namespace.
   fills the viewport, with the phone layout described).
 
 **REST endpoints, Flyway migrations:** none.
+
+### D11. Two fixes to the shared Dialog found while building this
+
+- In development, React mounts each effect twice. The first cleanup calls `dialog.close()`,
+  and its `close` event is a task that arrives after the second mount has reopened the dialog.
+  The dialog took it as a real close and shut at once. So every dialog closed immediately in
+  `pnpm dev`, but not in the production build. `onNativeClose` now ignores a `close` while
+  the dialog is open.
+- The dialog body is a grid that fills the full-screen phone dialog. With few rows, it spread
+  them over the height. It now packs them at the top (`align-content: start`).
 
 ## Risks / Trade-offs
 

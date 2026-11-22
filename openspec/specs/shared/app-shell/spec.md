@@ -8,17 +8,18 @@ and the fonts, so every feature page looks and behaves the same way.
 ## Requirements
 
 ### Requirement: Every page renders inside the app shell
-Every route SHALL render inside one layout made of a header landmark, a single
-main landmark holding the page content, and a footer landmark, in that order.
+Every route SHALL render inside one layout made of a header landmark followed by a
+single main landmark holding the page content. The layout SHALL have no footer
+landmark.
 
 #### Scenario: Home page has the shell
 - **WHEN** the app is opened at `/`
-- **THEN** the page has exactly one banner, one main and one contentinfo landmark
+- **THEN** the page has exactly one banner and one main landmark, and no contentinfo landmark
 - **AND** the page content is inside the main landmark
 
 #### Scenario: Not-found page has the shell
 - **WHEN** the app is opened at `/no-such-page`
-- **THEN** the page has the banner, main and contentinfo landmarks
+- **THEN** the page has the banner and main landmarks
 - **AND** the not-found message is inside the main landmark
 
 ### Requirement: A skip link leads past the header
@@ -69,7 +70,7 @@ updates the document language as `shared/i18n` requires.
 
 #### Scenario: Switch to Ukrainian
 - **WHEN** the user presses the "UK" button
-- **THEN** the page text, including the header and footer, shows the `uk` text
+- **THEN** the page text, including the header, shows the `uk` text
 - **AND** the "UK" button is pressed
 - **AND** the saved language choice is `uk`
 - **AND** the `<html>` element has `lang="uk"`
@@ -131,25 +132,6 @@ a navigation or account link in it is followed.
 #### Scenario: Log out from the drawer
 - **WHEN** the drawer is open for a signed-in user and the user chooses "Log out"
 - **THEN** the dialog is gone and the dialog's account links show "Log in" when it is opened again
-
-### Requirement: The footer shows the safety disclaimer
-The footer SHALL show the safety disclaimer of the active locale, led by a bold
-"Safety:" label, followed by a meta line with the project name and the map-data
-attribution. The disclaimer SHALL have no control that hides or dismisses it.
-
-#### Scenario: Disclaimer in English
-- **WHEN** the app is opened at `/` with active locale `en`
-- **THEN** the footer contains "Information on DiveNet is for reference only and does not replace dive planning according to your agency's standards."
-- **AND** it contains "Map data © OpenStreetMap contributors"
-- **AND** the footer contains no button
-
-#### Scenario: Disclaimer in Ukrainian
-- **WHEN** the app is opened at `/` with active locale `uk`
-- **THEN** the footer shows the `uk` text of the disclaimer and the meta line
-
-#### Scenario: Disclaimer on every page
-- **WHEN** the app is opened at `/no-such-page`
-- **THEN** the footer shows the safety disclaimer
 
 ### Requirement: The colour theme follows the system preference
 On start, the app SHALL set `data-theme` on the `<html>` element to `dark` when

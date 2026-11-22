@@ -4,12 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Map, phone · DiveNet</title>
-    <!-- @screen w=390 h=844 title="Phone: map with results sheet" -->
+    <!-- @screen w=390 h=2580 title="Phone: map with the results sheet peeking, then the filters dialog, then the sheet expanded" -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Manrope:wght@600;700;800&amp;display=swap" />
     <link rel="stylesheet" href="../system/tokens.css" />
     <link rel="stylesheet" href="../system/components/bundle.css" />
   </head>
   <body>
+    <!-- Screen 1: the map fills the screen below the header; search and Filters float over its top; the results sheet peeks (count and one card); "Add a site" sits just above the sheet. The page never scrolls. -->
     <div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--info-soft); color: var(--ink); font-family: var(--font-sans)">
       <header class="dn-header" style="padding: 0 16px; gap: 12px">
         <button class="dn-btn dn-btn--ghost" aria-label="Open menu" style="color: var(--on-brand); padding: 0; width: 44px; height: 44px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
@@ -23,24 +24,101 @@
       </svg>
       <div style="position: absolute; top: 80px; left: 16px; right: 16px; display: flex; gap: 8px">
         <input class="dn-input" type="search" placeholder="Search sites" aria-label="Search sites" style="flex: 1; box-shadow: var(--shadow-2)" />
-        <button class="dn-btn dn-btn--secondary" style="box-shadow: var(--shadow-2); min-height: 44px">Filters · 2</button>
+        <button class="dn-btn dn-btn--secondary" aria-expanded="false" style="box-shadow: var(--shadow-2); min-height: 44px">Filters · 2</button>
       </div>
       <span style="position: absolute; left: 70px; top: 220px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-full); background: var(--brand); color: var(--on-brand); font: 500 14px/20px var(--font-sans); box-shadow: 0 0 0 6px var(--surface-1)">24</span>
       <span style="position: absolute; left: 210px; top: 300px; width: 36px; height: 36px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent-strong); border: 3px solid var(--surface-1)"></span>
       <span style="position: absolute; left: 240px; top: 400px; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); border: 2px solid var(--surface-1)"></span>
-      <section aria-label="Results" style="position: absolute; left: 0; right: 0; bottom: 0; height: 330px; padding: 8px 16px 16px; display: grid; gap: 12px; align-content: start; background: var(--surface-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-2)">
+      <div style="position: absolute; right: 16px; bottom: 236px; display: grid; gap: 8px; justify-items: end">
+        <span style="display: grid; gap: 4px">
+          <button class="dn-btn dn-btn--secondary" aria-label="Zoom in" style="width: 44px; height: 44px; padding: 0; box-shadow: var(--shadow-2)">+</button>
+          <button class="dn-btn dn-btn--secondary" aria-label="Zoom out" style="width: 44px; height: 44px; padding: 0; box-shadow: var(--shadow-2)">−</button>
+        </span>
+        <a class="dn-btn dn-btn--primary" href="#" style="box-shadow: var(--shadow-2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>Add a site</a>
+      </div>
+      <section aria-label="Results" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 8px 16px 16px; display: grid; gap: 12px; align-content: start; background: var(--surface-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-2)">
         <span style="justify-self: center; width: 40px; height: 4px; border-radius: var(--radius-full); background: var(--border-strong)" aria-hidden="true"></span>
-        <div style="display: flex; justify-content: space-between"><h2 class="label" style="margin: 0">12 sites match</h2><button class="dn-btn dn-btn--ghost dn-btn--sm">List</button></div>
-        <a class="dn-site-card" href="#" style="background: var(--accent-soft); outline: 2px solid var(--accent)">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="label" style="margin: 0">Sites found: 12</h2><button class="dn-btn dn-btn--ghost dn-btn--sm" aria-expanded="false">Show all</button></div>
+        <a class="dn-site-card" href="#">
           <h3 class="dn-site-card__title">SS Thistlegorm</h3>
           <span class="dn-site-card__place">Egypt · Sha'ab Ali</span>
           <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.9</span></span><span class="dn-badge dn-badge--info">Intermediate</span><span>16–32 m</span></span>
         </a>
-        <a class="dn-site-card" href="#">
-          <h3 class="dn-site-card__title">Shark and Yolanda Reef</h3>
-          <span class="dn-site-card__place">Egypt · Ras Mohammed</span>
-        </a>
-        <p class="caption" style="margin: 0; color: var(--ink-muted)">For reference only; does not replace dive planning to your agency's standards.</p>
+      </section>
+    </div>
+
+    <!-- Screen 2: Filters opens the full-screen Filters dialog. Changes apply at once (the map behind it updates); "Show 12 sites" closes it, "Clear all" resets. -->
+    <div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--surface-1); color: var(--ink); font-family: var(--font-sans)">
+      <div class="dn-dialog" role="dialog" aria-modal="true" aria-labelledby="filters-title" style="width: 390px; height: 844px; max-height: none; border: 0; border-radius: 0">
+        <div class="dn-dialog__head">
+          <h2 id="filters-title" class="dn-dialog__title">Filters</h2>
+          <button type="button" class="dn-dialog__close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+        </div>
+        <div class="dn-dialog__body" style="align-content: start">
+          <fieldset style="border: 0; margin: 0; padding: 0">
+            <legend class="dn-field__label" style="padding: 0; margin-bottom: 8px">Difficulty</legend>
+            <div class="dn-chips">
+              <button class="dn-chip" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Beginner</button>
+              <button class="dn-chip" aria-pressed="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>Intermediate</button>
+              <button class="dn-chip" aria-pressed="false">Advanced</button>
+              <button class="dn-chip" aria-pressed="false">Technical</button>
+            </div>
+          </fieldset>
+          <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+            <label class="dn-field"><span class="dn-field__label">Min depth (m)</span><input class="dn-input" inputmode="numeric" /></label>
+            <label class="dn-field"><span class="dn-field__label">Max depth (m)</span><input class="dn-input" inputmode="numeric" /></label>
+          </div>
+          <label class="dn-field"><span class="dn-field__label">Country</span><select class="dn-input"><option>Any</option></select></label>
+          <label class="dn-field"><span class="dn-field__label">Min rating</span><select class="dn-input"><option>Any</option></select></label>
+          <fieldset style="border: 0; margin: 0; padding: 0">
+            <legend class="dn-field__label" style="padding: 0; margin-bottom: 8px">Required gear</legend>
+            <div class="dn-chips">
+              <button class="dn-chip" aria-pressed="false">Torch</button>
+              <button class="dn-chip" aria-pressed="false">Drysuit</button>
+              <button class="dn-chip" aria-pressed="false">SMB</button>
+            </div>
+          </fieldset>
+        </div>
+        <div class="dn-dialog__actions">
+          <button type="button" class="dn-btn dn-btn--secondary">Clear all</button>
+          <button type="button" class="dn-btn dn-btn--primary">Show 12 sites</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 3: "Show all" expands the sheet to 70% of the map; its list scrolls inside it. -->
+    <div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: var(--info-soft); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header" style="padding: 0 16px; gap: 12px">
+        <button class="dn-btn dn-btn--ghost" aria-label="Open menu" style="color: var(--on-brand); padding: 0; width: 44px; height: 44px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <span class="dn-header__spacer"></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <div style="position: absolute; top: 80px; left: 16px; right: 16px; display: flex; gap: 8px">
+        <input class="dn-input" type="search" placeholder="Search sites" aria-label="Search sites" style="flex: 1; box-shadow: var(--shadow-2)" />
+        <button class="dn-btn dn-btn--secondary" aria-expanded="false" style="box-shadow: var(--shadow-2); min-height: 44px">Filters · 2</button>
+      </div>
+      <section aria-label="Results" style="position: absolute; left: 0; right: 0; bottom: 0; height: 546px; padding: 8px 16px 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 12px; background: var(--surface-1); border-radius: var(--radius-lg) var(--radius-lg) 0 0; box-shadow: var(--shadow-2)">
+        <span style="justify-self: center; width: 40px; height: 4px; border-radius: var(--radius-full); background: var(--border-strong)" aria-hidden="true"></span>
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="label" style="margin: 0">Sites found: 12</h2><button class="dn-btn dn-btn--ghost dn-btn--sm" aria-expanded="true">Show less</button></div>
+        <div style="display: grid; gap: 12px; align-content: start; overflow-y: auto; padding-bottom: 16px">
+          <a class="dn-site-card" href="#">
+            <h3 class="dn-site-card__title">SS Thistlegorm</h3>
+            <span class="dn-site-card__place">Egypt · Sha'ab Ali</span>
+          </a>
+          <a class="dn-site-card" href="#">
+            <h3 class="dn-site-card__title">Shark and Yolanda Reef</h3>
+            <span class="dn-site-card__place">Egypt · Ras Mohammed</span>
+          </a>
+          <a class="dn-site-card" href="#">
+            <h3 class="dn-site-card__title">Lighthouse Reef</h3>
+            <span class="dn-site-card__place">Egypt · Dahab</span>
+          </a>
+          <a class="dn-site-card" href="#">
+            <h3 class="dn-site-card__title">Abu Dabbab</h3>
+            <span class="dn-site-card__place">Egypt · Marsa Alam</span>
+          </a>
+        </div>
       </section>
     </div>
   </body>

@@ -43,6 +43,18 @@ scanned with each of its form dialogs open.
 - **THEN** the page is scanned while the dialog is open, so the dialog's own
   controls and names are checked.
 
+#### Scenario: The disclaimer dialog is audited
+
+- **WHEN** the audit suite opens `/` in a browser where the disclaimer was not dismissed
+- **THEN** the page is scanned with the disclaimer dialog open, in the default
+  and dark themes and in the `uk` locale.
+
+#### Scenario: The phone map is audited
+
+- **WHEN** the audit suite opens `/` on a 390 px wide viewport
+- **THEN** the page is scanned with the results sheet expanded and again with
+  the filters dialog open.
+
 ### Requirement: Violations fail the suite by declared impact
 
 The audit SHALL fail when an unaccepted violation of impact `critical` or

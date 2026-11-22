@@ -1,8 +1,7 @@
 // Journey: a diver submits a site, the admin approves it in the moderation
 // queue, and the site becomes publicly visible (spec shared/e2e, "An admin
 // approves a submitted site").
-import { expect, test } from "@playwright/test";
-import { admin, login, logout, uniqueEmail } from "./support";
+import { admin, expect, login, logout, test, uniqueEmail } from "./support";
 
 test("an admin approves a submitted site", async ({ page }) => {
   const siteName = `E2E Test Reef ${Date.now()}`;
