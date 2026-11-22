@@ -34,6 +34,11 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-17](F-17-certificate-form-dialog.md) | Certificates | Edit is unclear; create and edit move to a dialog | UX, spec change | done: add-dialogs-and-toasts |
 | [F-18](F-18-admin-is-not-a-diver.md) | Roles | The admin can log dives, write posts and has a profile; the admin should be a moderator only (web app only, owner 2026-11-22) | product rule, spec change | done: scope-admin-account |
 | [F-19](F-19-moderation-in-header.md) | Shell | Moderation link is in the account menu; move it to the header navigation | UX, spec change | done: scope-admin-account |
+| [F-20](F-20-map-controls-over-drawer.md) | Map | On a phone the floating map controls draw over the open navigation drawer | bug | done: polish-second-review |
+| [F-21](F-21-filters-open-in-place.md) | Map | Filters open below the count, away from the button; count goes above the button, the form opens in its place and has a Hide button | UX, spec change | done: polish-second-review |
+| [F-22](F-22-phone-chips-stack.md) | Map | On a phone the active-filter chips wrap into many rows and cover the map; hide them on a phone | UX, spec change | done: polish-second-review |
+| [F-23](F-23-toast-too-short.md) | Achievements | Achievement toasts close after 6 s, too fast to read; 10 s for every toast | UX, spec change | done: polish-second-review |
+| [F-24](F-24-divelog-header-gap.md) | Dive log | Table header has no background above the Edit/Delete column | bug | done: polish-second-review |
 
 ## Proposed grouping into changes
 
@@ -51,6 +56,12 @@ The owner agreed to this grouping on 2026-11-21. `add-dialogs-and-toasts`,
 items change the app shell, so they run one after the other. The `polish-release` row
 names its findings. The owner moved it to the end of M6 (2026-11-21), so its audits
 cover the screens the other items change. `fix/ui-defects` needs no roadmap row: it changes no behaviour.
+
+## Second review (owner, 2026-11-22)
+
+After `polish-release` the owner walked the app again and found F-20 to F-24.
+The owner decided the open fixes (chips hidden on a phone, 10 s toasts) and grouped
+all five into one change, `polish-second-review`, a row in [ROADMAP.md](../ROADMAP.md) (M6).
 
 ## Cross-cutting notes
 

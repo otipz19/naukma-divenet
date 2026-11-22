@@ -14,16 +14,19 @@ const toggled = <T,>(values: T[], value: T) =>
 
 /**
  * The filters of spec site/search. `onChange` carries the whole next search. With `onClear`, they
- * have their own heading and "Clear all"; the phone's filters dialog supplies both itself.
+ * have their own heading and "Clear all", and with `onHide` a "Hide filters" button; the phone's
+ * filters dialog supplies its own heading and actions.
  */
 export function SearchFilters({
   search,
   onChange,
   onClear,
+  onHide,
 }: {
   search: SiteSearch;
   onChange: (next: SiteSearch, options?: { replace: boolean }) => void;
   onClear?: () => void;
+  onHide?: () => void;
 }) {
   const { t, i18n } = useTranslation();
   const countries = useQuery({
@@ -59,9 +62,16 @@ export function SearchFilters({
       {onClear && (
         <div className={styles.filtersHead}>
           <h2 className={`h3 ${styles.flush}`}>{t("site.search.filters")}</h2>
-          <Button variant="ghost" size="sm" onClick={onClear}>
-            {t("site.search.clearAll")}
-          </Button>
+          <div className={styles.filtersActions}>
+            <Button variant="ghost" size="sm" onClick={onClear}>
+              {t("site.search.clearAll")}
+            </Button>
+            {onHide && (
+              <Button variant="secondary" size="sm" onClick={onHide}>
+                {t("site.search.hideFilters")}
+              </Button>
+            )}
+          </div>
         </div>
       )}
       <fieldset className={styles.group}>

@@ -35,7 +35,12 @@ export function DiveTable({
             <th className="label">{t("divelog.table.maxDepth")}</th>
             <th className="label">{t("divelog.table.water")}</th>
             <th className="label">{t("divelog.table.visibility")}</th>
-            {onEdit && <th className={styles.hidden}>{t("divelog.table.actions")}</th>}
+            {/* The cell stays in the row so the header background spans the actions column. */}
+            {onEdit && (
+              <th>
+                <span className={styles.hidden}>{t("divelog.table.actions")}</span>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>

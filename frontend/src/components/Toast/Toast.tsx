@@ -14,7 +14,7 @@ import { Link } from "react-router";
 import styles from "./Toast.module.css";
 
 /** How long a toast stays without hover or focus (spec shared/app-shell). */
-export const TOAST_MS = 6000;
+export const TOAST_MS = 10000;
 
 export type ToastInput = { title?: string; body?: string; link?: { to: string; label: string } };
 type ToastItem = ToastInput & { id: number };

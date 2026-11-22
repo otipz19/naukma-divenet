@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { MapContainer, Popup, TileLayer } from "react-leaflet";
 import { Link, useSearchParams } from "react-router";
@@ -36,9 +36,10 @@ const NO_SITES: SiteMarker[] = [];
 
 /**
  * The world map at `/` with search, filters and results (specs site/map, site/search). It fills
- * the viewport below the header. On a desktop the side panel has a fixed head over a scrolling
- * body; below 1100 px the controls float over the map, the filters open in a dialog and the
- * results are a sheet (rework-map-page design D4, D6). The popup is a React portal, so SiteCard
+ * the viewport below the header. On a desktop the side panel has a head (search, count, and the
+ * Filters button or, in its place, the filters) over a scrolling result list; below 1100 px the
+ * controls float over the map, the filters open in a dialog and the results are a sheet
+ * (rework-map-page design D4, D6; polish-second-review design D2-D5). The popup is a React portal, so SiteCard
  * keeps its contexts.
  */
 export function MapPage() {
@@ -84,6 +85,19 @@ export function MapPage() {
   // Derived, so a popup closes by itself when its site leaves the results.
   const selected = sites.find((site) => site.id === selectedId);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  // On a desktop the button and the filters replace each other, so focus moves with them (design D4).
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const filtersRef = useRef<HTMLDivElement>(null);
+  const moveFocus = useRef(false);
+  useEffect(() => {
+    if (!moveFocus.current) return;
+    moveFocus.current = false;
+    (filtersOpen ? filtersRef : toggleRef).current?.focus();
+  }, [filtersOpen]);
+  const showFilters = (open: boolean) => {
+    moveFocus.current = !narrow;
+    setFiltersOpen(open);
+  };
   const [sheetExpanded, setSheetExpanded] = useState(false);
   // The floating search bar grows with the active-filter chips; Leaflet's zoom control sits under it.
   const [topBarHeight, setTopBarHeight] = useState(0);
@@ -110,8 +124,9 @@ export function MapPage() {
     <Button
       variant="secondary"
       size={narrow ? "md" : "sm"}
+      ref={toggleRef}
       aria-expanded={filtersOpen}
-      onClick={() => setFiltersOpen(!filtersOpen)}
+      onClick={() => showFilters(!filtersOpen)}
     >
       {filterCount > 0
         ? t("site.search.filtersCount", { n: filterCount })
@@ -218,7 +233,6 @@ export function MapPage() {
               {searchBox}
               {filtersToggle}
             </div>
-            {chipList}
           </section>
           <div className={styles.bottomStack}>
             {addSite}
@@ -267,18 +281,30 @@ export function MapPage() {
         <div className={styles.side}>
           <section className={styles.head} aria-label={t("site.search.panel")}>
             {searchBox}
-            <div className={styles.toolbar}>
-              {filtersToggle}
-              {chipList}
-            </div>
             <div className={styles.resultsHead}>{count}</div>
-          </section>
-          <div className={styles.body}>
-            {filtersOpen && (
-              <div className={styles.filtersBox}>
-                <SearchFilters search={search} onChange={update} onClear={clearAll} />
+            {filtersOpen ? (
+              <div
+                ref={filtersRef}
+                role="group"
+                aria-label={t("site.search.filters")}
+                tabIndex={-1}
+                className={styles.filtersBox}
+              >
+                <SearchFilters
+                  search={search}
+                  onChange={update}
+                  onClear={clearAll}
+                  onHide={() => showFilters(false)}
+                />
+              </div>
+            ) : (
+              <div className={styles.toolbar}>
+                {filtersToggle}
+                {chipList}
               </div>
             )}
+          </section>
+          <div className={styles.body}>
             <section className={styles.list} aria-label={t("site.search.results")}>
               {results}
             </section>

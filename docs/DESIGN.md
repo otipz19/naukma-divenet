@@ -37,7 +37,7 @@ files above.
 
 | Screen file | What it shows | Built by (roadmap) |
 | --- | --- | --- |
-| `Map.html` | The full-height map page: a panel head with search, the collapsed Filters toggle, active-filter chips and the count over a scrolling list, "Add a site" on the map; then the filters expanded; then the first-visit disclaimer dialog | `add-app-shell` (header), `add-dive-site-catalog`, `add-site-search-and-filters`, `rework-map-page` |
+| `Map.html` | The full-height map page: a panel head with search, the count, then the collapsed Filters toggle with the active-filter chips, over a scrolling list, "Add a site" on the map; then the filters open in place of the toggle with "Hide filters"; then the first-visit disclaimer dialog | `add-app-shell` (header), `add-dive-site-catalog`, `add-site-search-and-filters`, `rework-map-page`, `polish-second-review` |
 | `Site.html` | Photos, facts card, required and recommended gear, disclaimer box, recent warnings, description, reviews (own review with edit and delete), linked posts | `add-dive-site-catalog`, `add-site-reviews`, `add-site-warnings`, M5 site feed |
 | `ReviewForm.html` | Rating input with "No rating", community difficulty, text, photos | `add-site-reviews`, `add-media-uploads` |
 | `Auth.html` | Log in with a failed-login banner, sign up with a field error | `add-authentication` |

@@ -204,6 +204,7 @@ describe("site/search: The map page searches and filters", () => {
     await userEvent.selectOptions(await screen.findByLabelText("Min rating"), "4 stars and up");
 
     await waitFor(() => expect(lastUrl(urls).searchParams.get("minRating")).toBe("4"));
+    await userEvent.click(screen.getByRole("button", { name: "Hide filters" }));
     expect(screen.getByRole("button", { name: "Filters · 1" })).toBeInTheDocument();
   });
 
@@ -319,16 +320,48 @@ describe("site/search: Filters sit behind a toggle at every width", () => {
     expect(screen.queryByRole("button", { name: "Beginner" })).not.toBeInTheDocument();
   });
 
-  it("reports the count and the expanded state", async () => {
+  it("Toggles report their state", async () => {
     recordMarkers();
     renderRoute("/?difficulty=beginner");
-    const toggle = await screen.findByRole("button", { name: "Filters · 1" });
+
+    expect(await screen.findByRole("button", { name: "Filters · 1" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
+  });
+
+  it("Opens in place of the button", async () => {
+    recordMarkers();
+    renderRoute("/");
+
+    await userEvent.click(await screen.findByRole("button", { name: "Filters" }));
+
+    const panel = screen.getByRole("region", { name: "Search and filters" });
+    const filters = within(panel).getByRole("group", { name: "Filters" });
+    expect(within(filters).getByRole("button", { name: "Beginner" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Filters/ })).not.toBeInTheDocument();
+    expect(filters).toContainElement(document.activeElement as HTMLElement);
+  });
+
+  it("Hide filters", async () => {
+    recordMarkers();
+    renderRoute("/");
+    await userEvent.click(await screen.findByRole("button", { name: "Filters" }));
+
+    await userEvent.click(screen.getByRole("button", { name: "Hide filters" }));
+
+    expect(screen.queryByRole("button", { name: "Beginner" })).not.toBeInTheDocument();
+    const toggle = screen.getByRole("button", { name: "Filters" });
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(toggle).toHaveFocus();
+  });
 
-    await userEvent.click(toggle);
+  it("names Hide filters in the active language", async () => {
+    recordMarkers();
+    renderRoute("/", { language: "uk" });
+    await userEvent.click(await screen.findByRole("button", { name: "Фільтри" }));
 
-    expect(toggle).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("button", { name: "Beginner" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Сховати фільтри" })).toBeInTheDocument();
   });
 });
 
@@ -362,6 +395,20 @@ describe("site/search: Active filters show as removable chips", () => {
     expect(screen.getByRole("button", { name: "Filters · 1" })).toBeInTheDocument();
   });
 
+  it("No chips while the form is open", async () => {
+    recordMarkers();
+    renderRoute("/?difficulty=beginner");
+    expect(
+      await screen.findByRole("button", { name: "Remove filter: Beginner" }),
+    ).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Filters · 1" }));
+
+    expect(
+      screen.queryByRole("button", { name: "Remove filter: Beginner" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("names the chips in the active language", async () => {
     recordMarkers();
     renderRoute("/?difficulty=beginner&minDepth=10", { language: "uk" });
@@ -387,6 +434,18 @@ describe("site/search: The result count stays in view", () => {
         name: /Sites found/,
       }),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe("site/search: The result count stays in view (order)", () => {
+  it("Count above the Filters button", async () => {
+    recordMarkers();
+    renderRoute("/");
+
+    const panel = await screen.findByRole("region", { name: "Search and filters" });
+    const count = await within(panel).findByRole("heading", { name: "Sites found: 1" });
+    const toggle = within(panel).getByRole("button", { name: "Filters" });
+    expect(count.compareDocumentPosition(toggle) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
 
@@ -434,6 +493,15 @@ function onPhone() {
 
 describe("site/search: Phones show filters in a dialog and results in a sheet", () => {
   afterEach(() => vi.restoreAllMocks());
+
+  it("No chips on a phone", async () => {
+    onPhone();
+    recordMarkers();
+    renderRoute("/?difficulty=beginner&gear=torch");
+
+    expect(await screen.findByRole("button", { name: "Filters · 2" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Remove filter/ })).not.toBeInTheDocument();
+  });
 
   it("opens the filters in a dialog that applies at once and closes on Show", async () => {
     onPhone();

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../system/components/bundle.css" />
   </head>
   <body>
-    <!-- Screen 1: the map fills the viewport below the header. The panel head (search, Filters toggle, active-filter chips, count) stays fixed; only the list below it scrolls. "Add a site" floats on the map. -->
+    <!-- Screen 1: the map fills the viewport below the header. The panel head (search, count, then the Filters toggle with the active-filter chips) stays fixed; only the list below it scrolls. "Add a site" floats on the map. -->
     <div style="position: relative; height: 860px; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
       <header class="dn-header">
         <a class="dn-header__logo" href="#">DiveNet</a>
@@ -30,11 +30,85 @@
               <span class="dn-field__label">Search sites</span>
               <input class="dn-input" type="search" value="Egypt" />
             </label>
+            <div style="display: flex; justify-content: space-between; align-items: baseline">
+              <h2 class="label" style="margin: 0">Sites found: 12</h2>
+              <span class="body-sm" style="color: var(--ink-muted)">Sorted by rating</span>
+            </div>
             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
               <button class="dn-btn dn-btn--secondary dn-btn--sm" aria-expanded="false">Filters · 2</button>
               <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Beginner">Beginner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
               <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Intermediate">Intermediate<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
             </div>
+          </div>
+          <div style="display: grid; gap: 12px; align-content: start; padding: 16px 20px; overflow-y: auto">
+            <a class="dn-site-card" href="#" style="background: var(--accent-soft); outline: 2px solid var(--accent)">
+              <h3 class="dn-site-card__title">SS Thistlegorm</h3>
+              <span class="dn-site-card__place">Egypt · Sha'ab Ali</span>
+              <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.9</span><span class="dn-rating__count">(342)</span></span><span class="dn-badge dn-badge--info">Intermediate</span><span>16–32 m</span></span>
+            </a>
+            <a class="dn-site-card" href="#">
+              <h3 class="dn-site-card__title">Shark and Yolanda Reef</h3>
+              <span class="dn-site-card__place">Egypt · Ras Mohammed</span>
+              <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.8</span><span class="dn-rating__count">(211)</span></span><span class="dn-badge dn-badge--info">Intermediate</span><span>5–28 m</span></span>
+            </a>
+            <a class="dn-site-card" href="#">
+              <h3 class="dn-site-card__title">Lighthouse Reef</h3>
+              <span class="dn-site-card__place">Egypt · Dahab</span>
+              <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.4</span><span class="dn-rating__count">(97)</span></span><span class="dn-badge dn-badge--success">Beginner</span><span>3–18 m</span></span>
+            </a>
+            <a class="dn-site-card" href="#">
+              <h3 class="dn-site-card__title">Abu Dabbab</h3>
+              <span class="dn-site-card__place">Egypt · Marsa Alam</span>
+              <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.3</span><span class="dn-rating__count">(64)</span></span><span class="dn-badge dn-badge--success">Beginner</span><span>4–16 m</span></span>
+            </a>
+          </div>
+        </aside>
+        <section style="position: relative; min-width: 0; background: var(--info-soft); overflow: hidden" aria-label="Map">
+          <svg width="100%" height="100%" viewBox="0 0 860 796" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="position: absolute; inset: 0">
+            <path d="M0 0 H430 C400 120 470 210 420 330 C390 410 300 470 260 560 C230 640 170 720 120 796 H0 Z" style="fill: var(--surface-1); stroke: var(--border)" />
+            <path d="M860 0 H560 C590 90 540 170 600 260 C650 340 640 430 700 520 C740 600 800 700 860 760 Z" style="fill: var(--surface-1); stroke: var(--border)" />
+            <path d="M460 360 C500 330 540 350 548 390 C556 430 520 460 488 450 C456 440 430 390 460 360 Z" style="fill: var(--surface-2); stroke: var(--border)" />
+          </svg>
+          <div style="position: absolute; top: 16px; left: 16px; display: grid; gap: 8px">
+            <button class="dn-btn dn-btn--secondary dn-btn--sm" aria-label="Zoom in" style="width: 40px; height: 40px; padding: 0">+</button>
+            <button class="dn-btn dn-btn--secondary dn-btn--sm" aria-label="Zoom out" style="width: 40px; height: 40px; padding: 0">−</button>
+          </div>
+          <a class="dn-btn dn-btn--primary" href="#" style="position: absolute; top: 16px; right: 16px; box-shadow: var(--shadow-2)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>Add a site</a>
+          <span style="position: absolute; left: 140px; top: 140px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: var(--radius-full); background: var(--brand); color: var(--on-brand); font: 500 14px/20px var(--font-sans); box-shadow: 0 0 0 6px var(--surface-1)">24</span>
+          <span style="position: absolute; left: 640px; top: 600px; display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--brand); color: var(--on-brand); font: 500 14px/20px var(--font-sans); box-shadow: 0 0 0 6px var(--surface-1)">8</span>
+          <span style="position: absolute; left: 470px; top: 210px; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); border: 2px solid var(--surface-1)"></span>
+          <span style="position: absolute; left: 520px; top: 470px; width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent); border: 2px solid var(--surface-1)"></span>
+          <span style="position: absolute; left: 556px; top: 330px; width: 36px; height: 36px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: var(--accent-strong); border: 3px solid var(--surface-1)"></span>
+          <div style="position: absolute; left: 560px; top: 180px; width: 280px; padding: 16px; display: grid; gap: 8px; background: var(--surface-1); border-radius: var(--radius-md); box-shadow: var(--shadow-2)">
+            <a href="#" class="h3" style="color: var(--ink); text-decoration: none">SS Thistlegorm</a>
+            <span class="body-sm" style="color: var(--ink-muted)">Egypt · Sha'ab Ali</span>
+            <span class="dn-site-card__facts"><span class="dn-rating"><svg class="dn-rating__star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26" /></svg><span class="dn-rating__value">4.9</span></span><span class="dn-badge dn-badge--info">Intermediate</span><span>16–32 m</span></span>
+          </div>
+          <span class="caption" style="position: absolute; right: 8px; bottom: 8px; padding: 2px 6px; background: var(--surface-1); color: var(--ink-muted); border-radius: var(--radius-sm)">© OpenStreetMap contributors</span>
+        </section>
+      </div>
+    </div>
+
+    <!-- Screen 2: Filters expanded. They replace the Filters button in the panel head, under the count, with "Hide filters" to close them; the head takes at most 60% of the panel and scrolls, and the results scroll below. -->
+    <div style="position: relative; height: 860px; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
+      <header class="dn-header">
+        <a class="dn-header__logo" href="#">DiveNet</a>
+        <nav class="dn-header__nav" aria-label="Main">
+          <a class="dn-header__link" href="#" aria-current="page">Map</a>
+          <a class="dn-header__link" href="#">Feed</a>
+          <a class="dn-header__link" href="#">Dive log</a>
+        </nav>
+        <span class="dn-header__spacer"></span>
+        <span class="dn-header__lang" role="group" aria-label="Language"><button aria-pressed="true">EN</button><button aria-pressed="false">UK</button></span>
+        <a class="dn-avatar" href="#" aria-label="Your profile">MK</a>
+      </header>
+      <div style="flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(20rem, 26rem) minmax(0, 1fr)">
+        <aside style="display: grid; grid-template-rows: fit-content(60%) minmax(0, 1fr); min-height: 0; background: var(--surface-1); border-right: 1px solid var(--border)" aria-label="Search and filters">
+          <div style="display: grid; gap: 12px; padding: 20px; overflow-y: auto; border-bottom: 1px solid var(--border)">
+            <label class="dn-field">
+              <span class="dn-field__label">Search sites</span>
+              <input class="dn-input" type="search" value="Egypt" />
+            </label>
             <div style="display: flex; justify-content: space-between; align-items: baseline">
               <h2 class="label" style="margin: 0">Sites found: 12</h2>
               <span class="body-sm" style="color: var(--ink-muted)">Sorted by rating</span>
@@ -89,7 +163,7 @@
       </div>
     </div>
 
-    <!-- Screen 2: Filters expanded. They open at the top of the scrolling body; the count stays in the fixed head. -->
+    <!-- Screen 2: Filters expanded. They replace the Filters button in the panel head, under the count, with "Hide filters" to close them; the head takes at most 60% of the panel and scrolls, and the results scroll below. -->
     <div style="position: relative; height: 860px; display: flex; flex-direction: column; overflow: hidden; background: var(--surface-0); color: var(--ink); font-family: var(--font-sans)">
       <header class="dn-header">
         <a class="dn-header__logo" href="#">DiveNet</a>
@@ -109,11 +183,6 @@
               <span class="dn-field__label">Search sites</span>
               <input class="dn-input" type="search" value="Egypt" />
             </label>
-            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
-              <button class="dn-btn dn-btn--secondary dn-btn--sm" aria-expanded="true">Filters · 2</button>
-              <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Beginner">Beginner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
-              <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Intermediate">Intermediate<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
-            </div>
             <div style="display: flex; justify-content: space-between; align-items: baseline">
               <h2 class="label" style="margin: 0">Sites found: 12</h2>
               <span class="body-sm" style="color: var(--ink-muted)">Sorted by rating</span>
@@ -215,14 +284,14 @@
               <span class="dn-field__label">Search sites</span>
               <input class="dn-input" type="search" value="Egypt" />
             </label>
+            <div style="display: flex; justify-content: space-between; align-items: baseline">
+              <h2 class="label" style="margin: 0">Sites found: 12</h2>
+              <span class="body-sm" style="color: var(--ink-muted)">Sorted by rating</span>
+            </div>
             <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px">
               <button class="dn-btn dn-btn--secondary dn-btn--sm" aria-expanded="false">Filters · 2</button>
               <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Beginner">Beginner<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
               <button class="dn-chip dn-chip--remove" aria-label="Remove filter: Intermediate">Intermediate<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: baseline">
-              <h2 class="label" style="margin: 0">Sites found: 12</h2>
-              <span class="body-sm" style="color: var(--ink-muted)">Sorted by rating</span>
             </div>
           </div>
           <div style="display: grid; gap: 12px; align-content: start; padding: 16px 20px; overflow-y: auto">
