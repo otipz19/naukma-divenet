@@ -371,3 +371,30 @@ describe("warning/site-warnings: Admins hide warnings on the site page", () => {
     expect(box.queryByRole("button", { name: "Hide" })).not.toBeInTheDocument();
   });
 });
+
+describe("auth: The web app shows the admin no diver actions (warnings)", () => {
+  const ADMIN = { ...MIRA, id: 99, displayName: "Admin User", role: "ADMIN" as const };
+  const target = warning({ id: 15, author: { id: 21, displayName: "Oleh Kravets" } });
+
+  it("Site page for an admin: no Report a warning, each warning keeps Hide", async () => {
+    startSignedIn(ADMIN);
+    serve(() => page([target]));
+    renderRoute("/sites/7");
+
+    const box = within(await alertBox("Strong current on the bow line"));
+    expect(box.getByRole("button", { name: "Hide" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Report a warning" })).not.toBeInTheDocument();
+  });
+
+  it("Site page for a diver: has Report a warning", async () => {
+    startSignedIn();
+    serve(() => page([target]));
+    renderRoute("/sites/7");
+
+    await alertBox("Strong current on the bow line");
+    expect(screen.getByRole("link", { name: "Report a warning" })).toHaveAttribute(
+      "href",
+      "/sites/7/warnings/new",
+    );
+  });
+});

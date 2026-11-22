@@ -13,7 +13,7 @@ import { useMyReview } from "../review/api";
 import { SitePosts } from "../post/SitePosts";
 import { SiteReviews } from "../review/SiteReviews";
 import { SiteWarnings } from "../warning/SiteWarnings";
-import { useSession } from "../auth/useSession";
+import { useIsAdmin, useSession } from "../auth/useSession";
 import styles from "./SitePage.module.css";
 
 type Site = components["schemas"]["SiteResponse"];
@@ -68,6 +68,7 @@ function SiteDetails({ site }: { site: Site }) {
   const { t } = useTranslation();
   const country = t(`geo.countries.${site.countryCode}`);
   const region = t(`geo.regions.${site.regionCode}`);
+  const isAdmin = useIsAdmin();
   return (
     <>
       <nav aria-label={t("site.details.breadcrumb")} className={`body-sm ${styles.breadcrumb}`}>
@@ -89,7 +90,7 @@ function SiteDetails({ site }: { site: Site }) {
                 {`${formatCoordinates(site.lat, site.lng)} · ${country}, ${region}`}
               </span>
             </div>
-            {site.status === "APPROVED" && (
+            {site.status === "APPROVED" && !isAdmin && (
               <span className={styles.titleActions}>
                 <Link
                   className={buttonClassName({ variant: "secondary" })}

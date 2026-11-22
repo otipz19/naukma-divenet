@@ -7,7 +7,7 @@ export const warningRoutes: RouteObject[] = [
   {
     path: "sites/:id/warnings/new",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <WarningFormPage />
       </RequireAuth>
     ),
@@ -15,7 +15,7 @@ export const warningRoutes: RouteObject[] = [
   {
     path: "sites/:id/warnings/:warningId/edit",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <WarningFormPage />
       </RequireAuth>
     ),

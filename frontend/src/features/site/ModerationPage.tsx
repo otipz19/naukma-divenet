@@ -19,10 +19,11 @@ type QueueItem = components["schemas"]["QueueItemResponse"];
 const TABS = ["sites", "certificates"] as const;
 type Tab = (typeof TABS)[number];
 
-function useSiteQueue() {
+export function useSiteQueue({ enabled = true }: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: ["sites", "admin-queue"],
     queryFn: async () => (await api.GET("/api/v1/admin/sites")).data,
+    enabled,
   });
 }
 

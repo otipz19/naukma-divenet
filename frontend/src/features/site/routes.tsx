@@ -11,7 +11,7 @@ export const siteRoutes: RouteObject[] = [
   {
     path: "sites/new",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <SubmitSitePage />
       </RequireAuth>
     ),

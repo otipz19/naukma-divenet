@@ -7,7 +7,7 @@ export const diveLogRoutes: RouteObject[] = [
   {
     path: "dive-log",
     element: (
-      <RequireAuth>
+      <RequireAuth diver>
         <DiveLogPage />
       </RequireAuth>
     ),

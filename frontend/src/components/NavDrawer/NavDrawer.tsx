@@ -2,6 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useRef, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
+import type { NavItem } from "../../app/navigation";
 import type { RenderAccount } from "../AppHeader/AppHeader";
 import { NavLinks } from "../AppHeader/NavLinks";
 import { LanguageSwitch } from "../LanguageSwitch/LanguageSwitch";
@@ -18,10 +19,12 @@ const FOCUSABLE = "a[href], button:not([disabled])";
  */
 export function NavDrawer({
   id,
+  items,
   onClose,
   account,
 }: {
   id: string;
+  items: NavItem[];
   onClose: () => void;
   account?: RenderAccount;
 }) {
@@ -82,7 +85,7 @@ export function NavDrawer({
           <X size={20} aria-hidden="true" />
         </button>
         <nav aria-label={t("shell.nav.label")}>
-          <NavLinks vertical onNavigate={onClose} />
+          <NavLinks items={items} vertical onNavigate={onClose} />
         </nav>
         <LanguageSwitch className={styles.language} />
         {account?.("drawer", onClose)}

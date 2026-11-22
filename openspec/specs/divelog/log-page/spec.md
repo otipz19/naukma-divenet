@@ -7,7 +7,8 @@ Defines the page where a signed-in diver reads their dive log and adds, edits an
 ## Requirements
 
 ### Requirement: The dive log page needs a signed-in user
-`/dive-log` SHALL need a signed-in user, and the main navigation SHALL link to it.
+`/dive-log` SHALL need a signed-in user, and the main navigation SHALL link to it for every visitor
+except an admin. An admin who opens it SHALL be sent to `/admin/moderation`, as `auth` requires.
 
 #### Scenario: Signed out
 - **WHEN** a signed-out visitor opens `/dive-log`
@@ -16,6 +17,10 @@ Defines the page where a signed-in diver reads their dive log and adds, edits an
 #### Scenario: Navigation
 - **WHEN** a visitor opens any page
 - **THEN** the main navigation has a "Dive log" link to `/dive-log`
+
+#### Scenario: No entry for the admin
+- **WHEN** an admin opens any page
+- **THEN** the main navigation has no "Dive log" link
 
 ### Requirement: The page lists the user's dives
 The page SHALL show the user's statistics and a table of dives, newest first, with date, site and place in the active

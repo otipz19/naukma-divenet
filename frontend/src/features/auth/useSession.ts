@@ -5,3 +5,9 @@ import { getSession, subscribeSession, type Session } from "../../api/session";
 export function useSession(): Session {
   return useSyncExternalStore(subscribeSession, getSession);
 }
+
+/** True only for a signed-in admin; false while the session loads or when signed out. */
+export function useIsAdmin(): boolean {
+  const session = useSession();
+  return session.status === "signedIn" && session.user.role === "ADMIN";
+}

@@ -2,7 +2,7 @@ import { screen, within } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import type { components } from "../../api/schema.gen";
-import { startSignedIn } from "../../test/auth";
+import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 import { server } from "../../test/server";
 import { formatCoordinates } from "./SitePage";
@@ -318,5 +318,29 @@ describe("site/details: The disclaimer box reads as a sentence", () => {
     renderRoute("/sites/7", { language: "uk" });
 
     expect(await screen.findByText(/^Інформація на DiveNet/)).toBeInTheDocument();
+  });
+});
+
+describe("auth: The web app shows the admin no diver actions (site page)", () => {
+  it("Site page for an admin: no Log a dive here, Write a review or Report a warning", async () => {
+    startSignedIn(ADMIN);
+    siteReturns();
+    renderRoute("/sites/7");
+
+    await screen.findByRole("heading", { name: "Recent warnings" });
+    await screen.findByRole("button", { name: /Admin User/ });
+    expect(screen.queryByRole("link", { name: "Log a dive here" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /review/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Report a warning" })).not.toBeInTheDocument();
+  });
+
+  it("Site page for a diver: has all three links", async () => {
+    startSignedIn();
+    siteReturns();
+    renderRoute("/sites/7");
+
+    expect(await screen.findByRole("link", { name: "Log a dive here" })).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Write a review" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Report a warning" })).toBeInTheDocument();
   });
 });

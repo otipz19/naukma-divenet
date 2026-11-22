@@ -60,23 +60,131 @@ describe("site/moderation: The moderation page is for admins", () => {
     expect(requested).toBe(false);
   });
 
-  it("links admins, and only admins, from the account menu", async () => {
+  it("Account menu: has no link to the moderation page for an admin", async () => {
     startSignedIn(ADMIN);
     renderRoute("/");
     await userEvent.click(await screen.findByRole("button", { name: /Mira Koval/ }));
 
-    expect(screen.getByRole("menuitem", { name: "Moderation" })).toHaveAttribute(
-      "href",
-      "/admin/moderation",
+    const items = within(screen.getByRole("menu")).getAllByRole("menuitem");
+    expect(items.some((menuItem) => menuItem.getAttribute("href") === "/admin/moderation")).toBe(
+      false,
+    );
+  });
+});
+
+const certificatesUrl = `${origin}/api/v1/admin/certificates`;
+const nav = () =>
+  within(within(screen.getByRole("banner")).getByRole("navigation", { name: "Main" }));
+
+/** `sites` pending sites (ids 9, 10, ...) until each is approved, and `certificates` pending certificates. */
+function pending(sites: number, certificates: number) {
+  const approved = new Set<number>();
+  const answered = { sites: 0, certificates: 0 };
+  const items = Array.from({ length: sites }, (_, index) => ({
+    ...item,
+    site: { ...item.site, id: 9 + index, name: `Reef ${index + 1}` },
+  }));
+  server.use(
+    http.get(queueUrl, () => {
+      const content = items.filter((entry) => !approved.has(entry.site.id));
+      answered.sites += 1;
+      return HttpResponse.json({
+        content,
+        page: { number: 0, size: 20, totalElements: content.length, totalPages: 1 },
+      });
+    }),
+    http.get(certificatesUrl, () => {
+      answered.certificates += 1;
+      return HttpResponse.json({
+        content: [],
+        page: { number: 0, size: 20, totalElements: certificates, totalPages: 1 },
+      });
+    }),
+    http.post(`${queueUrl}/:id/approve`, ({ params }) => {
+      approved.add(Number(params.id));
+      return HttpResponse.json(item.site);
+    }),
+  );
+  return answered;
+}
+
+describe("site/moderation: The header's Moderation entry shows the pending count", () => {
+  it("Navigation entry: links to the page with a badge of 3 for 2 sites and 1 certificate", async () => {
+    pending(2, 1);
+    startSignedIn(ADMIN);
+    renderRoute("/");
+
+    const link = await nav().findByRole("link", { name: "Moderation, 3 pending" });
+    expect(link).toHaveAttribute("href", "/admin/moderation");
+    expect(within(link).getByText("3")).toBeInTheDocument();
+  });
+
+  it("Nothing pending: shows no badge", async () => {
+    const answered = pending(0, 0);
+    startSignedIn(ADMIN);
+    renderRoute("/");
+
+    const link = await nav().findByRole("link", { name: "Moderation" });
+    await waitFor(() => expect(answered).toEqual({ sites: 1, certificates: 1 }));
+    expect(link).toHaveAccessibleName("Moderation");
+    expect(link).toHaveTextContent(/^Moderation$/);
+  });
+
+  it("names the count in Ukrainian", async () => {
+    pending(2, 1);
+    startSignedIn(ADMIN);
+    renderRoute("/", { language: "uk" });
+
+    const ukNav = within(
+      within(screen.getByRole("banner")).getByRole("navigation", { name: "Основна" }),
+    );
+    expect(
+      await ukNav.findByRole("link", { name: "Модерація, 3 очікують розгляду" }),
+    ).toBeInTheDocument();
+  });
+
+  it("Current page: marks the entry on /admin/moderation", async () => {
+    pending(1, 0);
+    startSignedIn(ADMIN);
+    renderRoute("/admin/moderation");
+
+    expect(await nav().findByRole("link", { name: /^Moderation/ })).toHaveAttribute(
+      "aria-current",
+      "page",
     );
   });
 
-  it("hides the link from other users", async () => {
-    startSignedIn();
-    renderRoute("/");
-    await userEvent.click(await screen.findByRole("button", { name: /Mira Koval/ }));
+  it("Count follows moderation: approving one of 3 items shows 2", async () => {
+    pending(2, 1);
+    startSignedIn(ADMIN);
+    renderRoute("/admin/moderation");
+    await nav().findByRole("link", { name: "Moderation, 3 pending" });
 
-    expect(screen.queryByRole("menuitem", { name: "Moderation" })).not.toBeInTheDocument();
+    const [approve] = await screen.findAllByRole("button", { name: "Approve" });
+    await userEvent.click(approve!);
+
+    expect(await nav().findByRole("link", { name: "Moderation, 2 pending" })).toBeInTheDocument();
+  });
+
+  it("Not for divers: no link to the page and no admin request", async () => {
+    const adminRequests: string[] = [];
+    const record = ({ request }: { request: Request }) => {
+      if (new URL(request.url).pathname.startsWith("/api/v1/admin/")) {
+        adminRequests.push(request.url);
+      }
+    };
+    server.events.on("request:start", record);
+    try {
+      startSignedIn();
+      renderRoute("/");
+      await userEvent.click(await screen.findByRole("button", { name: /Mira Koval/ }));
+
+      const links = [...screen.queryAllByRole("link"), ...screen.queryAllByRole("menuitem")];
+      expect(links.some((link) => link.getAttribute("href") === "/admin/moderation")).toBe(false);
+      expect(adminRequests).toHaveLength(0);
+    } finally {
+      server.events.removeListener("request:start", record);
+    }
   });
 });
 

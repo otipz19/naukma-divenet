@@ -262,7 +262,13 @@ Each change that adds tables updates this diagram.
   other than 1-2px hairlines and redefined tokens in `frontend/src/**/*.css`.
 - Every route renders inside the app shell (`src/app/AppLayout.tsx`): header and
   one `main` landmark (no footer). Feature changes add routes to `routes` in
-  `src/app/router.tsx` and menu entries to `src/app/navigation.ts`.
+  `src/app/router.tsx` and menu entries to `src/app/navigation.ts`; an entry may set
+  an `audience` (admin only, or everyone but the admin), and `useNavItems()` filters
+  them for the current visitor.
+- Roles in the web app: `useIsAdmin()` (`features/auth/useSession.ts`) is the one role
+  check. The admin is a moderator only: diver entry points are hidden, and diver routes
+  use `<RequireAuth diver>`, which sends the admin to `/admin/moderation`. The API does
+  not enforce this (owner decision for the demo, F-18).
 - The theme follows the system `prefers-color-scheme` (`data-theme` on `<html>`);
   there is no manual toggle.
 - Every site page shows the safety disclaimer in a box that cannot be dismissed, and

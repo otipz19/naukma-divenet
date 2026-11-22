@@ -59,7 +59,7 @@ Both endpoints SHALL need role `ADMIN`.
 
 ### Requirement: The moderation page is for admins
 `/admin/moderation` SHALL show admins the queue. Other visitors SHALL see the not-found page, or
-the login page when signed out. The account menu SHALL link to it for admins only.
+the login page when signed out. The account menu SHALL NOT link to the page.
 
 #### Scenario: Signed-in user who is not an admin
 - **WHEN** a user with role `USER` opens the page
@@ -67,7 +67,33 @@ the login page when signed out. The account menu SHALL link to it for admins onl
 
 #### Scenario: Account menu
 - **WHEN** an admin opens the account menu
-- **THEN** it has a link to `/admin/moderation`, and for a user with role `USER` it has none
+- **THEN** it has no link to `/admin/moderation`
+
+#### Scenario: Not for divers
+- **WHEN** a user with role `USER` opens any page
+- **THEN** neither the main navigation nor the account menu links to `/admin/moderation`
+
+### Requirement: The header's Moderation entry shows the pending count
+The main navigation SHALL have a Moderation entry to `/admin/moderation` for admins only, after
+Map and Feed, marked current on that page. The entry SHALL show a badge with the number of pending
+items, sites and certificates together, and no badge when nothing is pending. The count SHALL
+follow approvals, rejections and verifications without a reload.
+
+#### Scenario: Navigation entry
+- **WHEN** an admin opens any page while 2 sites and 1 certificate are pending
+- **THEN** the main navigation has a Moderation link to `/admin/moderation` with a badge "3"
+
+#### Scenario: Current page
+- **WHEN** an admin opens `/admin/moderation`
+- **THEN** the Moderation entry has `aria-current="page"`
+
+#### Scenario: Count follows moderation
+- **WHEN** the admin approves one of 3 pending items on the moderation page
+- **THEN** the Moderation entry's badge shows "2"
+
+#### Scenario: Nothing pending
+- **WHEN** an admin opens any page and the queues are empty
+- **THEN** the Moderation entry shows no badge
 
 ### Requirement: The moderation page approves and rejects
 Each card SHALL show the site's facts, author and a link to its location on OpenStreetMap, with

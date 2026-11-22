@@ -18,3 +18,11 @@ export function authResponse(accessToken = "token-1", user: SessionUser = MIRA) 
 export function startSignedIn(user: SessionUser = MIRA) {
   server.use(http.post(refreshUrl(), () => HttpResponse.json(authResponse("token-1", user))));
 }
+
+/** A signed-in admin: a moderator only in the web app (spec auth). */
+export const ADMIN = {
+  id: 99,
+  email: "admin@example.com",
+  displayName: "Admin User",
+  role: "ADMIN" as const,
+};

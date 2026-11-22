@@ -1,7 +1,7 @@
 # F-19 Moderation link is in the account menu, not the header navigation
 
 - **Area:** App shell (admin)
-- **Status:** decided (owner, 2026-11-21: move it to the header navigation)
+- **Status:** done: scope-admin-account (decided: owner, 2026-11-21: move it to the header navigation)
 - **Delivered by:** `scope-admin-account`
 
 ## Seen

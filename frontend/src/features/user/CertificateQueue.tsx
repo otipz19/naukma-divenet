@@ -13,10 +13,11 @@ import { certificateTitle } from "./certificates";
 
 type QueueItem = components["schemas"]["CertificateQueueItemResponse"];
 
-export function useCertificateQueue() {
+export function useCertificateQueue({ enabled = true }: { enabled?: boolean } = {}) {
   return useQuery({
     queryKey: ["certificates", "admin-queue"],
     queryFn: async () => (await api.GET("/api/v1/admin/certificates")).data,
+    enabled,
   });
 }
 

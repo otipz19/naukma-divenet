@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { MIRA, startSignedIn } from "../../test/auth";
+import { ADMIN, MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
 
 describe("RequireAuth", () => {
@@ -29,5 +29,28 @@ describe("RequireAuth", () => {
     renderRoute("/admin/moderation");
 
     expect(await screen.findByRole("heading", { name: "Moderation" })).toBeInTheDocument();
+  });
+});
+
+describe("auth: Diver pages send the admin to moderation", () => {
+  it("replaces a diver page with the moderation page for an admin", async () => {
+    startSignedIn(ADMIN);
+    renderRoute("/sites/new");
+
+    expect(await screen.findByRole("heading", { name: "Moderation" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Submit a dive site" })).not.toBeInTheDocument();
+  });
+
+  it("shows a USER the diver page", async () => {
+    startSignedIn();
+    renderRoute("/sites/new");
+
+    expect(await screen.findByRole("heading", { name: "Submit a dive site" })).toBeInTheDocument();
+  });
+
+  it("still sends a signed-out visitor to the login page", async () => {
+    renderRoute("/sites/new");
+
+    expect(await screen.findByRole("heading", { name: "Log in" })).toBeInTheDocument();
   });
 });
