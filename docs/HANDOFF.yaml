@@ -5,15 +5,15 @@ done:
   - UML report merged (PR #36): docs/uml (sources docs/uml/src, build with node docs/uml/src/build.mjs)
   - fix/ui-defects merged (PR #38): F-02, F-04, F-13
   - add-dialogs-and-toasts merged (PR #39): components/Dialog (Dialog, ConfirmDialog), components/Toast in AppLayout; fix/audit-animation-wait merged (PR #40): a11y scans wait for finite animations
-  - rework-map-page archived (F-03, F-10..F-12): footer removed, first-visit disclaimer dialog (features/disclaimer), full-height map with collapsible filters, chips and fixed count, Add a site on the map, phone filters dialog and results sheet
+  - rework-map-page merged (PR #41) (F-03, F-10..F-12): footer removed, first-visit disclaimer dialog (features/disclaimer), full-height map with collapsible filters, chips and fixed count, Add a site on the map, phone filters dialog and results sheet
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: rework-map-page PR open with auto-merge (merges on green check and stack)
+wip: scope-admin-account proposed on change/scope-admin-account (front-end only, owner 2026-11-22); waiting for owner review
 blocked: null
-next: propose scope-admin-account (F-18, F-19); polish-release last. Optional fix/: Feed.test first findByRole times out under local load (fails on master too, green in CI)
+next: after review, /opsx:apply scope-admin-account; polish-release last. Optional fix/: Feed.test first findByRole times out under local load (fails on master too, green in CI)
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
-  - Admin is a moderator only, no diver features in UI or API (F-18); footer removed, disclaimer in a first-visit dialog (F-03)
+  - Admin is a moderator only, enforced in the web app only, no API 403s (F-18, owner 2026-11-22); footer removed, disclaimer in a first-visit dialog (F-03)
   - Plan changes for other roadmap items go in docs/plan-updates/<target>/<source>--<slug>.md notes (docs/adr/0010)
   - Workflow: propose -> apply -> sync (if delta specs) -> archive -> PR, all on one branch (AGENTS.md "Workflow rules")
   - Layered monolith with ArchUnit layer rules (docs/adr/0008); stack and conventions docs/adr/0001, 0003-0006
