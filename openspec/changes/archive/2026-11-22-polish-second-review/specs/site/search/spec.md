@@ -1,12 +1,10 @@
 ## MODIFIED Requirements
 
 ### Requirement: Filters sit behind a toggle at every width
-The map page SHALL hide the filters behind a Filters button at every width. The filters
-are collapsed when the page opens. The button's label SHALL include the number of active
-filters when there are any, and the button SHALL carry `aria-expanded`. On a desktop,
-pressing it SHALL replace the button with the filters form in the same place in the
-panel's search section, and move focus into the form. The form SHALL have a "Hide filters"
-button; pressing it SHALL close the form, show the Filters button again and put focus on it.
+The map page SHALL hide the filters, collapsed on open, behind a Filters button that
+carries `aria-expanded` and the number of active filters. On a desktop, pressing it SHALL
+put the filters form in the button's place and move focus into it. The form's "Hide
+filters" button SHALL close it and bring the Filters button back, focused.
 
 #### Scenario: Collapsed on open
 - **WHEN** `/` is opened on a desktop-width viewport
@@ -27,12 +25,10 @@ button; pressing it SHALL close the form, show the Filters button again and put 
 - **AND** the Filters button is shown again with `aria-expanded="false"` and has focus
 
 ### Requirement: Active filters show as removable chips
-On a desktop, while the filters form is closed, the map page SHALL show one chip for each
-active filter under the Filters button, labelled with the filter's value in the active
-language. Each chip SHALL have a remove control named after the filter it removes.
-Removing a chip SHALL clear only that filter and update the URL and the markers request.
-While the filters form is open, and on a phone at any time, the removable chips SHALL not
-be shown; there the Filters button's count and the filters themselves show the selection.
+On a desktop with the filters form closed, the map page SHALL show under the Filters
+button one chip per active filter, labelled in the active language, with a remove control
+named after its filter. Removing a chip SHALL clear only that filter, in the URL and the
+markers request. The chips SHALL not be shown while the form is open, nor on a phone.
 
 #### Scenario: Chips for active filters
 - **WHEN** the app is opened at `/?difficulty=beginner&gear=torch` on a desktop-width viewport

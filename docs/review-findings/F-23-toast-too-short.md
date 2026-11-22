@@ -1,7 +1,7 @@
 # F-23 Achievement toasts disappear too fast
 
 - **Area:** Achievements, app shell
-- **Status:** taken: polish-second-review
+- **Status:** done: polish-second-review
 - **Delivered by:** `polish-second-review` (see the index)
 
 ## Seen

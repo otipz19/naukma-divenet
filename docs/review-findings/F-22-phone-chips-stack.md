@@ -1,7 +1,7 @@
 # F-22 Active-filter chips stack up and cover the phone map
 
 - **Area:** Map (phone)
-- **Status:** taken: polish-second-review
+- **Status:** done: polish-second-review
 - **Delivered by:** `polish-second-review` (see the index)
 
 ## Seen

@@ -1,7 +1,7 @@
 # F-20 Map controls float over the open navigation drawer on a phone
 
 - **Area:** Map, app shell
-- **Status:** taken: polish-second-review
+- **Status:** done: polish-second-review
 - **Delivered by:** `polish-second-review` (see the index)
 
 ## Seen

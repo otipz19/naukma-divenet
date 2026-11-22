@@ -1,7 +1,7 @@
 # F-21 The Filters button opens the filters below it, under the count
 
 - **Area:** Map (desktop side panel)
-- **Status:** taken: polish-second-review (owner decided 2026-11-22)
+- **Status:** done: polish-second-review (owner decided 2026-11-22)
 - **Delivered by:** `polish-second-review` (see the index)
 
 ## Seen

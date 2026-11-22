@@ -240,6 +240,7 @@
       "filters": "Filters",
       "filtersCount": "Filters · {{n}}",
       "clearAll": "Clear all",
+      "hideFilters": "Hide filters",
       "difficulty": "Difficulty",
       "gear": "Required gear",
       "country": "Country",

@@ -1,7 +1,7 @@
 # F-24 The dive log table header has no background over the actions column
 
 - **Area:** Dive log
-- **Status:** taken: polish-second-review
+- **Status:** done: polish-second-review
 - **Delivered by:** `polish-second-review` (see the index)
 
 ## Seen

@@ -29,19 +29,23 @@
   height: calc(100dvh - var(--header-height));
 }
 
-/* A fixed head over a body that scrolls on its own, so the count stays in view (design D4). */
+/* A fixed head over a body that scrolls on its own, so the count stays in view (design D4). The
+   head takes at most 60% of the panel; open filters scroll inside it (polish-second-review D3). */
 .side {
   display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-rows: fit-content(60%) minmax(0, 1fr);
   min-height: 0;
   background: var(--surface-1);
   border-right: 1px solid var(--border);
 }
 
+/* Search, count, then the Filters button or the open filters; only the filters scroll (design D3). */
 .head {
   display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
   gap: var(--space-3);
   padding: var(--space-4);
+  overflow: hidden;
   border-bottom: 1px solid var(--border);
 }
 
@@ -61,6 +65,8 @@
 }
 
 .filtersBox {
+  min-height: 0;
+  overflow-y: auto;
   padding: var(--space-4);
   background: var(--surface-2);
   border-radius: var(--radius-md);
@@ -75,6 +81,12 @@
 .resultsHead {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.filtersActions {
+  display: flex;
   align-items: center;
   gap: var(--space-2);
 }
@@ -157,9 +169,11 @@
   box-shadow: var(--shadow-2);
 }
 
-/* Phone (below bp-lg): everything floats over a map that fills the space (design D6). */
+/* Phone (below bp-lg): everything floats over a map that fills the space (design D6). Isolation
+   keeps the floating controls' z-index inside this box, below the header and the drawer (F-20). */
 .phone {
   position: relative;
+  isolation: isolate;
   height: calc(100vh - var(--header-height));
   height: calc(100dvh - var(--header-height));
   overflow: hidden;

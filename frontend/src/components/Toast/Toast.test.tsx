@@ -58,7 +58,17 @@ describe("shared/app-shell: The app shell shows toasts", () => {
     expect(screen.getByRole("status")).toHaveTextContent("You logged your first dive.");
   });
 
-  it("closes on its own after 6 seconds", () => {
+  it("stays long enough to read: still shown after 9 seconds", () => {
+    renderRegion({ title: "First dive" });
+    add();
+
+    wait(9000);
+
+    expect(screen.getByText("First dive")).toBeInTheDocument();
+  });
+
+  it("closes on its own after 10 seconds", () => {
+    expect(TOAST_MS).toBe(10000);
     renderRegion({ title: "First dive" });
     add();
 
@@ -69,7 +79,7 @@ describe("shared/app-shell: The app shell shows toasts", () => {
     expect(screen.queryByText("First dive")).not.toBeInTheDocument();
   });
 
-  it("pauses while hovered and closes 6 seconds after the pointer leaves", () => {
+  it("pauses while hovered and closes 10 seconds after the pointer leaves", () => {
     renderRegion({ title: "First dive" });
     add();
     const toast = screen.getByText("First dive").closest("div")!.parentElement!;

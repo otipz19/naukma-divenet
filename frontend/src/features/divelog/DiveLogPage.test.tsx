@@ -415,3 +415,19 @@ describe("shared/web-app: Every list has an empty state (dive log)", () => {
     expect(await screen.findByText("You have not logged a dive yet.")).toBeInTheDocument();
   });
 });
+
+describe("divelog/log-page: The table header spans every column", () => {
+  it("Header cell over the actions", async () => {
+    startSignedIn();
+    serveLog(entry());
+    renderRoute("/dive-log");
+
+    const edit = await screen.findByRole("button", { name: "Edit dive at Blue Hole, 12 May 2026" });
+    const table = screen.getByRole("table");
+    const [headerRow, diveRow] = within(table).getAllByRole("row");
+    const headers = within(headerRow!).getAllByRole("columnheader");
+    expect(headers).toHaveLength(within(diveRow!).getAllByRole("cell").length);
+    expect(headers.at(-1)).toHaveAccessibleName("Actions");
+    expect(diveRow).toContainElement(edit);
+  });
+});

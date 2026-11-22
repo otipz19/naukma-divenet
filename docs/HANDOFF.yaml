@@ -9,10 +9,11 @@ done:
   - scope-admin-account merged (PR #42) (F-18, F-19): web app only; useIsAdmin(), <RequireAuth diver> sends the admin to /admin/moderation, header Moderation entry with pending badge (useNavItems)
   - polish-release applied and archived on change/polish-release (F-06, F-08; owner dropped the i18n audit and F-01): app/routes/ErrorPage via errorElement, components/Skeleton placeholders, app/documentTitle, components/ThemeSwitch + app/theme.ts choice, 45 published seed posts (round-robin, reused covers)
   - polish-release merged (PR #43)
+  - polish-second-review applied and archived (F-20..F-24): phone map isolation, desktop filters in place of the toggle with Hide filters, no phone chips, TOAST_MS 10 s, dive log actions header
   - Owner product review closed 2026-11-21 (PR #37): docs/review-findings/README.md indexes F-01..F-19, all decided or declined; ROADMAP M6 gained concrete polish-release scope and rows add-dialogs-and-toasts, scope-admin-account, rework-map-page
-wip: polish-second-review proposed on change/polish-second-review (F-20..F-24, front-end only); waiting for owner review
+wip: polish-second-review PR open; waiting for CI (check, stack, e2e incl. new drawer test)
 blocked: null
-next: after owner approves, /opsx:apply polish-second-review. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist
+next: after the polish-second-review PR merges, ask the owner what follows. Docs mismatch to fix (fix/): DESIGN.md "Accepted differences" names a moderation Warnings tab that does not exist
 decisions:
   - Review findings are the plan input for M6 items; each change sets its findings to taken/done in docs/review-findings (README.md "Review principles")
   - No new automated check suites for now (F-05 declined); fixes still carry the tests the gate requires
@@ -26,7 +27,7 @@ decisions:
 refs: [AGENTS.md, docs/ROADMAP.md, docs/review-findings/README.md, docs/ARCHITECTURE.md, docs/DESIGN.md, openspec/specs/]
 checks:
   gate: pnpm check
-  last: pass 2026-11-22 on Windows (scope-admin-account), full gate green incl. Feed.test; E2E runs in CI
+  last: pass 2026-11-22 on Windows (polish-second-review), full gate green; E2E runs in CI
   ci: PRs #1-#36 green on ubuntu-latest; jobs check, stack, e2e (with a11y audits), perf, security
   run_tests: E2E and perf run in CI only (owner, 2026-11-22); locally pnpm test:e2e (18081), test:perf (18082, needs npm ci in perf/), smoke:stack
   demo: docker compose up --build on :8080; demo divers <name>@demo.divenet.test / divenet-demo; admin from ADMIN_EMAIL/ADMIN_PASSWORD
