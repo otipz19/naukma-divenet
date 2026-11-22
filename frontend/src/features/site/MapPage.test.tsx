@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import type { SiteMarker } from "./MapPage";
 
@@ -510,5 +511,22 @@ describe("auth: The web app shows the admin no diver actions (map)", () => {
     const map = screen.getByRole("region", { name: "Map of dive sites" });
     expect(within(map).queryByRole("link", { name: "Add a site" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Add a site" })).not.toBeInTheDocument();
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (map results)", () => {
+  it("shows a busy region in the results until the markers arrive", async () => {
+    const held = heldResponse();
+    server.use(http.get(markersUrl, held.wait));
+    renderRoute("/");
+
+    const status = await screen.findByText("Loading…");
+    expect(status).toHaveAttribute("role", "status");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
+
+    held.release(HttpResponse.json([]));
+
+    expect(await screen.findByText(/Nothing found/)).toBeInTheDocument();
+    expect(document.querySelector("[aria-busy='true']")).toBeNull();
   });
 });

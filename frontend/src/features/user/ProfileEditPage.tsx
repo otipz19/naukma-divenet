@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router";
 import { z } from "zod";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { PhotoField, type PhotoFieldItem } from "../../components/PhotoField/PhotoField";
@@ -33,6 +34,7 @@ const SETTINGS = [
 /** The edit page at `/profile/edit`, inside `RequireAuth` (spec user/profile). */
 export function ProfileEditPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("user.edit.title"));
   const session = useSession();
   const id = session.status === "signedIn" ? session.user.id : 0;
   const profile = useProfile(id, id !== 0);

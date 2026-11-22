@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import { MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 
 const origin = window.location.origin;
@@ -289,5 +290,25 @@ describe("site/moderation: The moderation page approves and rejects", () => {
 
     expect(await screen.findByRole("alert")).toHaveTextContent("already been moderated");
     expect(await screen.findByText("Nothing is waiting for review.")).toBeInTheDocument();
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (moderation)", () => {
+  it("shows a busy region while the queue loads", async () => {
+    startSignedIn(ADMIN);
+    const held = heldResponse();
+    server.use(
+      http.get(queueUrl, held.wait),
+      http.get(certificatesUrl, () =>
+        HttpResponse.json({
+          content: [],
+          page: { number: 0, size: 20, totalElements: 0, totalPages: 0 },
+        }),
+      ),
+    );
+    renderRoute("/admin/moderation");
+
+    const status = await within(await screen.findByRole("tabpanel")).findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
   });
 });

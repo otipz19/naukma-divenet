@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useLocation } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { signIn } from "../../api/session";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
@@ -18,6 +19,7 @@ import { useSession } from "./useSession";
 /** Spec auth "The web app has a login page" (design/screens/Auth.html). */
 export function LoginPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("auth.login.title"));
   const location = useLocation();
   const session = useSession();
   const [failure, setFailure] = useState<"credentials" | "generic">();

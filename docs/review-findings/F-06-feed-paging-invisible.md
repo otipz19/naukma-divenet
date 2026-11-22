@@ -1,7 +1,7 @@
 # F-06 Feed paging exists but the demo never shows it
 
 - **Area:** Feed (`/feed`)
-- **Status:** decided (owner, 2026-11-21: option 2, more seeded posts)
+- **Status:** done: polish-release (owner, 2026-11-21: option 2, more seeded posts)
 - **Delivered by:** `polish-release`
 
 ## Seen

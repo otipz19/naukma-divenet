@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it, vi } from "vitest";
 import { ADMIN, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import type { PostSummary } from "./api";
 
@@ -340,5 +341,43 @@ describe("site/details: The site page shows the posts about the site", () => {
 
     await screen.findByText(/waiting for an admin/);
     expect(state.requested).toBe(false);
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (feed)", () => {
+  it("shows a busy region and no empty message while the feed loads", async () => {
+    const held = heldResponse();
+    server.use(
+      http.get(`${origin}/api/v1/countries`, () => HttpResponse.json(COUNTRIES)),
+      http.get(posts, held.wait),
+    );
+    renderRoute("/feed");
+
+    const status = await screen.findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
+    expect(screen.queryByText("No posts here yet.")).not.toBeInTheDocument();
+
+    held.release(HttpResponse.json(pageOf([summary()])));
+
+    expect(await screen.findByRole("link", { name: "Night dive" })).toBeInTheDocument();
+    expect(document.querySelector("[aria-busy='true']")).toBeNull();
+  });
+
+  it("Placeholder after a failed request: the error replaces it", async () => {
+    // A client error, so the query does not retry (src/app/queryClient.ts).
+    server.use(
+      http.get(`${origin}/api/v1/countries`, () => HttpResponse.json(COUNTRIES)),
+      http.get(posts, () =>
+        HttpResponse.json(
+          { status: 400 },
+          { status: 400, headers: { "Content-Type": "application/problem+json" } },
+        ),
+      ),
+    );
+    renderRoute("/feed");
+
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
+    expect(document.querySelector("[aria-busy='true']")).toBeNull();
   });
 });

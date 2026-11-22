@@ -6,6 +6,7 @@ import type { NavItem } from "../../app/navigation";
 import type { RenderAccount } from "../AppHeader/AppHeader";
 import { NavLinks } from "../AppHeader/NavLinks";
 import { LanguageSwitch } from "../LanguageSwitch/LanguageSwitch";
+import { ThemeSwitch } from "../ThemeSwitch/ThemeSwitch";
 import styles from "./NavDrawer.module.css";
 
 export const WIDE_SCREEN_QUERY = "(min-width: 768px)";
@@ -88,6 +89,7 @@ export function NavDrawer({
           <NavLinks items={items} vertical onNavigate={onClose} />
         </nav>
         <LanguageSwitch className={styles.language} />
+        <ThemeSwitch className={styles.language} />
         {account?.("drawer", onClose)}
       </div>
     </div>,

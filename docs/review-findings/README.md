@@ -20,9 +20,9 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | [F-03](F-03-footer-modal.md) | Shell | Footer makes the map page scroll; owner decided: remove the footer, show the disclaimer in a first-visit modal | spec change | done: rework-map-page |
 | [F-04](F-04-password-width.md) | Auth UI | Password field narrower than the email field | bug | done: PR #38 |
 | [F-05](F-05-checks-missed-ui.md) | Tests | No check catches console errors, page overflow or layout drift | test gap | declined |
-| [F-06](F-06-feed-paging-invisible.md) | Feed | Paging exists but never shows: 10 published posts, page size 20; seed more posts | demo gap | decided |
+| [F-06](F-06-feed-paging-invisible.md) | Feed | Paging exists but never shows: 10 published posts, page size 20; seed more posts | demo gap | done: polish-release |
 | [F-07](F-07-feed-card-width.md) | Feed | Cards fill a 720 px column on the left, leaving the right side empty for visitors | design question | declined |
-| [F-08](F-08-theme-switch.md) | Shell | No theme switch; the theme only follows the system | spec gap | decided |
+| [F-08](F-08-theme-switch.md) | Shell | No theme switch; the theme only follows the system | spec gap | done: polish-release |
 | [F-09](F-09-guest-actions.md) | Auth UX | Visitors see actions (review, warning, log a dive) they must sign in to use | design question | declined |
 | [F-10](F-10-map-panel-desktop.md) | Map | Filters always expanded on desktop; the result count and list sit below the fold | UX | done: rework-map-page |
 | [F-11](F-11-submit-site-placement.md) | Map | "Submit a site" sits inside the search form | UX | done: rework-map-page |
@@ -42,7 +42,7 @@ Status values: `open` (no fix chosen yet), `decided` (fix agreed, not built),
 | `fix/ui-defects` (no behaviour change) | F-02, F-04, F-13 | Small CSS and build fixes |
 | `add-dialogs-and-toasts` (new roadmap item) | F-14, F-15, F-16, F-17 | One shared Dialog and Toast in the design system and the app shell, then the dive log and certificates moved onto them |
 | `rework-map-page` (new roadmap item) | F-03, F-10, F-11, F-12 | They all change one screen's layout, and F-03 changes the shell that screen sits in |
-| `polish-release` (proposed) | F-06, F-08 (F-01 declined 2026-11-22) | Release polish across pages |
+| `polish-release` | F-06, F-08 (F-01 declined 2026-11-22) | Release polish across pages |
 | `scope-admin-account` (new roadmap item) | F-18, F-19 | One role rule across the web app and specs (no API change, owner 2026-11-22); the header entry is part of the admin's new shell |
 
 The owner agreed to this grouping on 2026-11-21. `add-dialogs-and-toasts`,

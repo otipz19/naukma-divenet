@@ -1,0 +1,38 @@
+/* design/system/components/Skeleton (dn-skeleton). */
+.skeleton {
+  display: block;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.round {
+  border-radius: var(--radius-full);
+}
+
+.placeholder {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}

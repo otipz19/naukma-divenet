@@ -172,9 +172,9 @@ Lists that already follow the rule:
 | Map results | `site.search.nothingFound` | ok |
 | Site reviews | `review.empty` | ok |
 | Site warnings | `warning.empty` | ok |
-| Site posts | section left out | ok (no add from that section) |
+| Site posts | section left out | ok (the section has no add control; posts are written in the editor) |
 | Feed | `post.feed.empty`, after `isSuccess` | ok |
-| Drafts aside | left out when empty | ok |
+| Drafts aside | left out when empty | ok (no add control in the aside; "Write a post" is in the feed head) |
 | Dive log | `divelog.empty` | ok |
 | Moderation sites / certificates | `site.moderation.empty` / `.certificates.empty` | ok |
 | Certificates page | `user.certificates.none` | ok |
@@ -212,8 +212,10 @@ viewer cannot add, plus one test. The final table goes into this change as
     pictures, with seed numbers taken round-robin from the covers the current 12
     posts get.
   - It does not draw a new picture.
-  - The existing content keeps its pictures, because the new posts' covers no
-    longer take `next++` numbers.
+  - The existing content keeps its pictures. The new posts' covers take no
+    `next++` numbers, and the existing posts' covers and photos are still
+    uploaded during their diver's pass, in the old order. Only the creation of
+    the post moves to the round-robin pass below (`PendingPost`).
 
   The seed format gains an optional field `"cover": "reuse"`; a missing field
   means a new picture, as today. The seeder still goes through `PostService`, as

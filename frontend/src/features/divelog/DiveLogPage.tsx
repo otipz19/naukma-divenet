@@ -3,9 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
 import { ConfirmDialog } from "../../components/Dialog/Dialog";
+import { CardRows, PagePlaceholder, Skeleton } from "../../components/Skeleton/Skeleton";
 import { useToast } from "../../components/Toast/Toast";
 import { useAchievements } from "../achievement/api";
 import { useSession } from "../auth/useSession";
@@ -32,6 +34,7 @@ type DialogState =
 /** The dive log at `/dive-log`, inside `RequireAuth` (spec divelog/log-page). */
 export function DiveLogPage() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t("divelog.title"));
   const session = useSession();
   const userId = session.status === "signedIn" ? session.user.id : 0;
   const [params] = useSearchParams();
@@ -123,6 +126,12 @@ export function DiveLogPage() {
         </Button>
       </div>
       <section className={styles.logColumn} aria-label={t("divelog.table.label")}>
+        {log.isPending && (
+          <PagePlaceholder>
+            <Skeleton height="var(--space-6)" />
+            <CardRows count={5} height="var(--space-6)" />
+          </PagePlaceholder>
+        )}
         {log.isError && (
           <Alert tone="danger" live>
             {t("divelog.loadError")}

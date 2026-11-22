@@ -7,6 +7,7 @@ import { api } from "../../api/client";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
+import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { TextField } from "../../components/TextField/TextField";
 import styles from "../site/ModerationPage.module.css";
 import { certificateTitle } from "./certificates";
@@ -37,6 +38,11 @@ export function CertificateQueue() {
               : "site.moderation.failure",
           )}
         </Alert>
+      )}
+      {queue.isPending && (
+        <PagePlaceholder>
+          <CardRows count={3} />
+        </PagePlaceholder>
       )}
       {queue.isError && (
         <Alert tone="danger" live>

@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import { MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import type { Post, PostSummary } from "./api";
 
@@ -520,5 +521,21 @@ describe("post/editor: The title uses the display type", () => {
     renderRoute("/posts/new");
 
     expect(await screen.findByLabelText("Title")).toHaveClass("h2");
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (post page)", () => {
+  it("shows a busy region until the post arrives", async () => {
+    const held = heldResponse();
+    server.use(http.get(`${posts}/5`, held.wait));
+    renderRoute("/posts/5");
+
+    const status = await screen.findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
+
+    held.release(HttpResponse.json(post()));
+
+    expect(await screen.findByRole("heading", { name: "Night dive" })).toBeInTheDocument();
+    expect(document.querySelector("[aria-busy='true']")).toBeNull();
   });
 });

@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { buttonClassName } from "../../components/Button/Button";
 import { SelectField } from "../../components/SelectField/SelectField";
+import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { useIsAdmin, useSession } from "../auth/useSession";
 import { useDrafts, useFeed } from "./api";
 import { DraftList } from "./DraftList";
@@ -15,6 +17,7 @@ import styles from "./Post.module.css";
 /** The feed at `/feed`; its filters and page live in the URL (spec post/feed, design D4). */
 export function FeedPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("post.feed.title"));
   const [params, setParams] = useSearchParams();
   const session = useSession();
   const country = params.get("country") ?? "";
@@ -117,6 +120,11 @@ export function FeedPage() {
       )}
       <div className={styles.columns}>
         <section className={styles.section} aria-label={t("post.feed.posts")}>
+          {feed.isPending && (
+            <PagePlaceholder>
+              <CardRows count={3} height="calc(var(--space-8) * 4)" />
+            </PagePlaceholder>
+          )}
           {feed.isError && (
             <Alert tone="danger" live>
               {t("post.loadError")}

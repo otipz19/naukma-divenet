@@ -23,3 +23,10 @@
   background: var(--on-brand);
   color: var(--brand);
 }
+
+/* Icon-only options (the theme switch): the icon sits centred in the pill. */
+.icon {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+}

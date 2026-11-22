@@ -76,15 +76,15 @@ loaded, and SHALL use their generic translated page name before that.
 
 ### Requirement: Every list has an empty state
 Every list on a page SHALL show a translated empty message when it has no items.
-It MAY instead leave out its whole section, but only when the viewer cannot add an
-item to it. A list SHALL NOT show its empty message while its data is still
+It MAY instead leave out its whole section, but only when that section offers the
+viewer no way to add an item. A list SHALL NOT show its empty message while its data is still
 loading.
 
 #### Scenario: Empty list with an empty message
 - **WHEN** a diver with no dives opens `/dive-log`
 - **THEN** the page shows the dive log's empty message of the active locale
 
-#### Scenario: Section left out for a viewer who cannot add
+#### Scenario: Section left out when it offers no way to add
 - **WHEN** a visitor opens the profile of a diver who has no published posts
 - **THEN** the profile has no posts section
 

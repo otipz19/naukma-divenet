@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { buttonClassName } from "../../components/Button/Button";
+import { CardRows, PagePlaceholder, Skeleton } from "../../components/Skeleton/Skeleton";
 import { initials } from "../auth/AccountArea";
 import { NotFoundPage } from "../../app/routes/NotFoundPage";
 import { useIsAdmin, useSession } from "../auth/useSession";
@@ -30,6 +32,7 @@ export function ProfilePage() {
     Number(id),
     validId && session.status !== "loading" && !ownAdminProfile,
   );
+  useDocumentTitle(profile.data?.displayName ?? t("shell.pageTitle.profile"));
 
   if (ownAdminProfile) return <NotFoundPage />;
   if (!validId || (profile.error instanceof ApiError && profile.error.status === 404)) {
@@ -49,7 +52,22 @@ export function ProfilePage() {
       </div>
     );
   }
-  if (!profile.data) return null;
+  if (!profile.data) {
+    return (
+      <div className={styles.page}>
+        <PagePlaceholder>
+          <div className={styles.header}>
+            <Skeleton round width="var(--space-8)" height="var(--space-8)" />
+            <div className={styles.text}>
+              <Skeleton width="40%" height="var(--space-6)" />
+              <Skeleton width="70%" />
+            </div>
+          </div>
+          <CardRows count={3} />
+        </PagePlaceholder>
+      </div>
+    );
+  }
 
   const { displayName, bio, avatar } = profile.data;
   const own = session.status === "signedIn" && session.user.id === profile.data.id;

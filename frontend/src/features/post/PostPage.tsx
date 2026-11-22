@@ -2,8 +2,10 @@ import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { Alert } from "../../components/Alert/Alert";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Badge } from "../../components/Badge/Badge";
 import { buttonClassName } from "../../components/Button/Button";
+import { PagePlaceholder, Skeleton } from "../../components/Skeleton/Skeleton";
 import { useSession } from "../auth/useSession";
 import { formatReviewDate } from "../review/ReviewCard";
 import { usePost } from "./api";
@@ -15,6 +17,7 @@ export function PostPage() {
   const { id } = useParams();
   const post = usePost(Number(id));
   const session = useSession();
+  useDocumentTitle(post.data?.title ?? t("shell.pageTitle.post"));
 
   if (post.isError || !Number.isInteger(Number(id))) {
     const missing =
@@ -32,7 +35,20 @@ export function PostPage() {
       </div>
     );
   }
-  if (!post.data) return null;
+  if (!post.data) {
+    return (
+      <div className={styles.page}>
+        <PagePlaceholder className={styles.reading}>
+          <Skeleton height="calc(var(--space-8) * 4)" />
+          <Skeleton width="70%" height="var(--space-6)" />
+          <Skeleton />
+          <Skeleton />
+          <Skeleton />
+          <Skeleton width="60%" />
+        </PagePlaceholder>
+      </div>
+    );
+  }
   const { data } = post;
   const own = session.status === "signedIn" && session.user.id === data.author.id;
 

@@ -2,9 +2,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
 import { ConfirmDialog } from "../../components/Dialog/Dialog";
+import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { useSession } from "../auth/useSession";
 import { CertificateForm } from "./CertificateForm";
 import {
@@ -25,6 +27,7 @@ type DialogState =
 /** The certificates page at `/profile/certificates`, inside `RequireAuth` (spec user/certificates). */
 export function CertificatesPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("user.certificates.pageTitle"));
   const session = useSession();
   const userId = session.status === "signedIn" ? session.user.id : 0;
   const certificates = useCertificates(userId);
@@ -58,6 +61,11 @@ export function CertificatesPage() {
         <Button onClick={() => open({ kind: "new" })}>{t("user.certificates.addTitle")}</Button>
       </div>
       <section className={styles.list} aria-label={t("user.certificates.title")}>
+        {certificates.isPending && (
+          <PagePlaceholder>
+            <CardRows count={3} />
+          </PagePlaceholder>
+        )}
         {certificates.isError && (
           <Alert tone="danger" live>
             {t("user.certificates.loadError")}

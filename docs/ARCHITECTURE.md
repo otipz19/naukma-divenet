@@ -269,8 +269,9 @@ Each change that adds tables updates this diagram.
   check. The admin is a moderator only: diver entry points are hidden, and diver routes
   use `<RequireAuth diver>`, which sends the admin to `/admin/moderation`. The API does
   not enforce this (owner decision for the demo, F-18).
-- The theme follows the system `prefers-color-scheme` (`data-theme` on `<html>`);
-  there is no manual toggle.
+- The theme comes from the System / Light / Dark switch in the header and the drawer,
+  kept in `localStorage` (`src/app/theme.ts`). System, the default, follows
+  `prefers-color-scheme`; the result is `data-theme` on `<html>`.
 - Every site page shows the safety disclaimer in a box that cannot be dismissed, and
   the shell opens it in a first-visit dialog (`src/features/disclaimer/`).
 

@@ -1,7 +1,7 @@
 # F-08 No theme switch
 
 - **Area:** App shell
-- **Status:** decided (owner, 2026-11-21: add the switch)
+- **Status:** done: polish-release (owner, 2026-11-21: add the switch)
 - **Delivered by:** `polish-release`
 
 ## Seen

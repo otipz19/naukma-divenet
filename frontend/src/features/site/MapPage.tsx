@@ -6,10 +6,12 @@ import { MapContainer, Popup, TileLayer } from "react-leaflet";
 import { Link, useSearchParams } from "react-router";
 import "leaflet/dist/leaflet.css";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import type { components } from "../../api/schema.gen";
 import { Alert } from "../../components/Alert/Alert";
 import { Button, buttonClassName } from "../../components/Button/Button";
 import { Dialog, DialogActions, DialogBody } from "../../components/Dialog/Dialog";
+import { CardRows, PagePlaceholder } from "../../components/Skeleton/Skeleton";
 import { SiteCard } from "../../components/SiteCard/SiteCard";
 import { TextField } from "../../components/TextField/TextField";
 import { SearchFilters } from "./SearchFilters";
@@ -41,6 +43,7 @@ const NO_SITES: SiteMarker[] = [];
  */
 export function MapPage() {
   const { t, i18n } = useTranslation();
+  useDocumentTitle(t("site.map.title"));
   const [params, setParams] = useSearchParams();
   const search = parseSearch(params);
   const narrow = useMediaQuery(NARROW_MAP_QUERY);
@@ -142,6 +145,11 @@ export function MapPage() {
   const listed = narrow && !sheetExpanded ? sites.slice(0, 1) : sites;
   const results = (
     <>
+      {markers.isPending && (
+        <PagePlaceholder>
+          <CardRows count={narrow && !sheetExpanded ? 1 : 3} />
+        </PagePlaceholder>
+      )}
       {markers.isError ? (
         <Alert tone="danger" live>
           {t("site.map.loadError")}

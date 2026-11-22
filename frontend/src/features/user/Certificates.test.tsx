@@ -4,6 +4,7 @@ import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
 import { MIRA, startSignedIn } from "../../test/auth";
 import { renderRoute } from "../../test/render";
+import { heldResponse } from "../../test/pending";
 import { server } from "../../test/server";
 import type { Certificate } from "./certificates";
 
@@ -419,5 +420,17 @@ describe("site/moderation: The moderation page has a tab for each queue", () => 
 
     expect(screen.getByRole("tab", { name: /Sites/ })).toHaveAttribute("aria-selected", "true");
     expect(screen.getByRole("tab", { name: /Sites/ })).toHaveFocus();
+  });
+});
+
+describe("shared/web-app: Main pages show a loading placeholder (certificates)", () => {
+  it("shows a busy region while the certificates load", async () => {
+    startSignedIn();
+    const held = heldResponse();
+    server.use(http.get(mine, held.wait));
+    renderRoute("/profile/certificates");
+
+    const status = await screen.findByText("Loading…");
+    expect(status.closest("[aria-busy='true']")).not.toBeNull();
   });
 });

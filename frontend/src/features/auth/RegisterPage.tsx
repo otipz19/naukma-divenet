@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useLocation } from "react-router";
 import { ApiError } from "../../api/ApiError";
 import { api } from "../../api/client";
+import { useDocumentTitle } from "../../app/documentTitle";
 import { signIn } from "../../api/session";
 import { Alert } from "../../components/Alert/Alert";
 import { Button } from "../../components/Button/Button";
@@ -20,6 +21,7 @@ const FIELDS = ["displayName", "email", "password"] as const;
 /** Spec auth "The web app has a sign-up page" (design/screens/Auth.html). */
 export function RegisterPage() {
   const { t } = useTranslation();
+  useDocumentTitle(t("auth.register.title"));
   const location = useLocation();
   const session = useSession();
   const [generic, setGeneric] = useState(false);
