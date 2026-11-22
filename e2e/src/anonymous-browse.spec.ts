@@ -120,6 +120,12 @@ test("the open menu covers the phone map controls", async ({ page }) => {
   await page.getByRole("button", { name: "Open menu" }).click();
   const drawer = page.getByRole("dialog", { name: "Menu" });
   await expect(drawer).toBeVisible();
+  // Measure the panel where it comes to rest, not partway through its slide-in.
+  await drawer.evaluate((panel) =>
+    Promise.all(
+      panel.getAnimations().map((a) => a.finished.catch(() => undefined)),
+    ),
+  );
   const drawerBox = (await drawer.boundingBox())!;
   // A point of the search box that the drawer's panel overlaps.
   const x = Math.min(box.x + box.width / 2, drawerBox.x + drawerBox.width - 10);
@@ -174,7 +180,9 @@ test("a review photo opens in the viewer and closes on Escape", async ({
 
   const viewer = page.getByRole("dialog", { name: "Photo viewer" });
   await expect(viewer).toBeVisible();
-  await expect(viewer.getByRole("button", { name: "Next photo" })).toBeVisible();
+  await expect(
+    viewer.getByRole("button", { name: "Next photo" }),
+  ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(viewer).toBeHidden();
   await expect(
